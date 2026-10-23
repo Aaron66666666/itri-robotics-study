@@ -36,9 +36,11 @@
 
 ## 下一步
 
-- [ ] 確認 Gazebo 中的機器人模型是否正常顯示。
-- [ ] 學習 cmd_vel 與速度控制。
-- [ ] 學習 odometry 與機器人位置資訊。
-- [ ] 練習撰寫 Python ROS 2 Node。
+- [x] 確認 Gazebo 中的機器人模型正常顯示。
+- [x] 學習 cmd_vel 與速度控制，成功控制藍色車輛移動。
+- [x] 學習 odometry，讀取車輛位置與速度資訊。
+- [x] 撰寫 Python ROS 2 Node，控制車輛前進、轉彎與停止。
+- [x] 建立 Subscriber，持續讀取 Odometry。
+- [x] 建立 ROS 2 Launch，同時啟動控制與里程資訊程式。
 - [ ] 學習 YOLO 物件辨識。
 - [ ] 研究 AI Agent / Multi-Agent 協作程式開發。
