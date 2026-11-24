@@ -24,10 +24,12 @@ ROBOT_WS = Path(os.environ.get('ROBOT_WS', Path.home() / 'robot_ws'))
 OUT_DIR = Path(os.environ.get('OUT', '/tmp/robot_acceptance'))
 YOLO_PYTHON = Path.home() / 'yolo_project' / '.venv' / 'bin' / 'python'
 
+# Stop width calibrated for the default YOLO (Gazebo fine-tuned v3, whose
+# cup boxes include the handle). With the original yolo26n.pt use 0.14.
 COMMON_ARGS = [
     'target_class:=cup', 'search_speed:=0.05', 'approach_speed:=0.05',
     'alignment_speed:=0.15', 'target_action:=stop',
-    'stop_bbox_dimension:=width', 'stop_bbox_ratio:=0.14',
+    'stop_bbox_dimension:=width', 'stop_bbox_ratio:=0.185',
 ]
 SCENARIOS = {
     'approach': {

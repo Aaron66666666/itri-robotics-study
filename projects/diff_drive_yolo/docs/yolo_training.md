@@ -43,19 +43,21 @@
 | E2：杯子場景 | PASS：停在 x = 0.529 m | cup ≥ 0.5 佔 99.4%（最低 0.43）；原模型為 100%（最低 0.63） |
 | E3：人物情境 | PASS：人物出現後 478 ms 停車，畫面中有人時位移 0.0 m，人離開後 58 ms 恢復接近，停在 x = 0.555 m | person 0.946 |
 
-使用 v3 時的參數：
+**v3 已設為預設模型**（`~/yolo_project/yolo26n_gazebo_v3.pt`）。切回原模型用 `model_path:=~/yolo_project/yolo26n.pt`。停止門檻：
 
 ```bash
-model_path:=$HOME/yolo_project/runs/gazebo_ft/yolo26n_gazebo_v3/weights/best.pt device:=0
-# 瓶子：target_class:=bottle stop_bbox_dimension:=width stop_bbox_ratio:=0.22
-# 杯子：target_class:=cup    stop_bbox_dimension:=width stop_bbox_ratio:=0.185
+# v3（預設）：
+#   瓶子 target_class:=bottle stop_bbox_dimension:=width stop_bbox_ratio:=0.22
+#   杯子 target_class:=cup    stop_bbox_dimension:=width stop_bbox_ratio:=0.185
+# 原模型（model_path:=~/yolo_project/yolo26n.pt）：
+#   杯子 target_class:=cup    stop_bbox_dimension:=width stop_bbox_ratio:=0.14
 ```
 
 **停止門檻必須依模型重新校正**：Gazebo 的標註框包含杯子把手，所以 v3 的杯子框比原模型寬約 30%。沿用原模型的 0.14 時，車輛一開始就判定「已到達」而完全不動。改為 0.185 後，停止位置與原本相同（約 x = 0.5 m）。
 
 ## 取捨與限制
 
-- v3 的杯子在閉環中有少數影格低於控制器門檻 0.5（每次約 2 個影格），造成短暫停車再繼續（安全處理）。原模型對杯子較穩定。因此 launch 的預設模型**維持不變**；需要辨識瓶子時再改用 v3。是否改成預設由使用者決定。
+- v3 的杯子在閉環中有少數影格低於控制器門檻 0.5（每次約 2 個影格），造成短暫停車再繼續（安全處理）；原模型對杯子較穩定。經使用者決定，v3 已設為預設模型，並重新驗收通過（見 `docs/progress.md`）。
 - E3 的停車反應時間 478 ms，接近 500 ms 的檢查上限；先前的執行為 94–180 ms。同一時段 headless Gazebo 的相機只有約 3.7 Hz（正常約 10 Hz，偵測頻率也受影響），但也可能部分來自 person 分數，尚未分開驗證。
 - 只驗證 person、bottle、cup 三類。COCO 其他 77 類沒有評估：COCO128 同時用於訓練，無法當作獨立測試。
 - 下載項目：COCO128 範例資料集（7 MB，`~/datasets/coco128`）、Ultralytics 繪圖字型。Ultralytics 的 AMP 檢查另外下載了一份 `yolo26n.pt` 到 `~/yolo_project/weights/`（不用於訓練，可刪除）。原本的 `~/yolo_project/yolo26n.pt` 未被修改。
@@ -67,7 +69,7 @@ model_path:=$HOME/yolo_project/runs/gazebo_ft/yolo26n_gazebo_v3/weights/best.pt 
 | 資料產生與訓練工具 | `tools/dataset/`（`make_world.py`、`generate.py`、`gzcapture.py`、`build_dataset.sh`、`montage.py`、`train_yolo.py`、`eval_models.py`、`capture_robot_frames.sh`） |
 | 資料世界 | `worlds/yolo_datagen.sdf`（由 `make_world.py` 產生） |
 | 資料集（不納入 git） | `~/yolo_project/datasets/gazebo_bottle_cup`（v1）、`gazebo_bottle_cup_v2`（v2、v3） |
-| 模型（不納入 git） | `~/yolo_project/runs/gazebo_ft/yolo26n_gazebo{,_v2,_v3}/weights/best.pt` |
+| 模型（不納入 git） | 預設 `~/yolo_project/yolo26n_gazebo_v3.pt`（複製自 `runs/gazebo_ft/yolo26n_gazebo_v3/weights/best.pt`）；v1、v2 在 `runs/gazebo_ft/` |
 | 證據 | `docs/evidence/2026-11-24/yolo_training/` |
 
 ## 開發中遇到的問題

@@ -17,11 +17,21 @@
 
 ## 重現驗收
 
+預設 YOLO 為 Gazebo 微調的 v3（`~/yolo_project/yolo26n_gazebo_v3.pt`），下列杯子停止門檻 0.185 是依 v3 校正（v3 的杯子框含把手）。改用原模型時加 `model_path:=~/yolo_project/yolo26n.pt`，杯子門檻改回 `stop_bbox_ratio:=0.14`。瓶子情境（原瓶子場景）：
+
+```bash
+cd ~/robot_ws/tools/acceptance
+WORLD=worlds/diff_drive_camera_bottle.sdf ./run.sh E1_bottle 70 target_class:=bottle device:=0 \
+  search_speed:=0.05 approach_speed:=0.05 alignment_speed:=0.15 target_action:=stop \
+  stop_bbox_dimension:=width stop_bbox_ratio:=0.22
+./report.sh E1_bottle
+```
+
 ```bash
 cd ~/robot_ws/tools/acceptance
 WORLD=worlds/diff_drive_camera_cup.sdf ./run.sh A1_approach 60 target_class:=cup device:=cpu \
   search_speed:=0.05 approach_speed:=0.05 alignment_speed:=0.15 target_action:=stop \
-  stop_bbox_dimension:=width stop_bbox_ratio:=0.14
+  stop_bbox_dimension:=width stop_bbox_ratio:=0.185
 ./report.sh A1_approach
 ```
 
@@ -29,7 +39,7 @@ WORLD=worlds/diff_drive_camera_cup.sdf ./run.sh A1_approach 60 target_class:=cup
 cd ~/robot_ws/tools/acceptance
 HOOK=$PWD/hook_loss.sh WORLD=worlds/diff_drive_camera_cup.sdf ./run.sh B1_loss 55 target_class:=cup device:=cpu \
   search_speed:=0.05 search_duration:=3.0 approach_speed:=0.05 alignment_speed:=0.15 target_action:=stop \
-  stop_bbox_dimension:=width stop_bbox_ratio:=0.14
+  stop_bbox_dimension:=width stop_bbox_ratio:=0.185
 ./report.sh B1_loss
 ```
 
@@ -41,7 +51,7 @@ cd ~/robot_ws/tools/acceptance && ./run_inject.sh && python3 phase_odom.py /tmp/
 cd ~/robot_ws/tools/acceptance
 HOOK=$PWD/hook_person.sh WORLD=worlds/diff_drive_camera_cup_person.sdf ./run.sh D1_person 55 target_class:=cup device:=cpu \
   search_speed:=0.05 approach_speed:=0.05 alignment_speed:=0.15 target_action:=stop \
-  stop_bbox_dimension:=width stop_bbox_ratio:=0.14
+  stop_bbox_dimension:=width stop_bbox_ratio:=0.185
 ./report.sh D1_person
 ```
 

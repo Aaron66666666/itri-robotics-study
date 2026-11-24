@@ -1,0 +1,184 @@
+[INFO] [launch]: All log files can be found below /tmp/ros-log/2026-11-24-21-31-37-777676-DESKTOP-6LQSEGH-63254
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [image_bridge-1]: process started with pid [63274]
+[INFO] [camera_yolo-2]: process started with pid [63275]
+[INFO] [parameter_bridge-3]: process started with pid [63276]
+[INFO] [autonomy_controller-4]: process started with pid [63277]
+[parameter_bridge-3] [INFO] [1795527097.875899293] [cmd_vel_bridge]: Creating GZ->ROS Bridge: [/model/vehicle_blue/cmd_vel (gz.msgs.Twist) -> /model/vehicle_blue/cmd_vel (geometry_msgs/msg/Twist)] (Lazy 0)
+[parameter_bridge-3] [INFO] [1795527097.877538886] [cmd_vel_bridge]: Creating ROS->GZ Bridge: [/model/vehicle_blue/cmd_vel (geometry_msgs/msg/Twist) -> /model/vehicle_blue/cmd_vel (gz.msgs.Twist)] (Lazy 0)
+[parameter_bridge-3] [INFO] [1795527097.878451981] [cmd_vel_bridge]: Creating GZ->ROS Bridge: [/model/vehicle_blue/odometry (gz.msgs.Odometry) -> /model/vehicle_blue/odometry (nav_msgs/msg/Odometry)] (Lazy 0)
+[autonomy_controller-4] [INFO] [1795527098.158107842] [autonomy_controller]: Listening /yolo/detections; publishing /model/vehicle_blue/cmd_vel; person stops; searching/approaching cup before stop
+[autonomy_controller-4] [INFO] [1795527098.553378939] [autonomy_controller]: Autonomy state: stale_detections
+[parameter_bridge-3] [INFO] [1795527098.553537956] [cmd_vel_bridge]: Passing message from ROS geometry_msgs/msg/Twist to Gazebo gz.msgs.Twist (showing msg only once per type)
+[camera_yolo-2] [INFO] [1795527099.195995546] [camera_yolo]: YOLO model loaded: /home/yulin/yolo_project/yolo26n_gazebo_v3.pt
+[camera_yolo-2] [INFO] [1795527099.196270900] [camera_yolo]: YOLO inference settings: conf=0.35, device=0
+[camera_yolo-2] [INFO] [1795527099.196465361] [camera_yolo]: Python executable: /usr/bin/python3
+[camera_yolo-2] [INFO] [1795527099.196677129] [camera_yolo]: YOLO Python packages: /home/yulin/yolo_project/.venv/lib/python3.12/site-packages
+[camera_yolo-2] [INFO] [1795527099.196915621] [camera_yolo]: Subscribing to camera: /vehicle_blue/camera/image
+[camera_yolo-2] [INFO] [1795527099.197134011] [camera_yolo]: Publishing detections: /yolo/detections
+[camera_yolo-2] [INFO] [1795527099.197345143] [camera_yolo]: Publishing annotated image: /yolo/image
+[camera_yolo-2] [INFO] [1795527099.623198826] [camera_yolo]: Received camera frame 1: encoding=rgb8, shape=(480, 640, 3), dtype=uint8, channel_order=BGR, min=50, max=255, channel_means=[221.61, 223.94, 225.95]
+[camera_yolo-2] [INFO] [1795527102.572512195] [camera_yolo]: YOLO inference 1 complete; elapsed=2.948s, runtime_device=cuda:0, detections=['cup:0.9473']
+[autonomy_controller-4] [INFO] [1795527102.573516824] [autonomy_controller]: Autonomy state: approach_target
+[camera_yolo-2] [INFO] [1795527102.730812718] [camera_yolo]: YOLO inference 8 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9499']
+[camera_yolo-2] [INFO] [1795527102.831331874] [camera_yolo]: YOLO inference 9 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9527']
+[camera_yolo-2] [INFO] [1795527102.929806827] [camera_yolo]: YOLO inference 10 complete; elapsed=0.008s, runtime_device=cuda:0, detections=['cup:0.9489']
+[camera_yolo-2] [INFO] [1795527103.030289397] [camera_yolo]: YOLO inference 11 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9497']
+[camera_yolo-2] [INFO] [1795527103.131835943] [camera_yolo]: YOLO inference 12 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9504']
+[camera_yolo-2] [INFO] [1795527103.230567285] [camera_yolo]: YOLO inference 13 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9495']
+[camera_yolo-2] [INFO] [1795527103.333031401] [camera_yolo]: YOLO inference 14 complete; elapsed=0.011s, runtime_device=cuda:0, detections=['cup:0.9468']
+[camera_yolo-2] [INFO] [1795527103.430904184] [camera_yolo]: YOLO inference 15 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9508']
+[camera_yolo-2] [INFO] [1795527103.529871992] [camera_yolo]: YOLO inference 16 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9522']
+[camera_yolo-2] [INFO] [1795527103.630465627] [camera_yolo]: YOLO inference 17 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9551']
+[camera_yolo-2] [INFO] [1795527103.730044929] [camera_yolo]: YOLO inference 18 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9559']
+[camera_yolo-2] [INFO] [1795527103.932619176] [camera_yolo]: YOLO inference 19 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9554']
+[camera_yolo-2] [INFO] [1795527104.029663441] [camera_yolo]: YOLO inference 20 complete; elapsed=0.008s, runtime_device=cuda:0, detections=['cup:0.9550']
+[camera_yolo-2] [INFO] [1795527104.131320922] [camera_yolo]: YOLO inference 21 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9552']
+[camera_yolo-2] [INFO] [1795527104.231663492] [camera_yolo]: YOLO inference 22 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9547']
+[camera_yolo-2] [INFO] [1795527104.329888183] [camera_yolo]: YOLO inference 23 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9538']
+[camera_yolo-2] [INFO] [1795527104.433696891] [camera_yolo]: YOLO inference 24 complete; elapsed=0.012s, runtime_device=cuda:0, detections=['cup:0.9516']
+[camera_yolo-2] [INFO] [1795527104.532855221] [camera_yolo]: YOLO inference 25 complete; elapsed=0.011s, runtime_device=cuda:0, detections=['cup:0.9514']
+[camera_yolo-2] [INFO] [1795527104.630917142] [camera_yolo]: YOLO inference 26 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9493']
+[camera_yolo-2] [INFO] [1795527104.731919736] [camera_yolo]: YOLO inference 27 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9446']
+[camera_yolo-2] [INFO] [1795527104.829450255] [camera_yolo]: YOLO inference 28 complete; elapsed=0.008s, runtime_device=cuda:0, detections=['cup:0.9493']
+[camera_yolo-2] [INFO] [1795527104.930510727] [camera_yolo]: YOLO inference 29 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9545']
+[camera_yolo-2] [INFO] [1795527105.026157935] [camera_yolo]: Received camera frame 30: encoding=rgb8, shape=(480, 640, 3), dtype=uint8, channel_order=BGR, min=46, max=255, channel_means=[220.97, 223.68, 226.01]
+[camera_yolo-2] [INFO] [1795527105.038603021] [camera_yolo]: YOLO inference 30 complete; elapsed=0.012s, runtime_device=cuda:0, detections=['cup:0.9527']
+[camera_yolo-2] [INFO] [1795527105.129890671] [camera_yolo]: YOLO inference 31 complete; elapsed=0.008s, runtime_device=cuda:0, detections=['cup:0.9510']
+[camera_yolo-2] [INFO] [1795527105.231656216] [camera_yolo]: YOLO inference 32 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9509']
+[camera_yolo-2] [INFO] [1795527105.333160830] [camera_yolo]: YOLO inference 33 complete; elapsed=0.011s, runtime_device=cuda:0, detections=['cup:0.9521']
+[camera_yolo-2] [INFO] [1795527105.431293576] [camera_yolo]: YOLO inference 34 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9554']
+[camera_yolo-2] [INFO] [1795527105.536117641] [camera_yolo]: YOLO inference 35 complete; elapsed=0.012s, runtime_device=cuda:0, detections=['cup:0.9575']
+[camera_yolo-2] [INFO] [1795527105.634066375] [camera_yolo]: YOLO inference 36 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9543']
+[camera_yolo-2] [INFO] [1795527105.732081797] [camera_yolo]: YOLO inference 37 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9524']
+[camera_yolo-2] [INFO] [1795527105.834096967] [camera_yolo]: YOLO inference 38 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9507']
+[camera_yolo-2] [INFO] [1795527105.934309432] [camera_yolo]: YOLO inference 39 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9511']
+[camera_yolo-2] [INFO] [1795527106.031717142] [camera_yolo]: YOLO inference 40 complete; elapsed=0.008s, runtime_device=cuda:0, detections=['cup:0.9473']
+[camera_yolo-2] [INFO] [1795527106.133823198] [camera_yolo]: YOLO inference 41 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9440']
+[camera_yolo-2] [INFO] [1795527106.232117989] [camera_yolo]: YOLO inference 42 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9413']
+[camera_yolo-2] [INFO] [1795527106.334365554] [camera_yolo]: YOLO inference 43 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9422']
+[camera_yolo-2] [INFO] [1795527106.532353550] [camera_yolo]: YOLO inference 44 complete; elapsed=0.008s, runtime_device=cuda:0, detections=['cup:0.9436']
+[camera_yolo-2] [INFO] [1795527106.636905445] [camera_yolo]: YOLO inference 45 complete; elapsed=0.013s, runtime_device=cuda:0, detections=['cup:0.9411']
+[camera_yolo-2] [INFO] [1795527106.733360449] [camera_yolo]: YOLO inference 46 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9399']
+[camera_yolo-2] [INFO] [1795527106.831771486] [camera_yolo]: YOLO inference 47 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9388']
+[camera_yolo-2] [INFO] [1795527106.935606543] [camera_yolo]: YOLO inference 48 complete; elapsed=0.011s, runtime_device=cuda:0, detections=['cup:0.9341']
+[camera_yolo-2] [INFO] [1795527107.032981995] [camera_yolo]: YOLO inference 49 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9304']
+[camera_yolo-2] [INFO] [1795527107.133367241] [camera_yolo]: YOLO inference 50 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9365']
+[camera_yolo-2] [INFO] [1795527107.233425501] [camera_yolo]: YOLO inference 51 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9346']
+[camera_yolo-2] [INFO] [1795527107.333711622] [camera_yolo]: YOLO inference 52 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9327']
+[camera_yolo-2] [INFO] [1795527107.432760022] [camera_yolo]: YOLO inference 53 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9281']
+[camera_yolo-2] [INFO] [1795527107.531698464] [camera_yolo]: YOLO inference 54 complete; elapsed=0.008s, runtime_device=cuda:0, detections=['cup:0.9271']
+[camera_yolo-2] [INFO] [1795527107.632206793] [camera_yolo]: YOLO inference 55 complete; elapsed=0.008s, runtime_device=cuda:0, detections=['cup:0.9230']
+[camera_yolo-2] [INFO] [1795527107.732723414] [camera_yolo]: YOLO inference 56 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9154']
+[camera_yolo-2] [INFO] [1795527107.834176739] [camera_yolo]: YOLO inference 57 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9152']
+[camera_yolo-2] [INFO] [1795527107.932122783] [camera_yolo]: YOLO inference 58 complete; elapsed=0.008s, runtime_device=cuda:0, detections=['cup:0.9280']
+[camera_yolo-2] [INFO] [1795527108.034250227] [camera_yolo]: YOLO inference 59 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9318']
+[camera_yolo-2] [INFO] [1795527108.128802361] [camera_yolo]: Received camera frame 60: encoding=rgb8, shape=(480, 640, 3), dtype=uint8, channel_order=BGR, min=49, max=255, channel_means=[221.02, 224.03, 226.64]
+[camera_yolo-2] [INFO] [1795527108.138626255] [camera_yolo]: YOLO inference 60 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9314']
+[camera_yolo-2] [INFO] [1795527108.233895738] [camera_yolo]: YOLO inference 61 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9284']
+[camera_yolo-2] [INFO] [1795527108.334976322] [camera_yolo]: YOLO inference 62 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9296']
+[camera_yolo-2] [INFO] [1795527108.433500592] [camera_yolo]: YOLO inference 63 complete; elapsed=0.008s, runtime_device=cuda:0, detections=['cup:0.9220']
+[camera_yolo-2] [INFO] [1795527108.533541431] [camera_yolo]: YOLO inference 64 complete; elapsed=0.008s, runtime_device=cuda:0, detections=['cup:0.9260']
+[camera_yolo-2] [INFO] [1795527108.635514605] [camera_yolo]: YOLO inference 65 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9200']
+[camera_yolo-2] [INFO] [1795527108.733993591] [camera_yolo]: YOLO inference 66 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9213']
+[camera_yolo-2] [INFO] [1795527108.833349753] [camera_yolo]: YOLO inference 67 complete; elapsed=0.008s, runtime_device=cuda:0, detections=['cup:0.9109']
+[camera_yolo-2] [INFO] [1795527108.937361476] [camera_yolo]: YOLO inference 68 complete; elapsed=0.011s, runtime_device=cuda:0, detections=['cup:0.9150']
+[camera_yolo-2] [INFO] [1795527109.033598214] [camera_yolo]: YOLO inference 69 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9185']
+[camera_yolo-2] [INFO] [1795527109.235411779] [camera_yolo]: YOLO inference 70 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9342']
+[camera_yolo-2] [INFO] [1795527109.334561103] [camera_yolo]: YOLO inference 71 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9415']
+[camera_yolo-2] [INFO] [1795527109.434105190] [camera_yolo]: YOLO inference 72 complete; elapsed=0.008s, runtime_device=cuda:0, detections=['cup:0.9394']
+[camera_yolo-2] [INFO] [1795527109.538028628] [camera_yolo]: YOLO inference 73 complete; elapsed=0.011s, runtime_device=cuda:0, detections=['cup:0.9446']
+[camera_yolo-2] [INFO] [1795527109.634517949] [camera_yolo]: YOLO inference 74 complete; elapsed=0.008s, runtime_device=cuda:0, detections=['cup:0.9476']
+[camera_yolo-2] [INFO] [1795527109.736588056] [camera_yolo]: YOLO inference 75 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9401']
+[camera_yolo-2] [INFO] [1795527109.838448349] [camera_yolo]: YOLO inference 76 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9387']
+[camera_yolo-2] [INFO] [1795527109.935894486] [camera_yolo]: YOLO inference 77 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9403']
+[camera_yolo-2] [INFO] [1795527110.040880639] [camera_yolo]: YOLO inference 78 complete; elapsed=0.014s, runtime_device=cuda:0, detections=['cup:0.9456']
+[camera_yolo-2] [INFO] [1795527110.136125927] [camera_yolo]: YOLO inference 79 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9339']
+[camera_yolo-2] [INFO] [1795527110.236436366] [camera_yolo]: YOLO inference 80 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9342']
+[camera_yolo-2] [INFO] [1795527110.336473697] [camera_yolo]: YOLO inference 81 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9341']
+[camera_yolo-2] [INFO] [1795527110.435335674] [camera_yolo]: YOLO inference 82 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.8989']
+[camera_yolo-2] [INFO] [1795527110.535937320] [camera_yolo]: YOLO inference 83 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.8981']
+[camera_yolo-2] [INFO] [1795527110.634949914] [camera_yolo]: YOLO inference 84 complete; elapsed=0.008s, runtime_device=cuda:0, detections=['cup:0.8783']
+[camera_yolo-2] [INFO] [1795527110.734890071] [camera_yolo]: YOLO inference 85 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.8111']
+[camera_yolo-2] [INFO] [1795527110.837957166] [camera_yolo]: YOLO inference 86 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.8621']
+[camera_yolo-2] [INFO] [1795527110.938448649] [camera_yolo]: YOLO inference 87 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.8921']
+[camera_yolo-2] [INFO] [1795527111.037070939] [camera_yolo]: YOLO inference 88 complete; elapsed=0.009s, runtime_device=cuda:0, detections=['cup:0.9126']
+[camera_yolo-2] [INFO] [1795527111.139625807] [camera_yolo]: YOLO inference 89 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9176']
+[camera_yolo-2] [INFO] [1795527111.232138267] [camera_yolo]: Received camera frame 90: encoding=rgb8, shape=(480, 640, 3), dtype=uint8, channel_order=BGR, min=48, max=255, channel_means=[222.44, 225.37, 227.91]
+[camera_yolo-2] [INFO] [1795527111.243349278] [camera_yolo]: YOLO inference 90 complete; elapsed=0.010s, runtime_device=cuda:0, detections=['cup:0.9200']
+[camera_yolo-2] [INFO] [1795527111.340750330] [camera_yolo]: YOLO inference 91 complete; elapsed=0.012s, runtime_device=cuda:0, detections=['cup:0.9011']
+[camera_yolo-2] [INFO] [1795527111.440051713] [camera_yolo]: YOLO inference 92 complete; elapsed=0.011s, runtime_device=cuda:0, detections=['cup:0.8366']
+[camera_yolo-2] [INFO] [1795527111.539839382] [camera_yolo]: YOLO inference 93 complete; elapsed=0.011s, runtime_device=cuda:0, detections=['cup:0.7534']
+[camera_yolo-2] [INFO] [1795527111.640204669] [camera_yolo]: YOLO inference 94 complete; elapsed=0.011s, runtime_device=cuda:0, detections=['cup:0.7033']
+[camera_yolo-2] [INFO] [1795527111.741652279] [camera_yolo]: YOLO inference 95 complete; elapsed=0.012s, runtime_device=cuda:0, detections=['cup:0.6835']
+[camera_yolo-2] [INFO] [1795527111.840149093] [camera_yolo]: YOLO inference 96 complete; elapsed=0.012s, runtime_device=cuda:0, detections=['cup:0.4517']
+[autonomy_controller-4] [INFO] [1795527111.840894618] [autonomy_controller]: Autonomy state: target_lost_wait
+[camera_yolo-2] [INFO] [1795527112.041564762] [camera_yolo]: YOLO inference 97 complete; elapsed=0.013s, runtime_device=cuda:0, detections=[]
+[autonomy_controller-4] [INFO] [1795527112.341730162] [autonomy_controller]: Autonomy state: search_forward
+[camera_yolo-2] [INFO] [1795527112.847556202] [camera_yolo]: YOLO inference 104 complete; elapsed=0.017s, runtime_device=cuda:0, detections=['cup:0.8746']
+[autonomy_controller-4] [INFO] [1795527112.848217770] [autonomy_controller]: Autonomy state: approach_target
+[camera_yolo-2] [INFO] [1795527112.947550021] [camera_yolo]: YOLO inference 105 complete; elapsed=0.018s, runtime_device=cuda:0, detections=['cup:0.8578']
+[camera_yolo-2] [INFO] [1795527113.047312128] [camera_yolo]: YOLO inference 106 complete; elapsed=0.018s, runtime_device=cuda:0, detections=['cup:0.8326']
+[camera_yolo-2] [INFO] [1795527113.148646352] [camera_yolo]: YOLO inference 107 complete; elapsed=0.019s, runtime_device=cuda:0, detections=['cup:0.8087']
+[camera_yolo-2] [INFO] [1795527113.247447087] [camera_yolo]: YOLO inference 108 complete; elapsed=0.018s, runtime_device=cuda:0, detections=['cup:0.8262']
+[camera_yolo-2] [INFO] [1795527113.348031337] [camera_yolo]: YOLO inference 109 complete; elapsed=0.018s, runtime_device=cuda:0, detections=['cup:0.7108']
+[camera_yolo-2] [INFO] [1795527113.448981618] [camera_yolo]: YOLO inference 110 complete; elapsed=0.020s, runtime_device=cuda:0, detections=['cup:0.6623']
+[camera_yolo-2] [INFO] [1795527113.548409096] [camera_yolo]: YOLO inference 111 complete; elapsed=0.019s, runtime_device=cuda:0, detections=['cup:0.6615']
+[camera_yolo-2] [INFO] [1795527113.652279756] [camera_yolo]: YOLO inference 112 complete; elapsed=0.022s, runtime_device=cuda:0, detections=['cup:0.7099']
+[camera_yolo-2] [INFO] [1795527113.750956347] [camera_yolo]: YOLO inference 113 complete; elapsed=0.020s, runtime_device=cuda:0, detections=['cup:0.8997']
+[camera_yolo-2] [INFO] [1795527113.851251782] [camera_yolo]: YOLO inference 114 complete; elapsed=0.020s, runtime_device=cuda:0, detections=['cup:0.8939']
+[camera_yolo-2] [INFO] [1795527113.951457308] [camera_yolo]: YOLO inference 115 complete; elapsed=0.020s, runtime_device=cuda:0, detections=['cup:0.8541']
+[camera_yolo-2] [INFO] [1795527114.053801842] [camera_yolo]: YOLO inference 116 complete; elapsed=0.023s, runtime_device=cuda:0, detections=['cup:0.8774']
+[autonomy_controller-4] [INFO] [1795527114.054561964] [autonomy_controller]: Autonomy state: target_action:stop
+[camera_yolo-2] [INFO] [1795527114.151928769] [camera_yolo]: YOLO inference 117 complete; elapsed=0.021s, runtime_device=cuda:0, detections=['cup:0.8705']
+[camera_yolo-2] [INFO] [1795527114.255846259] [camera_yolo]: YOLO inference 118 complete; elapsed=0.024s, runtime_device=cuda:0, detections=['cup:0.8484']
+[camera_yolo-2] [INFO] [1795527114.435326363] [camera_yolo]: Received camera frame 120: encoding=rgb8, shape=(480, 640, 3), dtype=uint8, channel_order=BGR, min=48, max=255, channel_means=[223.34, 225.8, 227.94]
+[camera_yolo-2] [INFO] [1795527114.457811761] [camera_yolo]: YOLO inference 120 complete; elapsed=0.022s, runtime_device=cuda:0, detections=['cup:0.8484']
+[autonomy_controller-4] [INFO] [1795527115.651094704] [autonomy_controller]: Autonomy state: target_action_complete
+[camera_yolo-2] [INFO] [1795527116.254280200] [camera_yolo]: YOLO inference 136 complete; elapsed=0.022s, runtime_device=cuda:0, detections=[]
+[autonomy_controller-4] [INFO] [1795527116.254786221] [autonomy_controller]: Autonomy state: target_lost_wait
+[autonomy_controller-4] [INFO] [1795527116.752330821] [autonomy_controller]: Autonomy state: search_forward
+[camera_yolo-2] [INFO] [1795527117.735698244] [camera_yolo]: Received camera frame 150: encoding=rgb8, shape=(480, 640, 3), dtype=uint8, channel_order=BGR, min=130, max=255, channel_means=[225.26, 228.34, 230.99]
+[camera_yolo-2] [INFO] [1795527117.756954930] [camera_yolo]: YOLO inference 150 complete; elapsed=0.021s, runtime_device=cuda:0, detections=[]
+[autonomy_controller-4] [INFO] [1795527119.851613047] [autonomy_controller]: Autonomy state: search_timeout
+[camera_yolo-2] [INFO] [1795527120.935431861] [camera_yolo]: Received camera frame 180: encoding=rgb8, shape=(480, 640, 3), dtype=uint8, channel_order=BGR, min=130, max=255, channel_means=[226.43, 229.08, 231.36]
+[camera_yolo-2] [INFO] [1795527120.958782024] [camera_yolo]: YOLO inference 180 complete; elapsed=0.023s, runtime_device=cuda:0, detections=[]
+[camera_yolo-2] [INFO] [1795527124.035183192] [camera_yolo]: Received camera frame 210: encoding=rgb8, shape=(480, 640, 3), dtype=uint8, channel_order=BGR, min=130, max=255, channel_means=[226.43, 229.08, 231.36]
+[camera_yolo-2] [INFO] [1795527124.056230815] [camera_yolo]: YOLO inference 210 complete; elapsed=0.020s, runtime_device=cuda:0, detections=[]
+[camera_yolo-2] [INFO] [1795527127.136273996] [camera_yolo]: Received camera frame 240: encoding=rgb8, shape=(480, 640, 3), dtype=uint8, channel_order=BGR, min=130, max=255, channel_means=[226.43, 229.08, 231.36]
+[camera_yolo-2] [INFO] [1795527127.156989896] [camera_yolo]: YOLO inference 240 complete; elapsed=0.020s, runtime_device=cuda:0, detections=[]
+[camera_yolo-2] [INFO] [1795527128.654345457] [camera_yolo]: YOLO inference 252 complete; elapsed=0.022s, runtime_device=cuda:0, detections=['cup:0.9396']
+[autonomy_controller-4] [INFO] [1795527128.655024127] [autonomy_controller]: Autonomy state: target_action:stop
+[autonomy_controller-4] [INFO] [1795527132.996422424] [autonomy_controller]: Autonomy state: target_action_complete
+[camera_yolo-2] [INFO] [1795527133.276319732] [camera_yolo]: Received camera frame 270: encoding=rgb8, shape=(480, 640, 3), dtype=uint8, channel_order=BGR, min=49, max=255, channel_means=[224.9, 226.76, 228.38]
+[camera_yolo-2] [INFO] [1795527133.300412291] [camera_yolo]: YOLO inference 270 complete; elapsed=0.023s, runtime_device=cuda:0, detections=['cup:0.9396']
+[camera_yolo-2] [INFO] [1795527136.282984943] [camera_yolo]: Received camera frame 300: encoding=rgb8, shape=(480, 640, 3), dtype=uint8, channel_order=BGR, min=49, max=255, channel_means=[224.9, 226.76, 228.38]
+[camera_yolo-2] [INFO] [1795527136.306958662] [camera_yolo]: YOLO inference 300 complete; elapsed=0.023s, runtime_device=cuda:0, detections=['cup:0.9396']
+[camera_yolo-2] [INFO] [1795527139.788682900] [camera_yolo]: Received camera frame 330: encoding=rgb8, shape=(480, 640, 3), dtype=uint8, channel_order=BGR, min=49, max=255, channel_means=[224.9, 226.76, 228.38]
+[camera_yolo-2] [INFO] [1795527139.812518709] [camera_yolo]: YOLO inference 330 complete; elapsed=0.023s, runtime_device=cuda:0, detections=['cup:0.9396']
+[camera_yolo-2] [INFO] [1795527142.895976769] [camera_yolo]: Received camera frame 360: encoding=rgb8, shape=(480, 640, 3), dtype=uint8, channel_order=BGR, min=49, max=255, channel_means=[224.9, 226.76, 228.38]
+[camera_yolo-2] [INFO] [1795527142.919866919] [camera_yolo]: YOLO inference 360 complete; elapsed=0.023s, runtime_device=cuda:0, detections=['cup:0.9396']
+[camera_yolo-2] [INFO] [1795527145.905101060] [camera_yolo]: Received camera frame 390: encoding=rgb8, shape=(480, 640, 3), dtype=uint8, channel_order=BGR, min=49, max=255, channel_means=[224.9, 226.76, 228.38]
+[camera_yolo-2] [INFO] [1795527145.928918264] [camera_yolo]: YOLO inference 390 complete; elapsed=0.023s, runtime_device=cuda:0, detections=['cup:0.9396']
+[camera_yolo-2] [INFO] [1795527148.912857942] [camera_yolo]: Received camera frame 420: encoding=rgb8, shape=(480, 640, 3), dtype=uint8, channel_order=BGR, min=49, max=255, channel_means=[224.9, 226.76, 228.38]
+[camera_yolo-2] [INFO] [1795527148.936954163] [camera_yolo]: YOLO inference 420 complete; elapsed=0.023s, runtime_device=cuda:0, detections=['cup:0.9396']
+[camera_yolo-2] [INFO] [1795527151.912919287] [camera_yolo]: Received camera frame 450: encoding=rgb8, shape=(480, 640, 3), dtype=uint8, channel_order=BGR, min=49, max=255, channel_means=[224.9, 226.76, 228.38]
+[camera_yolo-2] [INFO] [1795527151.934712465] [camera_yolo]: YOLO inference 450 complete; elapsed=0.021s, runtime_device=cuda:0, detections=['cup:0.9396']
+[camera_yolo-2] [INFO] [1795527154.913751571] [camera_yolo]: Received camera frame 480: encoding=rgb8, shape=(480, 640, 3), dtype=uint8, channel_order=BGR, min=49, max=255, channel_means=[224.9, 226.76, 228.38]
+[camera_yolo-2] [INFO] [1795527154.935572463] [camera_yolo]: YOLO inference 480 complete; elapsed=0.021s, runtime_device=cuda:0, detections=['cup:0.9396']
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT) again, ignoring...
+[INFO] [autonomy_controller-4]: sending signal 'SIGINT' to process[autonomy_controller-4]
+[INFO] [parameter_bridge-3]: sending signal 'SIGINT' to process[parameter_bridge-3]
+[INFO] [camera_yolo-2]: sending signal 'SIGINT' to process[camera_yolo-2]
+[INFO] [image_bridge-1]: sending signal 'SIGINT' to process[image_bridge-1]
+[image_bridge-1] [INFO] [1795527155.410514226] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[parameter_bridge-3] [INFO] [1795527155.410531706] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[parameter_bridge-3] [INFO] [1795527155.412521659] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[autonomy_controller-4] KeyboardInterrupt
+[image_bridge-1] [INFO] [1795527155.413375980] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[camera_yolo-2] KeyboardInterrupt
+[ERROR] [autonomy_controller-4]: process has died [pid 63277, exit code -2, cmd '/home/yulin/robot_ws/install/robot_control/lib/robot_control/autonomy_controller --ros-args -r __node:=autonomy_controller --params-file /tmp/launch_params_w1nm6q87'].
+[INFO] [parameter_bridge-3]: process has finished cleanly [pid 63276]
+[INFO] [image_bridge-1]: process has finished cleanly [pid 63274]
+[ERROR] [camera_yolo-2]: process has died [pid 63275, exit code -2, cmd '/home/yulin/robot_ws/install/robot_control/lib/robot_control/camera_yolo --ros-args -r __node:=camera_yolo --params-file /tmp/launch_params_uuj0_yqj'].

@@ -1,8 +1,12 @@
+from pathlib import Path
+
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
+
+DEFAULT_MODEL = str(Path.home() / 'yolo_project' / 'yolo26n_gazebo_v3.pt')
 
 
 def generate_launch_description():
@@ -14,8 +18,9 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'model_path',
-            default_value='/home/yulin/yolo_project/yolo26n.pt',
-            description='Path to the existing YOLO model file',
+            default_value=DEFAULT_MODEL,
+            description='YOLO weights. Default: Gazebo fine-tuned v3; '
+                        'original model: ~/yolo_project/yolo26n.pt',
         ),
         DeclareLaunchArgument(
             'confidence_threshold',

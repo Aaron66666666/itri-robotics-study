@@ -93,11 +93,18 @@
 
 詳見 `docs/yolo_training.md`。用 Gazebo `boundingbox_camera` 自動標註，產生 2800 張隨機場景影像（瓶子、杯子、人物、干擾物、隨機光線與背景），並以 GPU 微調 YOLO26n。共訓練三版：v1（僅合成資料）修好瓶子，但出現人員遺忘；v2（加補光與白地墊、凍結骨幹）沒有解決遺忘；v3（加 COCO128 真實影像回放）三類都達標。機器人場景 18 張影格中各類最低分數：bottle 0.00 → 0.93、cup 0.26 → 0.76、person 0.90 → 0.90。閉環實測（v3）：原瓶子場景接近並停在 x = 1.004 m（bottle ≥ 0.5 佔 100%）；杯子 PASS（≥ 0.5 佔 99.4%，略低於原模型的 100%）；人物停止 PASS（478 ms，位移 0.0 m）。停止門檻須依模型重新校正（v3 杯子框含把手，較寬）。launch 預設模型維持不變。
 
+### v3 設為預設 YOLO 模型（2026-11-24）
+
+- v3 權重複製到 `~/yolo_project/yolo26n_gazebo_v3.pt`（SHA-256 前 16 碼 `f99d3033ae1dfbae`，與訓練輸出相同），launch 與相機節點預設改指向此檔，不指向 `runs/`。
+- 切回原模型：`model_path:=~/yolo_project/yolo26n.pt`。節點會自行展開 `~`（shell 不會展開 `:=~` 這種寫法）；權重檔不存在時直接報錯，不會讓 Ultralytics 自動下載。
+- 依 v3 重新校正杯子停止門檻 0.14 → 0.185（Agent 驗收工具與驗收 README 同步更新）；瓶子為 0.22。
+- 新增 `tools/dataset/make_replay_yaml.py`，可從 git 內的檔案重新產生 v3 的訓練設定。README 說明權重不在 git 內，以及取得或重新訓練的方法。
+- 驗收重跑（未指定 model_path，log 確認載入 v3）：F1 杯子 PASS（x = 0.549 m）、F2 目標遺失 PASS、F3 人物停止 PASS（264 ms、位移 0.0 m）、F4 原瓶子場景 PASS（x = 0.973 m）；F5 切回原模型（log 確認載入 yolo26n.pt）杯子 PASS（x = 0.524 m）。單元測試 robot_control 21、yolo_ros 2、Agent 59 全部通過。證據：`docs/evidence/2026-11-24/v3_default/`。
+
 ### 仍待處理
 
 - 使用者以 GUI（Gazebo + RViz）目視確認一次車輛閉環與 UR5e pick-and-place。
 - `autonomous_yolo.launch.py` 預設 `target_class` 仍為 `bottle`；cup 場景需使用上表參數。是否把 cup 場景參數做成預設，待使用者決定。
-- 是否把 v3 模型設為 launch 預設（瓶子大幅改善，杯子略不穩），待使用者決定。
 - `itri-robotics-study/projects/` 尚未加入 git（未提交任何變更）。
 
 ---

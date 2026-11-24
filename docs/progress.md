@@ -29,7 +29,7 @@
 - ROS 2：Jazzy
 - 模擬器：Gazebo Harmonic（Gazebo Sim 8）
 - 機械手臂規劃：MoveIt 2（`ur_simulation_gz`、`ur_moveit_config`）
-- 物件辨識：YOLO26n（Ultralytics；RTX 4070 Laptop GPU，驅動 621.24／CUDA 13.5；venv `~/yolo_project/.venv`）
+- 物件辨識：YOLO26n，預設為 Gazebo 微調的 v3（`~/yolo_project/yolo26n_gazebo_v3.pt`，不在 git 內）；Ultralytics；RTX 4070 Laptop GPU，驅動 621.24／CUDA 13.5；venv `~/yolo_project/.venv`
 - 主要程式語言：Python
 - 版本控制：Git + GitHub（WSL 以 SSH 金鑰推送）
 
@@ -143,7 +143,7 @@
 - [x] （2026-11-24）train 2000／val 400／test 400（不同種子），以 RTX 4070 微調 YOLO26n 三版。v1 出現人員遺忘；v2 凍結骨幹無效；v3 加入 COCO128 真實影像回放後解決。
 - [x] （2026-11-24）機器人場景 18 張影格各類最低分數：bottle 0.00 → 0.93（8 個距離全部辨識）、cup 0.26 → 0.76、person 0.90 → 0.90；合成測試集 mAP50 0.379 → 0.991。
 - [x] （2026-11-24）以 v3 重跑閉環：原瓶子場景接近並停在 x = 1.004 m（以前做不到）；杯子 PASS（≥ 0.5 影格 99.4%，略低於原模型 100%）；人物停止 PASS（478 ms、位移 0.0 m）。發現停止門檻須依模型重新校正（v3 杯子框含把手，0.14 → 0.185）。
-- [ ] 決定是否把 v3 設為 launch 預設模型（目前維持原模型）。
+- [x] （2026-11-24）v3 設為 launch 預設模型：權重複製到 `~/yolo_project/yolo26n_gazebo_v3.pt`（不指向 `runs/`），可用 `model_path:=~/yolo_project/yolo26n.pt` 切回原模型；找不到權重時直接報錯，不自動下載；杯子停止門檻依 v3 改為 0.185。重跑驗收 5 項全部通過（杯子、目標遺失、人物停止 264 ms、原瓶子場景、切回原模型），README 說明權重不在 git 內及取得／重新訓練方法。
 
 ### 階段 3：Isaac Sim（Windows 原生，不在 WSL）
 
