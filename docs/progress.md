@@ -53,6 +53,7 @@
 - [x] 整合 Launch 加入獨立 `yolo_confidence_threshold` 參數並傳入相機辨識節點；可調低門檻觀察候選框，而自主行為門檻仍獨立控制。
 - [x] 新增自主控制節點與 Gazebo cmd_vel bridge Launch；人物偵測優先停止、無目標時限速前進搜尋、依目標框置中/接近、接近後執行設定動作、偵測逾時安全停止等 9 項邏輯測試通過。
 - [x] （2026-11-24）Camera→YOLO→Controller→Gazebo 閉環驗收 8 項全部通過：偵測 cup、接近 0.526 m 後停止（odometry 與 Gazebo world pose 一致）、短暫漏檢停車、長時間失去目標進入限時搜尋、人員最高優先停止、stale 停止。
+- [x] （2026-11-24）差速車 YOLO 專案程式與文件納入版本控制：`projects/diff_drive_yolo`（`~/robot_ws` 的副本）。
 - [x] （2026-11-24）修正 Launch 參數洩漏（YOLO conf 覆寫控制器門檻）、人員離開後不再接近目標、目標閃爍重複觸發動作；新增 odometry bridge 與 `stop_bbox_dimension`；robot_control 測試 21 passed。
 - [ ] WSL 當前 PyTorch `torch.cuda.is_available()` 為 False；YOLO 可在 CPU 運行，RTX 4070 加速尚未驗證。
 - [x] 完成 YOLO Camera + ROS 2 即時辨識管線；已驗證 Gazebo 影像輸入、YOLO 推論與偵測/標註影像 Topic 輸出。

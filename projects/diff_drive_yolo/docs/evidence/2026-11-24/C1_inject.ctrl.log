@@ -1,0 +1,10 @@
+[INFO] [1795503292.037409647] [autonomy_controller]: Listening /yolo/detections; publishing /model/vehicle_blue/cmd_vel; person stops; searching/approaching cup before stop
+[INFO] [1795503292.130414745] [autonomy_controller]: Autonomy state: stale_detections
+[INFO] [1795503297.280653522] [autonomy_controller]: Autonomy state: approach_target
+[INFO] [1795503300.872354770] [autonomy_controller]: Autonomy state: target_lost_wait
+[INFO] [1795503301.172315694] [autonomy_controller]: Autonomy state: approach_target
+[INFO] [1795503304.872344856] [autonomy_controller]: Autonomy state: person_detected
+[INFO] [1795503308.872322682] [autonomy_controller]: Autonomy state: approach_target
+[INFO] [1795503311.872361268] [autonomy_controller]: Autonomy state: person_detected
+[INFO] [1795503314.872343623] [autonomy_controller]: Autonomy state: approach_target
+[INFO] [1795503316.830572068] [autonomy_controller]: Autonomy state: stale_detections

@@ -1,0 +1,1 @@
+ros2 launch robot_control autonomous_yolo.launch.py target_class:=cup device:=cpu search_speed:=0.05 search_duration:=3.0 approach_speed:=0.05 alignment_speed:=0.15 target_action:=stop stop_bbox_dimension:=width stop_bbox_ratio:=0.14
