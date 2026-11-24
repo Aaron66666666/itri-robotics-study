@@ -13,7 +13,7 @@ Gazebo camera → ros_gz_image bridge → /vehicle_blue/camera/image
 
 - [x] 相機 → YOLO → 控制器 → Gazebo 閉環；8 項驗收全部通過（2026-11-24），詳見 `docs/stage_report_2026-11-24.md`。
 - [x] 人員偵測最高優先停止、短暫漏檢停車、長時間失去目標限時搜尋、偵測 stale 停車。
-- [ ] 以 Gazebo 人物模型做人員停止的端到端測試（目前以注入偵測訊息驗證）。
+- [x] Gazebo 人物模型端到端測試：真實影像偵測 person 後停車、人物離開後恢復接近（2 次通過，場景 `worlds/diff_drive_camera_cup_person.sdf`）。
 - [ ] 使用者以 GUI 目視確認。
 
 ## 環境
@@ -41,6 +41,6 @@ ros2 launch robot_control autonomous_yolo.launch.py target_class:=cup device:=cp
 
 - `ros2_ws/src/robot_control`：相機 YOLO 節點、自主控制器、Launch、單元測試。
 - `ros2_ws/src/yolo_ros`：早期固定圖片 YOLO 範例。
-- `worlds/`：`diff_drive_camera.sdf`（空場景）、`diff_drive_camera_bottle.sdf`（瓶子，YOLO 不穩定）、`diff_drive_camera_cup.sdf`（杯子，建議使用）。
+- `worlds/`：`diff_drive_camera.sdf`（空場景）、`diff_drive_camera_bottle.sdf`（瓶子，YOLO 不穩定）、`diff_drive_camera_cup.sdf`（杯子，建議使用）、`diff_drive_camera_cup_person.sdf`（杯子 + 人物，人員停止測試；人物模型由 Gazebo Fuel 下載）。
 - `tools/acceptance/`：headless 驗收腳本（`ROBOT_WS` 指定 workspace，預設 `~/robot_ws`）。
 - `docs/`：進度、架構、YOLO 診斷、交接文件、階段報告與 2026-11-24 驗收證據。

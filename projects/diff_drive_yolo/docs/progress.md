@@ -12,6 +12,7 @@
 | 即時 YOLO 診斷 | ✅ 找到原因（見下） |
 | Camera→YOLO→Controller→Gazebo 閉環 | ✅ 以 odometry 與 Gazebo world pose 證實車輛實際移動與停止 |
 | 短暫漏檢停車、長時間失去目標搜尋、人員最高優先停止、stale 停止 | ✅ 實機（Gazebo）驗證 |
+| 人物模型端到端（真實影像 person 偵測→停車→恢復） | ✅ 連續 2 次通過 |
 | UR5e 碰撞場景、關節控制、末端控制、Pick-and-Place | ✅ 連續 3 次成功（另一專案，見下） |
 
 所有測試以 headless Gazebo（`gz sim -s -r --headless-rendering`）在此 WSL 環境執行，未重新安裝 ROS 2／Gazebo／YOLO。
@@ -67,11 +68,23 @@
 - 結果：碰撞場景（桌面、4 桌腳、方塊、底座）✅；關節控制誤差 ≤ 0.005 rad ✅；末端位姿誤差約 1 mm ✅；Pick-and-place 連續 3 次成功，方塊最終位置誤差 ≤ 1.2 mm ✅。
 - 修改前檔案備份：`docs/backup_2026-11-24_before_pedestal/`；紀錄：`docs/evidence_2026-11-24/`。
 
+### 人物模型端到端測試（2026-11-24）
+
+- 新增 `worlds/diff_drive_camera_cup_person.sdf`：杯子場景 + Gazebo Fuel「Casual female」人物（起始停在車後方、不在畫面中）；`tools/acceptance/moveperson.sh` 以 gz set_pose 移動人物，`hook_person.sh` 在接近途中讓人物進入畫面 6 s 後離開。
+- 離線探測（`person_probe.sh`）：人物在畫面中時 YOLO `person` 0.90–0.91，杯子仍為 cup 0.56–0.72（> 0.5，未被遮擋）。
+- 實機結果（全部為真實相機影像與 YOLO，無注入訊息）：
+
+| 執行 | 人物出現→`person_detected` | 人物在畫面中的車輛位移 | 人物離開→恢復 `approach_target` | 最終停止位置 |
+|---|---|---|---|---|
+| D1 | 94 ms | 2.6 mm 後 vx=0 維持 6 s；38/38 影格偵測到 person（0.915） | 147 ms | x=0.531 m |
+| D2 | 180 ms | 停車 | 82 ms | x=0.523 m |
+
+證據：`docs/evidence/2026-11-24/D1_person.*`、`D2_person.*`、`person_world_frame_person_in_view.png`。
+
 ### 仍待處理
 
 - 使用者以 GUI（Gazebo + RViz）目視確認一次車輛閉環與 UR5e pick-and-place。
 - `autonomous_yolo.launch.py` 預設 `target_class` 仍為 `bottle`；cup 場景需使用上表參數。是否把 cup 場景參數做成預設，待使用者決定。
-- 真實「人員」影像的端到端測試（目前以腳本注入 person 偵測驗證）。
 - 原 bottle 場景若要繼續使用，需要更像瓶子的模型；YOLO26n 對目前的圓柱瓶子不穩定。
 - `itri-robotics-study/projects/` 尚未加入 git（未提交任何變更）。
 

@@ -88,6 +88,8 @@ ROS 2 的 console script 使用系統 Python，因此節點啟動時會把 YOLO 
 | 6 | 目標還小（bbox 未達 `stop_bbox_ratio`） | `approach_target` | 低速前進 |
 | 7 | 目標夠近 | `target_action:<動作>` → `target_action_complete` | 執行一次目標動作後停止 |
 
+人員優先停止已用 Gazebo 人物模型實測：人物進入畫面後 0.1–0.2 秒內車輛停止，離開後自動恢復接近。
+
 邏輯寫在不依賴 ROS 的 `AutonomyLogic` 類別，可直接用 pytest 測試（`test_autonomy_logic.py`）。`stop_bbox_dimension` 可選擇用 bbox 高度或寬度判斷距離；杯子位於相機下方，靠近時底部會被裁切，因此杯子場景使用寬度。
 
 ## 10. 自主控制閉環的完整資料流

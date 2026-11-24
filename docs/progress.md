@@ -12,7 +12,8 @@
 | 相機 + YOLO 即時辨識管線 | 完成 |
 | Camera→YOLO→Controller→Gazebo 自主控制閉環 | 完成，8 項驗收通過 |
 | UR5e 碰撞場景、關節／末端控制、Pick-and-Place | 完成，連續 3 次成功 |
-| GUI 目視確認、人物模型端到端測試 | 待完成 |
+| 人物模型端到端測試（真實影像人員停止） | 完成，連續 2 次通過 |
+| GUI 目視確認 | 待完成 |
 | AI Agent / Multi-Agent | 尚未開始 |
 
 詳細報告：`projects/diff_drive_yolo/docs/stage_report_2026-11-24.md`。
@@ -82,6 +83,7 @@
 - [x] 新增自主控制節點與 Gazebo cmd_vel bridge Launch；人物偵測優先停止、無目標時限速前進搜尋、依目標框置中/接近、接近後執行設定動作、偵測逾時安全停止等 9 項邏輯測試通過。
 - [x] （2026-11-24）修正 Launch 參數洩漏（YOLO conf 覆寫控制器門檻）、人員離開後不再接近目標、目標閃爍重複觸發動作；新增 odometry bridge 與 `stop_bbox_dimension`；robot_control 測試 21 passed。
 - [x] （2026-11-24）Camera→YOLO→Controller→Gazebo 閉環驗收 8 項全部通過：偵測 cup、接近 0.526 m 後停止（odometry 與 Gazebo world pose 一致）、短暫漏檢停車、長時間失去目標進入限時搜尋、人員最高優先停止、stale 停止。
+- [x] （2026-11-24）Gazebo 人物模型端到端測試：新增 `worlds/diff_drive_camera_cup_person.sdf`（Fuel「Casual female」）。接近途中人物進入畫面，YOLO 以真實相機影像偵測 person 0.915，車輛 94／180 ms 內停車並維持 vx=0；人物離開後恢復接近，最終停在杯子前（x=0.531／0.523 m）。連續 2 次通過。
 - [x] （2026-11-24）差速車 YOLO 專案程式與文件納入版本控制：`projects/diff_drive_yolo`（`~/robot_ws` 的副本）。
 
 ### 獨立專案：UR5e Gazebo 模擬與取放
@@ -108,7 +110,6 @@
 
 - [ ] 使用者以 GUI 目視確認車輛閉環（`worlds/diff_drive_camera_cup.sdf`）。
 - [ ] 使用者以 GUI（Gazebo + RViz）目視確認一次完整 pick-and-place。
-- [ ] 以 Gazebo 人物模型做人員停止的端到端測試（目前以注入 person 偵測訊息驗證，控制器、bridge、車輛與 odometry 為實際執行）。
 - [ ] WSL 當前 PyTorch `torch.cuda.is_available()` 為 False；YOLO 可在 CPU 運行，RTX 4070 加速尚未驗證。
 
 ### 後續模擬與機器人學習方向

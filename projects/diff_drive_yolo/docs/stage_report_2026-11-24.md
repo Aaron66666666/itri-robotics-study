@@ -44,7 +44,15 @@
 | 8 | Gazebo 中車輛真的移動 | ✅ odometry（20 Hz）與 Gazebo world pose 一致 |
 | — | 偵測資料 stale | ✅ 1.0 s 後停車 |
 
-第 5、7 項的偵測訊息由腳本產生（Gazebo 場景沒有人員模型；gz 服務延遲無法製造 < 0.5 s 的漏檢），其餘鏈路（controller、bridge、Gazebo 車輛、odometry）皆為實際執行，並重複 2 次結果一致。
+第 5 項的偵測訊息由腳本產生（gz 服務延遲無法製造 < 0.5 s 的漏檢），其餘鏈路皆為實際執行，重複 2 次結果一致。第 7 項另以 Gazebo 人物模型做真實影像端到端測試（見下），連續 2 次通過：人物出現後 94／180 ms 停車，離開後 147／82 ms 恢復接近。
+
+### 4b. 人物模型端到端測試（真實影像）
+場景 `worlds/diff_drive_camera_cup_person.sdf`（Gazebo Fuel「Casual female」）。接近途中人物進入畫面 6 s 後離開：
+
+| 執行 | 出現→停車 | 停車期間 | 離開→恢復接近 | 最終停止 |
+|---|---|---|---|---|
+| D1 | 94 ms | 位移 2.6 mm 後 vx=0；38/38 影格 person 0.915 | 147 ms | x=0.531 m |
+| D2 | 180 ms | 停車 | 82 ms | x=0.523 m |
 
 ### 5. UR5e Gazebo／MoveIt（`~/itri-robotics-study/projects/ur5e_gazebo_pick_place`）
 | 項目 | 結果 |
@@ -69,10 +77,8 @@
 
 1. **使用者 GUI 目視確認**（需要您操作，見下方指令）。
 2. 決定是否把 cup 場景參數設為 `autonomous_yolo.launch.py` 預設（目前預設仍為 `bottle`／高度停止）。
-3. 以真實人員影像（Gazebo 人物模型）做端到端人員停止測試；目前為注入偵測訊息。
-4. 原 bottle 場景若要保留使用，需換成 YOLO 能穩定辨識的瓶子模型。
-5. `itri-robotics-study/projects/` 尚未加入 git，所有變更皆未提交。
-6. 抓取以摩擦力夾持完成；若要更長距離或高速搬運，可再評估夾持力／接觸參數。
+3. 原 bottle 場景若要保留使用，需換成 YOLO 能穩定辨識的瓶子模型。
+4. 抓取以摩擦力夾持完成；若要更長距離或高速搬運，可再評估夾持力／接觸參數。
 
 ## 四、需要您操作（GUI 目視確認，可選）
 
@@ -105,7 +111,7 @@ robot_ws：
 - `src/robot_control/robot_control/autonomous_controller.py`（人員 latch 修正、漏檢 latch、stop_bbox_dimension）
 - `src/robot_control/test/test_autonomy_logic.py`（+6 測試）
 - `src/robot_control/package.xml`（nav_msgs）
-- `worlds/diff_drive_camera_cup.sdf`（新增）
+- `worlds/diff_drive_camera_cup.sdf`、`worlds/diff_drive_camera_cup_person.sdf`（新增）
 - `tools/acceptance/*`（新增）、`docs/evidence/2026-11-24/*`（新增）
 - `docs/progress.md`、`docs/stage_report_2026-11-24.md`
 

@@ -11,6 +11,7 @@
 | `phase_odom.py /tmp/robot_acceptance/C1_inject` | 依情境階段列出 odometry 位移與 cmd_vel。 |
 | `hook_loss.sh`、`movecup.sh` | 以 `gz service set_pose` 把杯子移出／移回畫面（短暫／長時間失去目標）。 |
 | `sweep.sh`、`grab.py`、`yscan.py` | 把車放在不同 x 位置擷取影格，離線用 YOLO 評分（距離對信心的影響）。 |
+| `person_probe.sh`、`moveperson.sh`、`hook_person.sh` | 人物模型測試：探測人物各位置的 YOLO 分數；接近途中讓人物進出畫面（場景 `worlds/diff_drive_camera_cup_person.sdf`）。 |
 | `offline.py PNG...` | 同模型、CPU、conf 0.35／0.05 離線推論。 |
 
 ## 重現驗收
@@ -33,6 +34,14 @@ HOOK=$PWD/hook_loss.sh WORLD=worlds/diff_drive_camera_cup.sdf ./run.sh B1_loss 5
 
 ```bash
 cd ~/robot_ws/tools/acceptance && ./run_inject.sh && python3 phase_odom.py /tmp/robot_acceptance/C1_inject
+```
+
+```bash
+cd ~/robot_ws/tools/acceptance
+HOOK=$PWD/hook_person.sh WORLD=worlds/diff_drive_camera_cup_person.sdf ./run.sh D1_person 55 target_class:=cup device:=cpu \
+  search_speed:=0.05 approach_speed:=0.05 alignment_speed:=0.15 target_action:=stop \
+  stop_bbox_dimension:=width stop_bbox_ratio:=0.14
+./report.sh D1_person
 ```
 
 注意：在外層 shell 指令中不要直接包含 `autonomy_controller`、`camera_yolo`、`recorder.py` 等字樣再呼叫這些腳本的清理步驟，`pkill -f` 會比對到外層 shell 本身。
