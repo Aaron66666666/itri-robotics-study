@@ -1,0 +1,554 @@
+[
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 54,
+  "falls_total": 159,
+  "falls_per_min": 7.453125,
+  "cmd": [
+   0.2,
+   0.0,
+   0.0
+  ],
+  "measured": [
+   0.09,
+   -0.001,
+   -0.049
+  ],
+  "abs_err_vx": 0.127,
+  "abs_err_vy": 0.014,
+  "abs_err_wz": 0.132,
+  "checkpoint": "model_1000.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 34,
+  "falls_total": 35,
+  "falls_per_min": 1.640625,
+  "cmd": [
+   0.2,
+   0.0,
+   0.0
+  ],
+  "measured": [
+   0.122,
+   0.002,
+   -0.012
+  ],
+  "abs_err_vx": 0.097,
+  "abs_err_vy": 0.012,
+  "abs_err_wz": 0.074,
+  "checkpoint": "model_3999.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 24,
+  "falls_total": 28,
+  "falls_per_min": 1.3125,
+  "cmd": [
+   0.2,
+   0.0,
+   0.0
+  ],
+  "measured": [
+   0.13,
+   0.006,
+   -0.026
+  ],
+  "abs_err_vx": 0.089,
+  "abs_err_vy": 0.013,
+  "abs_err_wz": 0.079,
+  "checkpoint": "model_5998.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 26,
+  "falls_total": 31,
+  "falls_per_min": 1.453125,
+  "cmd": [
+   0.2,
+   0.0,
+   0.0
+  ],
+  "measured": [
+   0.125,
+   -0.003,
+   -0.009
+  ],
+  "abs_err_vx": 0.095,
+  "abs_err_vy": 0.011,
+  "abs_err_wz": 0.074,
+  "checkpoint": "model_7997.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 59,
+  "falls_total": 190,
+  "falls_per_min": 8.90625,
+  "cmd": [
+   0.4,
+   0.0,
+   0.0
+  ],
+  "measured": [
+   0.183,
+   0.004,
+   -0.145
+  ],
+  "abs_err_vx": 0.218,
+  "abs_err_vy": 0.015,
+  "abs_err_wz": 0.209,
+  "checkpoint": "model_1000.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 31,
+  "falls_total": 38,
+  "falls_per_min": 1.78125,
+  "cmd": [
+   0.4,
+   0.0,
+   0.0
+  ],
+  "measured": [
+   0.216,
+   -0.003,
+   0.023
+  ],
+  "abs_err_vx": 0.184,
+  "abs_err_vy": 0.015,
+  "abs_err_wz": 0.108,
+  "checkpoint": "model_3999.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 22,
+  "falls_total": 25,
+  "falls_per_min": 1.171875,
+  "cmd": [
+   0.4,
+   0.0,
+   0.0
+  ],
+  "measured": [
+   0.217,
+   0.002,
+   -0.011
+  ],
+  "abs_err_vx": 0.182,
+  "abs_err_vy": 0.013,
+  "abs_err_wz": 0.108,
+  "checkpoint": "model_5998.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 18,
+  "falls_total": 24,
+  "falls_per_min": 1.125,
+  "cmd": [
+   0.4,
+   0.0,
+   0.0
+  ],
+  "measured": [
+   0.212,
+   -0.003,
+   -0.012
+  ],
+  "abs_err_vx": 0.188,
+  "abs_err_vy": 0.015,
+  "abs_err_wz": 0.088,
+  "checkpoint": "model_7997.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 58,
+  "falls_total": 170,
+  "falls_per_min": 7.96875,
+  "cmd": [
+   -0.2,
+   0.0,
+   0.0
+  ],
+  "measured": [
+   -0.056,
+   0.001,
+   0.034
+  ],
+  "abs_err_vx": 0.17,
+  "abs_err_vy": 0.019,
+  "abs_err_wz": 0.113,
+  "checkpoint": "model_1000.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 35,
+  "falls_total": 56,
+  "falls_per_min": 2.625,
+  "cmd": [
+   -0.2,
+   0.0,
+   0.0
+  ],
+  "measured": [
+   -0.053,
+   0.0,
+   0.019
+  ],
+  "abs_err_vx": 0.183,
+  "abs_err_vy": 0.012,
+  "abs_err_wz": 0.063,
+  "checkpoint": "model_3999.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 28,
+  "falls_total": 40,
+  "falls_per_min": 1.875,
+  "cmd": [
+   -0.2,
+   0.0,
+   0.0
+  ],
+  "measured": [
+   -0.045,
+   0.006,
+   0.029
+  ],
+  "abs_err_vx": 0.17,
+  "abs_err_vy": 0.01,
+  "abs_err_wz": 0.066,
+  "checkpoint": "model_5998.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 30,
+  "falls_total": 42,
+  "falls_per_min": 1.96875,
+  "cmd": [
+   -0.2,
+   0.0,
+   0.0
+  ],
+  "measured": [
+   -0.045,
+   -0.001,
+   0.015
+  ],
+  "abs_err_vx": 0.17,
+  "abs_err_vy": 0.014,
+  "abs_err_wz": 0.06,
+  "checkpoint": "model_7997.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 57,
+  "falls_total": 172,
+  "falls_per_min": 8.0625,
+  "cmd": [
+   0.0,
+   0.2,
+   0.0
+  ],
+  "measured": [
+   0.014,
+   0.027,
+   0.0
+  ],
+  "abs_err_vx": 0.086,
+  "abs_err_vy": 0.147,
+  "abs_err_wz": 0.142,
+  "checkpoint": "model_1000.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 38,
+  "falls_total": 58,
+  "falls_per_min": 2.71875,
+  "cmd": [
+   0.0,
+   0.2,
+   0.0
+  ],
+  "measured": [
+   0.05,
+   0.036,
+   0.021
+  ],
+  "abs_err_vx": 0.074,
+  "abs_err_vy": 0.135,
+  "abs_err_wz": 0.06,
+  "checkpoint": "model_3999.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 27,
+  "falls_total": 35,
+  "falls_per_min": 1.640625,
+  "cmd": [
+   0.0,
+   0.2,
+   0.0
+  ],
+  "measured": [
+   0.046,
+   0.041,
+   0.014
+  ],
+  "abs_err_vx": 0.071,
+  "abs_err_vy": 0.135,
+  "abs_err_wz": 0.061,
+  "checkpoint": "model_5998.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 31,
+  "falls_total": 45,
+  "falls_per_min": 2.109375,
+  "cmd": [
+   0.0,
+   0.2,
+   0.0
+  ],
+  "measured": [
+   0.046,
+   0.033,
+   0.021
+  ],
+  "abs_err_vx": 0.071,
+  "abs_err_vy": 0.14,
+  "abs_err_wz": 0.047,
+  "checkpoint": "model_7997.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 55,
+  "falls_total": 153,
+  "falls_per_min": 7.171875,
+  "cmd": [
+   0.0,
+   0.0,
+   0.8
+  ],
+  "measured": [
+   0.028,
+   0.001,
+   0.28
+  ],
+  "abs_err_vx": 0.087,
+  "abs_err_vy": 0.015,
+  "abs_err_wz": 0.459,
+  "checkpoint": "model_1000.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 38,
+  "falls_total": 52,
+  "falls_per_min": 2.4375,
+  "cmd": [
+   0.0,
+   0.0,
+   0.8
+  ],
+  "measured": [
+   0.043,
+   -0.006,
+   0.515
+  ],
+  "abs_err_vx": 0.079,
+  "abs_err_vy": 0.011,
+  "abs_err_wz": 0.313,
+  "checkpoint": "model_3999.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 28,
+  "falls_total": 43,
+  "falls_per_min": 2.015625,
+  "cmd": [
+   0.0,
+   0.0,
+   0.8
+  ],
+  "measured": [
+   0.039,
+   0.004,
+   0.546
+  ],
+  "abs_err_vx": 0.077,
+  "abs_err_vy": 0.012,
+  "abs_err_wz": 0.284,
+  "checkpoint": "model_5998.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 35,
+  "falls_total": 47,
+  "falls_per_min": 2.203125,
+  "cmd": [
+   0.0,
+   0.0,
+   0.8
+  ],
+  "measured": [
+   0.021,
+   -0.003,
+   0.584
+  ],
+  "abs_err_vx": 0.084,
+  "abs_err_vy": 0.01,
+  "abs_err_wz": 0.272,
+  "checkpoint": "model_7997.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 55,
+  "falls_total": 156,
+  "falls_per_min": 7.3125,
+  "cmd": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "measured": [
+   0.018,
+   -0.005,
+   -0.048
+  ],
+  "abs_err_vx": 0.092,
+  "abs_err_vy": 0.016,
+  "abs_err_wz": 0.12,
+  "checkpoint": "model_1000.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 8,
+  "falls_total": 8,
+  "falls_per_min": 0.375,
+  "cmd": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "measured": [
+   0.042,
+   -0.003,
+   0.006
+  ],
+  "abs_err_vx": 0.079,
+  "abs_err_vy": 0.006,
+  "abs_err_wz": 0.048,
+  "checkpoint": "model_3999.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 6,
+  "falls_total": 6,
+  "falls_per_min": 0.28125,
+  "cmd": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "measured": [
+   0.031,
+   0.0,
+   -0.029
+  ],
+  "abs_err_vx": 0.062,
+  "abs_err_vy": 0.005,
+  "abs_err_wz": 0.048,
+  "checkpoint": "model_5998.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ },
+ {
+  "envs": 64,
+  "seconds": 20.0,
+  "envs_fell": 9,
+  "falls_total": 9,
+  "falls_per_min": 0.421875,
+  "cmd": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "measured": [
+   0.033,
+   -0.004,
+   0.01
+  ],
+  "abs_err_vx": 0.07,
+  "abs_err_vy": 0.005,
+  "abs_err_wz": 0.041,
+  "checkpoint": "model_7997.pt",
+  "pushes": "on",
+  "action_rate_w": -1.0
+ }
+]
