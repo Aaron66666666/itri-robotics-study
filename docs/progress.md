@@ -18,7 +18,7 @@
 | 階段 1：AI Agent（本機 Ollama） | 完成：單一 Agent（Llama 12/12）與 Multi-Agent（11/12） |
 | 階段 2：YOLO 自訂資料訓練 | 完成：瓶子辨識修好，人員未退化（v3） |
 | 階段 3：Isaac Sim（Windows 原生） | 下一步，需使用者在 Windows 操作 |
-| 階段 4：microduck RL | 尚未開始 |
+| 階段 4：microduck RL | 進行中：平地行走訓練 8000 次迭代完成，策略可匯出 ONNX |
 
 詳細報告：`projects/diff_drive_yolo/docs/stage_report_2026-11-24.md`。
 
@@ -158,7 +158,7 @@
   | GPU／VRAM | RTX 4080，16 GB | RTX 4070 Laptop，8 GB | **低於最低需求** |
   | 驅動程式 | 測試版本 595.97 | 621.24 | 較新 |
 
-  文件提到「低於最低規格的 GPU 可能無法執行部分教學與 benchmark」，但沒有說 8 GB 不支援；需以相容性檢查結果決定。Windows 端目前沒有 Python 3.12，長路徑支援也未開啟（`LongPathsEnabled = 0`）。
+  文件提到「低於最低規格的 GPU 可能無法執行部分教學與 benchmark」，但沒有說 8 GB 不支援；需以相容性檢查結果決定。Windows 端已安裝 Python 3.12（winget，個人安裝）並開啟長路徑支援（`LongPathsEnabled = 1`），檢查工具裝在 `C:\isaacsim\env_check`。
 - [ ] 執行 Isaac Sim 相容性檢查（Compatibility Checker），步驟見下方「Isaac Sim 相容性檢查」，等待使用者確認後執行。
 - [ ] 在 Windows 安裝 Isaac Sim（安裝前先確認）。
 - [ ] 匯入 UR 手臂（UR5／UR5e）USD，完成關節控制與物件取放。
@@ -166,7 +166,13 @@
 
 ### 階段 4：microduck RL
 
-- [ ] 研讀 [microduck_rl](https://github.com/pollen-robotics/microduck_rl)（MuJoCo／mjlab + PPO），在本機重現模擬與訓練。
+- [x] 研讀 [microduck_rl](https://github.com/pollen-robotics/microduck_rl)（MuJoCo／mjlab + PPO），在本機建立環境（uv、mjlab 1.3.0、torch 2.9.1+cu128）。
+- [x] 重現平地行走訓練（`Mjlab-Velocity-Flat-MicroDuck`，4096 個環境）：3 輪共 8000 次迭代，約 7 小時。前 2000 次迭代進步最多，之後進入平台期（線速度誤差約 0.41、角速度誤差約 1.06）。
+- [x] 匯出 ONNX 策略（輸入 61 維、輸出 14 維，無 NaN），錄影確認 10 秒內保持直立。
+- [ ] 寫固定指令的量化評估（固定速度指令，量實際速度與跌倒次數），比較各檢查點。
+- [ ] 研讀獎勵設計與觀測空間，試其他任務（例如崎嶇地形）。
+
+筆記、指令與評估腳本：`projects/microduck_rl_study/README.md`。上游程式碼和機器人網格檔（CC BY-NC-SA）不放進這個 repo。
 
 ## 需要在 Windows 操作的步驟
 
@@ -176,7 +182,7 @@
 |---|---|---|
 | 更新 NVIDIA 驅動（Studio 621.24，CUDA 13.5） | GPU | 完成 |
 | 安裝 Ollama 並下載模型（含防火牆規則） | 1 | 完成 |
-| Isaac Sim 相容性檢查 | 3 | 待確認 |
+| Isaac Sim 相容性檢查 | 3 | 檢查工具已安裝，等使用者回答 EULA |
 | Isaac Sim 完整安裝 | 3 | 依檢查結果決定 |
 
 ### 安裝 Ollama（階段 1）
