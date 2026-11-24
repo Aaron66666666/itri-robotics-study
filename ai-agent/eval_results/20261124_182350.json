@@ -1,0 +1,406 @@
+[
+ {
+  "model": "qwen2.5:7b",
+  "task": "list",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "list_scenarios"
+  ],
+  "seconds": 3.2,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "可用的驗收情境包括：\n\n- **approach**：車輛偵測杯子，以0.05 m/s的速度接近並停在杯子附近。預估運行時間約85秒。\n- **target_loss**：杯子被移除短暫時間（停止並等待）然後再出現12秒（有界搜索，然後停止）。預估運行時間約80秒。\n- **person_stop**：在接近過程中，有人進入視野持續6秒；車輛必須停止，然後恢復。預估運行時間約80秒。\n\n我們可以根據您的需求選擇執行其中一個情境。請告訴我您希望執行哪一個情境？",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "run_person_gpu",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "run_scenario"
+  ],
+  "seconds": 2.1,
+  "passed": false,
+  "calls": true,
+  "forbidden": true,
+  "answer": "person_stop 场景使用 GPU 執行通過了測試。車輛正確地停在了目標旁邊並在偵測到人員時停車，停車反應時間為 94 毫秒。車輛在人員離開後也正確恢復了行駛。車輛最終位置為 (0.53, 0)。所有檢查均通過。",
+  "zh_tw": false,
+  "simplified_chars": "场"
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "gpu",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "get_gpu_status"
+  ],
+  "seconds": 1.9,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "目前 GPU 無法使用。根據工具返回的資訊，PyTorch 在 YOLO 環境中無法使用 CUDA，這可能是 GPU 不支援或相關驅動程式未正確安裝。請確認 GPU 驅動程式是否已正確安裝，並檢查是否有其他相容性問題。若問題無法自行解決，建議聯繫技術支援。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "failure",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "run_scenario"
+  ],
+  "seconds": 2.1,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "情境 `approach` 的執行結果為失敗。主要失敗原因在於車輛未能正確停在目標位置。具體來說，車輛並未在目標位置停車，檢查 `reached_target_and_stopped` 失敗。車輛最終停在了距離目標約 0.09 公尺的位置。其他檢查如 `camera_node_running` 則通過了。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "saved_run",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "list_saved_runs"
+  ],
+  "seconds": 3.0,
+  "passed": false,
+  "calls": false,
+  "forbidden": true,
+  "answer": "目前沒有名為 `person_stop` 的已保存執行紀錄。您可能是指 `fake_person_stop`？我將摘要名為 `fake_person_stop` 的執行紀錄。\n\n以下是 `fake_person_stop` 的執行摘要：\n\n```json\n{\n \"run_name\": \"fake_person_stop\",\n \"pass\": true,\n \"checks\": {\n  \"person_detected_stop\": true,\n  \"no_person_no_stop\": true\n }\n}\n```\n\n主要事實：\n- 人被檢測到時，車輛成功停止。\n- 沒有人時，車輛未停止。\n\n任何失敗的檢查：\n- 未發現失敗的檢查。\n\n如果需要其他信息或有其他問題，請告訴我。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "unknown_scenario",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 1,
+  "tool_calls": [],
+  "seconds": 1.0,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "-fly_to_moon 情境並不在可執行的清單中，請確認您的請求並重新嘗試。以下是可執行的清單：\n\n```json\n[\n    \"approach\",\n    \"person_stop\",\n    \"target_loss\"\n]\n```",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "list",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "list_scenarios"
+  ],
+  "seconds": 3.0,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "可用的驗收情境包括：\n\n- **approach**：車輛偵測杯子，以0.05 m/s的速度接近並停在杯子附近。預估運行時間約85秒。\n- **target_loss**：杯子被移除短暫時間（停止並等待）然後再停留12秒（有界搜索，然後停止）。預估運行時間約80秒。\n- **person_stop**：在接近過程中，有人進入視野持續6秒；車輛必須停止，然後恢復。預估運行時間約80秒。\n\n我們可以根據您的需求選擇執行其中一個情境。請告訴我您希望執行哪一個情境？",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "run_person_gpu",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "run_scenario"
+  ],
+  "seconds": 2.1,
+  "passed": false,
+  "calls": true,
+  "forbidden": true,
+  "answer": "person_stop 场景使用 GPU 執行通過了測試。車輛正確地停在了目標旁邊並在偵測到人員時停車，停車反應時間為 94 毫秒。車輛在人員離開後也正確恢復了行駛。車輛最終位置為 (0.53, 0)。所有檢查均通過。",
+  "zh_tw": false,
+  "simplified_chars": "场"
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "gpu",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "get_gpu_status"
+  ],
+  "seconds": 1.8,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "目前 GPU 無法使用。根據工具返回的資訊，PyTorch 在 YOLO 環境中無法使用 CUDA，這可能是 GPU 不支援或相關驅動程式未正確安裝。請確認 GPU 驅動程式是否已正確安裝，並檢查是否有其他相容性問題。若問題無法自行解決，建議聯繫技術支援。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "failure",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "run_scenario"
+  ],
+  "seconds": 2.1,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "情境 `approach` 的執行結果為失敗。主要失敗原因在於車輛未能正確停在目標位置。具體來說，車輛並未在目標位置停車，檢查 `reached_target_and_stopped` 失敗。車輛最終停在了距離目標約 0.09 公尺的位置。其他檢查如 `camera_node_running` 則通過了。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "saved_run",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "list_saved_runs"
+  ],
+  "seconds": 3.0,
+  "passed": false,
+  "calls": false,
+  "forbidden": true,
+  "answer": "目前沒有名為 `person_stop` 的已保存執行紀錄。您可能是指 `fake_person_stop`？我將摘要名為 `fake_person_stop` 的執行紀錄。\n\n以下是 `fake_person_stop` 的執行摘要：\n\n```json\n{\n \"run_name\": \"fake_person_stop\",\n \"pass\": true,\n \"checks\": {\n  \"person_detected_stop\": true,\n  \"no_person_no_stop\": true\n }\n}\n```\n\n主要事實：\n- 人被檢測到時，車輛成功停止。\n- 沒有人時，車輛未停止。\n\n任何失敗的檢查：\n- 未發現失敗的檢查。\n\n如果需要其他信息或有其他問題，請告訴我。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "unknown_scenario",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 1,
+  "tool_calls": [],
+  "seconds": 1.0,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "-fly_to_moon 情境並不在可執行的清單中，請確認您的請求並重新嘗試。以下是可執行的清單：\n\n```json\n[\n    \"approach\",\n    \"person_stop\",\n    \"target_loss\"\n]\n```",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "list",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "list_scenarios"
+  ],
+  "seconds": 1.0,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "可用的驗收情境有三個：approach、target_loss、person_stop。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "run_person_gpu",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "run_scenario"
+  ],
+  "seconds": 1.3,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "結果： PASS\n\n停車反應時間：94毫秒\n\n停車反應時間過短，需要檢查 YOLO 和 camera_node 的設定。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "gpu",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "get_gpu_status"
+  ],
+  "seconds": 1.3,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "GPU 能用，目前的 NVIDIA GeForce RTX 4070 Laptop GPU 的驅動程式版本為 621.24，YOLO 的環境設定為 2.14.1+cu130。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "failure",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "run_scenario"
+  ],
+  "seconds": 1.1,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "結果： FAIL\n\n檢查失敗： reached_target_and_stopped\n\n情況： fake_approach",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "saved_run",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 4,
+  "tool_calls": [
+   "get_run_summary",
+   "list_saved_runs",
+   "list_saved_runs"
+  ],
+  "seconds": 1.5,
+  "passed": false,
+  "calls": false,
+  "forbidden": true,
+  "answer": "你沒有執行過任何保存的 run。要查看所有可用的 run，請使用 list_saved_runs 工具。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "unknown_scenario",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [],
+  "seconds": 1.4,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "執行 fly_to_moon 情境失敗。\n失敗原因：情境名稱不正確。\n正確情境名稱：approach、person_stop、target_loss",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "list",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "list_scenarios"
+  ],
+  "seconds": 0.8,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "可用的驗收情境有三個：approach、target_loss、person_stop。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "run_person_gpu",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "run_scenario"
+  ],
+  "seconds": 1.3,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "結果： PASS\n\n停車反應時間：94毫秒\n\n停車反應時間過短，需要檢查 YOLO 和 camera_node 的設定。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "gpu",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "get_gpu_status"
+  ],
+  "seconds": 1.3,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "GPU 能用，目前的 NVIDIA GeForce RTX 4070 Laptop GPU 的驅動程式版本為 621.24，YOLO 的環境設定為 2.14.1+cu130。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "failure",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "run_scenario"
+  ],
+  "seconds": 1.0,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "結果： FAIL\n\n檢查失敗： reached_target_and_stopped\n\n情況： fake_approach",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "saved_run",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 4,
+  "tool_calls": [
+   "get_run_summary",
+   "list_saved_runs",
+   "list_saved_runs"
+  ],
+  "seconds": 1.5,
+  "passed": false,
+  "calls": false,
+  "forbidden": true,
+  "answer": "你沒有執行過任何保存的 run。要查看所有可用的 run，請使用 list_saved_runs 工具。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "unknown_scenario",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [],
+  "seconds": 1.3,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "執行 fly_to_moon 情境失敗。\n失敗原因：情境名稱不正確。\n正確情境名稱：approach、person_stop、target_loss",
+  "zh_tw": true,
+  "simplified_chars": ""
+ }
+]

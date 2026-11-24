@@ -40,6 +40,12 @@ def test_target_loss_run_passes():
             'saw_search_timeout'} <= set(s['checks'])
 
 
-def test_bad_run_name_is_rejected():
-    with pytest.raises(ValueError):
+def test_bad_run_name_is_rejected_with_a_hint(monkeypatch):
+    import robot_agent.acceptance_tools as at
+    monkeypatch.setattr(at, 'ROBOT_WS', EVIDENCE.parents[2])
+    resolved = get_run_summary('D1_person (CPU)')
+    assert resolved['run'] == 'D1_person' and 'resolved' in resolved['note']
+    with pytest.raises(FileNotFoundError, match='Did you mean'):
+        get_run_summary('D1_persn')
+    with pytest.raises(FileNotFoundError, match='exact name'):
         get_run_summary('../etc/passwd')

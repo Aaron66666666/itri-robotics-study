@@ -15,7 +15,7 @@
 | 人物模型端到端測試（真實影像人員停止） | 完成，連續 2 次通過 |
 | GPU 加速（RTX 4070） | 完成 |
 | GUI 目視確認 | 待完成 |
-| 階段 1：AI Agent（本機 Ollama） | 進行中：迴圈與工具完成，待安裝 Ollama |
+| 階段 1：AI Agent（本機 Ollama） | 進行中：單一 Agent 完成（Llama 3.1 8B 12/12），下一步 Multi-Agent |
 | 階段 2–4：YOLO 訓練、Isaac Sim、microduck RL | 尚未開始 |
 
 詳細報告：`projects/diff_drive_yolo/docs/stage_report_2026-11-24.md`。
@@ -126,8 +126,9 @@
 - [x] （2026-11-24）自己撰寫 Agent 迴圈：工具定義、tool call、結果回傳、最多輪數、重複呼叫保護；模型呼叫層獨立（`ChatModel`），以後換模型只需新增一個類別。
 - [x] （2026-11-24）以假工具（同名稱、同 schema）及假 Ollama 伺服器測試迴圈；28 項測試通過，不需網路。
 - [x] （2026-11-24）接上真實驗收工具：執行／摘要 Gazebo 情境（approach、target_loss、person_stop）與 GPU 狀態，只回傳 JSON 摘要。直接呼叫 `run_scenario` 實測：person_stop PASS（GPU，人物出現後 114 ms 停車）。
-- [ ] 在 Windows 安裝 Ollama 並下載 Qwen 2.5 7B／Llama 3.1 8B（需使用者操作，見下方步驟）。
-- [ ] 以本機模型先跑假工具、再跑真工具；比較兩個模型的工具呼叫正確率與回報品質。
+- [x] （2026-11-24）Windows 安裝 Ollama 0.40.18，下載 Qwen 2.5 7B 與 Llama 3.1 8B；兩者皆完整載入 GPU（約 5 GB VRAM），暖機後每次呼叫約 0.6–1 秒。WSL（NAT 模式）透過 Windows 主機 IP 連線，防火牆只允許 WSL 網段。
+- [x] （2026-11-24）以 `eval_models.py` 比較兩個模型（6 個固定任務 × 2 次，自動檢查工具呼叫、禁止動作、答案數字、繁體中文）：Llama 3.1 8B 12/12、Qwen 2.5 7B 10/12。發現並處理：Qwen 會編造結果與混用簡體字（加強提示詞改善）、Llama 會自行改跑使用者沒要求的情境（改以程式層 policy 禁止）。預設模型改為 Llama 3.1 8B。
+- [x] （2026-11-24）真實工具實測（Llama）：Agent 自行執行 Gazebo person_stop，回報 PASS、130 ms 停車、畫面有人時位移 0.0 m，與執行紀錄一致；比較 CPU／GPU 兩次已保存紀錄，修正工具名稱解析後答案完全正確（94／93 ms 停車、27／20 ms 推論）。
 - [ ] Multi-Agent：規劃者／執行者／審查者分工，審查者核對報告數字是否都來自工具結果。
 
 ### 階段 2：YOLO 自訂資料訓練
@@ -155,7 +156,7 @@
 | 項目 | 階段 | 狀態 |
 |---|---|---|
 | 更新 NVIDIA 驅動（Studio 621.24，CUDA 13.5） | GPU | 完成 |
-| 安裝 Ollama 並下載模型 | 1 | 待確認 |
+| 安裝 Ollama 並下載模型（含防火牆規則） | 1 | 完成 |
 | Isaac Sim 相容性檢查與安裝 | 3 | 之後 |
 
 ### 安裝 Ollama（階段 1）
@@ -184,3 +185,9 @@
 
 4. 確認：`ollama run qwen2.5:7b "hello"` 有回應，`ollama ps` 顯示 `100% GPU`。
 5. 在 WSL 確認：`python3 ~/itri-robotics-study/ai-agent/run_agent.py --fake "列出所有情境"`（Agent 會自動找 localhost 或 Windows 主機 IP）。
+
+注意：Ollama 第一次對外監聽時，Windows 可能跳出「是否允許存取」視窗。**不要按取消**：取消會替 ollama.exe 建立封鎖規則，優先權高於允許規則，WSL 會連不上。若已按取消，用系統管理員 PowerShell 刪除封鎖規則：
+
+```powershell
+Get-NetFirewallRule -Direction Inbound -Action Block | Where-Object { $_.DisplayName -like "*ollama*" } | Remove-NetFirewallRule
+```

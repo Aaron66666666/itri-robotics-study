@@ -7,10 +7,14 @@ from .acceptance_tools import SCENARIOS, list_scenarios, tool_specs
 from .tools import Tool
 
 FAIL_SCENARIOS: set[str] = set()
+# Saved-run names look like the real evidence runs (not "fake_*"), so the
+# model has to map a request such as "person_stop" to the right run name.
+SAVED_RUNS = {'A1_approach': 'approach', 'B1_loss': 'target_loss',
+              'D1_person': 'person_stop'}
 CALL_LOG: list[tuple[str, dict]] = []
 
 
-def _summary(scenario: str, device: str) -> dict:
+def _summary(scenario: str, device: str, run_name: str = '') -> dict:
     ok = scenario not in FAIL_SCENARIOS
     checks = {'camera_node_running': True,
               'reached_target_and_stopped': ok}
@@ -18,7 +22,7 @@ def _summary(scenario: str, device: str) -> dict:
     if scenario == 'person_stop':
         checks.update(stopped_for_person=ok, resumed_after_person_left=True)
         facts = {'person_to_stop_ms': 94 if ok else None}
-    return {'run': f'fake_{scenario}', 'scenario': scenario,
+    return {'run': run_name or f'run_{scenario}', 'scenario': scenario,
             'verdict': 'PASS' if ok else 'FAIL', 'checks': checks,
             'facts': facts, 'final_x_m': 0.53 if ok else 0.09,
             'yolo_device': 'cuda:0' if device == 'gpu' else 'cpu',
@@ -41,16 +45,16 @@ def fake_run_scenario(scenario, device='gpu'):
 
 def fake_list_saved_runs():
     _record('list_saved_runs')
-    return {'runs': [f'fake_{name}' for name in sorted(SCENARIOS)],
-            'count': len(SCENARIOS)}
+    return {'runs': sorted(SAVED_RUNS), 'count': len(SAVED_RUNS)}
 
 
 def fake_get_run_summary(run_name):
     _record('get_run_summary', run_name=run_name)
-    scenario = run_name.removeprefix('fake_')
-    if scenario not in SCENARIOS:
-        raise FileNotFoundError(f'no saved run named {run_name}')
-    return _summary(scenario, 'gpu')
+    # Strict like the real tool: only exact names from list_saved_runs.
+    if run_name not in SAVED_RUNS:
+        raise FileNotFoundError(f'no saved run named {run_name}; '
+                                'call list_saved_runs first')
+    return _summary(SAVED_RUNS[run_name], 'gpu', run_name)
 
 
 def fake_get_gpu_status():

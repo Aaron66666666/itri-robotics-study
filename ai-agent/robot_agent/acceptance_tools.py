@@ -10,6 +10,7 @@ Saved evidence runs in ROBOT_WS/docs/evidence/* are summarized as well.
 """
 
 import csv
+import difflib
 import os
 import re
 import statistics
@@ -177,6 +178,34 @@ def summarize_run(run_name: str, directory: Path,
     }
 
 
+# ------------------------------------------------------------ policy
+ALL_WORDS = ('全部', '所有', '每個', '每一個', 'all', 'every')
+
+
+def requested_scenarios(task: str) -> set[str]:
+    """Scenarios the user's task explicitly asks for."""
+    text = task.lower()
+    if any(word in text for word in ALL_WORDS):
+        return set(SCENARIOS)
+    return {name for name in SCENARIOS if name in text}
+
+
+def scenario_policy(task: str):
+    """Only run scenarios the user named (or all, if they asked for all)."""
+    allowed = requested_scenarios(task)
+
+    def check(name: str, args: dict):
+        if name != 'run_scenario':
+            return None
+        scenario = args.get('scenario')
+        if scenario in allowed:
+            return None
+        return (f'refused: the user did not ask to run "{scenario}". '
+                f'Requested scenarios: {sorted(allowed) or "none"}. '
+                'Do not run other scenarios; report this to the user.')
+    return check
+
+
 # ------------------------------------------------------------- tools
 def list_scenarios() -> dict:
     return {name: {'description': spec['description'],
@@ -193,14 +222,29 @@ def list_saved_runs() -> dict:
     return {'runs': sorted(runs), 'count': len(runs)}
 
 
+def _suggest(run_name: str) -> str:
+    """Error hint naming the closest saved runs, so the model can fix it."""
+    runs = list_saved_runs()['runs']
+    key = re.split(r'[\s(（]', run_name.strip())[0]
+    close = difflib.get_close_matches(key, runs, n=3, cutoff=0.4)
+    hint = f' Did you mean: {close}?' if close else ''
+    return (f'no saved run named "{run_name}".{hint} '
+            f'Use an exact name from: {runs}')
+
+
 def get_run_summary(run_name: str) -> dict:
-    if not NAME_RE.match(run_name):
-        raise ValueError('run_name may contain only letters, digits and _')
-    directory = _find_run(run_name)
-    if directory is None:
-        raise FileNotFoundError(f'no saved run named {run_name}; '
-                                'call list_saved_runs first')
-    return summarize_run(run_name, directory)
+    requested = run_name
+    if not NAME_RE.match(run_name) or _find_run(run_name) is None:
+        # Accept "D1_person (CPU)" when the part before the space or
+        # parenthesis is exactly a saved run; anything fuzzier gets a hint.
+        key = re.split(r'[\s(（]', run_name.strip())[0]
+        if not (NAME_RE.match(key) and _find_run(key)):
+            raise FileNotFoundError(_suggest(run_name))
+        run_name = key
+    summary = summarize_run(run_name, _find_run(run_name))
+    if run_name != requested:
+        summary['note'] = f'"{requested}" was resolved to run "{run_name}"'
+    return summary
 
 
 def run_scenario(scenario: str, device: str = 'gpu') -> dict:

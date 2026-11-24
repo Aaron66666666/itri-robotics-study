@@ -132,3 +132,37 @@ def test_long_tool_output_is_truncated():
     result = registry.execute('big', {})
     assert result.ok and len(result.content) < 200
     assert 'truncated, 5000 chars total' in result.content
+
+
+def test_fake_saved_run_requires_exact_name_like_real_tool():
+    _, result = run([call('get_run_summary', run_name='person_stop'),
+                     final('x')])
+    assert 'call list_saved_runs first' in tool_messages(result)[0].content
+
+
+def test_policy_blocks_scenarios_the_user_did_not_ask_for():
+    from robot_agent.acceptance_tools import scenario_policy
+    steps = [call('run_scenario', cid='a', scenario='approach'),
+             call('run_scenario', cid='b', scenario='person_stop'),
+             final('done')]
+    model = ScriptedModel(steps)
+    result = run_agent(model, ToolRegistry(build_fake_tools()), 'sys',
+                       '執行 person_stop', policy=scenario_policy(
+                           '執行 person_stop'))
+    tools = tool_messages(result)
+    assert 'did not ask to run "approach"' in json.loads(
+        tools[0].content)['error']
+    assert json.loads(tools[1].content)['verdict'] == 'PASS'
+    assert fake_tools.CALL_LOG == [
+        ('run_scenario', {'scenario': 'person_stop', 'device': 'gpu'})]
+
+
+@pytest.mark.parametrize('task, expected', [
+    ('執行 fly_to_moon 情境。', set()),
+    ('用 GPU 執行 person_stop', {'person_stop'}),
+    ('把全部情境都跑一次', {'approach', 'target_loss', 'person_stop'}),
+    ('Run every scenario', {'approach', 'target_loss', 'person_stop'}),
+])
+def test_requested_scenarios(task, expected):
+    from robot_agent.acceptance_tools import requested_scenarios
+    assert requested_scenarios(task) == expected

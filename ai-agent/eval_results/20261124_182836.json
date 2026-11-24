@@ -1,0 +1,410 @@
+[
+ {
+  "model": "qwen2.5:7b",
+  "task": "list",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "list_scenarios"
+  ],
+  "seconds": 3.3,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "可用的驗收情境包括：\n\n- `approach`：車輛偵測杯子，以 0.05 m/s 的速度接近並停在杯子附近。預估運行時間約 85 秒。\n- `target_loss`：杯子被移除短暫時間（停止並等待）然後再出現 12 秒（有界搜索，然後停止）。預估運行時間約 80 秒。\n- `person_stop`：在接近過程中，有人進入視野 6 秒；車輛必須停止，然後恢復。預估運行時間約 80 秒。\n\n請告訴我您希望執行哪一個情境？",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "run_person_gpu",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 3,
+  "tool_calls": [
+   "get_gpu_status",
+   "run_scenario"
+  ],
+  "seconds": 4.8,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "`person_stop` 團景運行結果如下：\n\n結果: PASS\n\n關鍵事實:\n- 人形檢測節點運行正常。\n- 車輛成功抵達目標並停止。\n- 車輛在檢測到人形時正確停止。\n- 車輛在人形離開後正確恢復行駛。\n\n停車反應時間: 94 毫秒\n\n此運行通過所有檢查項目。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "gpu",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "get_gpu_status"
+  ],
+  "seconds": 1.8,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "目前 GPU 無法使用 CUDA，但 PyTorch 環境中的 CUDA 似乎已安裝。請確認您的 GPU 驅動程式是否正確安裝。我們可以開始執行一些場景來測試您的需求。請問您想要執行哪個場景？例如 `approach`、`person_stop` 或 `target_loss`。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "failure",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 3,
+  "tool_calls": [
+   "list_scenarios",
+   "run_scenario"
+  ],
+  "seconds": 3.6,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "`approach` 情境執行結果為失敗。以下是詳細結果：\n\n- 車輛的攝像頭節點運行正常。\n- 車輛未能正確抵達目標並停止。\n\n最後車輛的 x 座標為 0.09 公尺。失敗的檢查項目為 `reached_target_and_stopped`。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "saved_run",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "list_saved_runs"
+  ],
+  "seconds": 1.1,
+  "passed": false,
+  "calls": false,
+  "forbidden": true,
+  "answer": "目前沒有名為 person_stop 的執行紀錄。請確認您的需求並重新嘗試。以下是已有的執行紀錄：A1_approach, B1_loss, D1_person。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "unknown_scenario",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 1,
+  "tool_calls": [],
+  "seconds": 0.7,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "-fly_to_moon 情境並不在 list_scenarios 所列的可用情境中，因此無法執行此情境。請確認情境名稱後再試一次。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "list",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "list_scenarios"
+  ],
+  "seconds": 5.6,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "可用的驗收情境包括：\n\n- `approach`：車輛偵測杯子，以 0.05 m/s 的速度接近並停在杯子附近。預估運行時間約 85 秒。\n- `target_loss`：杯子被移除一段時間（暫停並等待）然後再出現 12 秒（有界搜索，然後停止）。預估運行時間約 80 秒。\n- `person_stop`：在接近過程中，有人進入視野 6 秒；車輛必須停止，然後恢復。預估運行時間約 80 秒。\n\n請告訴我您希望執行哪一個情境？",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "run_person_gpu",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 3,
+  "tool_calls": [
+   "get_gpu_status",
+   "run_scenario"
+  ],
+  "seconds": 4.9,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "`person_stop` 團景運行結果如下：\n\n結果: PASS\n\n關鍵事實:\n- 人形檢測節點運行正常。\n- 車輛成功抵達目標並停止。\n- 車輛在檢測到人形時正確停止。\n- 車輛在人形離開後正確恢復行駛。\n\n停車反應時間: 94 毫秒\n\n此運行通過所有檢查項目。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "gpu",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "get_gpu_status"
+  ],
+  "seconds": 1.8,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "目前 GPU 無法使用 CUDA，但 PyTorch 環境中的 CUDA 似乎已安裝。請確認您的 GPU 驅動程式是否正確安裝。我們可以開始執行一些場景來測試您的需求。請問您想要執行哪個場景？例如 `approach`、`person_stop` 或 `target_loss`。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "failure",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 3,
+  "tool_calls": [
+   "list_scenarios",
+   "run_scenario"
+  ],
+  "seconds": 3.7,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "`approach` 情境執行結果為失敗。以下是詳細結果：\n\n- 車輛的攝像頭節點運行正常。\n- 車輛未能正確抵達目標並停止。\n\n最後車輛的 x 座標為 0.09 公尺。失敗的檢查項目為 `reached_target_and_stopped`。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "saved_run",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "list_saved_runs"
+  ],
+  "seconds": 1.1,
+  "passed": false,
+  "calls": false,
+  "forbidden": true,
+  "answer": "目前沒有名為 person_stop 的執行紀錄。請確認您的需求並重新嘗試。以下是已有的執行紀錄：A1_approach, B1_loss, D1_person。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "qwen2.5:7b",
+  "task": "unknown_scenario",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 1,
+  "tool_calls": [],
+  "seconds": 0.7,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "-fly_to_moon 情境並不在 list_scenarios 所列的可用情境中，因此無法執行此情境。請確認情境名稱後再試一次。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "list",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "list_scenarios"
+  ],
+  "seconds": 0.9,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "場景名稱：approach、target_loss、person_stop",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "run_person_gpu",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "run_scenario"
+  ],
+  "seconds": 0.9,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "結果： PASS\n停車反應時間： 94 ms",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "gpu",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "get_gpu_status"
+  ],
+  "seconds": 1.2,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "GPU 能用，目前的 NVIDIA GeForce RTX 4070 Laptop GPU 的驅動程式版本為 621.24，YOLO 的環境設定為使用 CUDA 13.0。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "failure",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "run_scenario"
+  ],
+  "seconds": 1.0,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "結果：FAIL\n\n檢查失敗：reached_target_and_stopped",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "saved_run",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 4,
+  "tool_calls": [
+   "get_run_summary",
+   "list_saved_runs",
+   "get_run_summary"
+  ],
+  "seconds": 2.5,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "結果： PASS\n場景： person_stop\n車輛： 停止於目標\n檢測： 人員出現時停止\n結果： 停止於目標，人員出現時停止\n檢查： camera_node_running, reached_target_and_stopped, stopped_for_person, resumed_after_person_left",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "unknown_scenario",
+  "repeat": 0,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [],
+  "seconds": 0.8,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "這個情境不存在。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "list",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "list_scenarios"
+  ],
+  "seconds": 0.7,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "場景名稱：approach、target_loss、person_stop",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "run_person_gpu",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "run_scenario"
+  ],
+  "seconds": 0.9,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "結果： PASS\n停車反應時間： 94 ms",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "gpu",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "get_gpu_status"
+  ],
+  "seconds": 1.2,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "GPU 能用，目前的 NVIDIA GeForce RTX 4070 Laptop GPU 的驅動程式版本為 621.24，YOLO 的環境設定為使用 CUDA 13.0。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "failure",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [
+   "run_scenario"
+  ],
+  "seconds": 0.9,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "結果：FAIL\n\n檢查失敗：reached_target_and_stopped",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "saved_run",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 4,
+  "tool_calls": [
+   "get_run_summary",
+   "list_saved_runs",
+   "get_run_summary"
+  ],
+  "seconds": 5.0,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "結果： PASS\n場景： person_stop\n車輛： 停止於目標\n檢測： 人員出現時停止\n結果： 停止於目標，人員出現時停止\n檢查： camera_node_running, reached_target_and_stopped, stopped_for_person, resumed_after_person_left",
+  "zh_tw": true,
+  "simplified_chars": ""
+ },
+ {
+  "model": "llama3.1:8b",
+  "task": "unknown_scenario",
+  "repeat": 1,
+  "stop_reason": "final",
+  "turns": 2,
+  "tool_calls": [],
+  "seconds": 0.8,
+  "passed": true,
+  "calls": true,
+  "forbidden": true,
+  "answer": "這個情境不存在。",
+  "zh_tw": true,
+  "simplified_chars": ""
+ }
+]

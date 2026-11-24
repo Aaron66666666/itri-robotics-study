@@ -7,13 +7,19 @@ or record what happened.
 
 import json
 from dataclasses import dataclass, field
-from typing import Callable
+from typing import Callable, Optional
 
 from .llm import ChatModel, ModelError
 from .messages import Message
 from .tools import ToolRegistry, ToolResult
 
 REPEAT_LIMIT = 2  # identical calls allowed before the loop refuses
+
+# A policy sees (tool name, arguments) and returns None to allow the call or
+# an error message to refuse it. Rules that must hold (e.g. "never start a
+# simulation the user did not ask for") are enforced here in code, because a
+# small model does not follow every prompt instruction.
+Policy = Callable[[str, dict], Optional[str]]
 
 
 @dataclass
@@ -31,8 +37,8 @@ def _key(name: str, args: dict) -> str:
 
 def run_agent(model: ChatModel, registry: ToolRegistry, system: str,
               task: str, max_turns: int = 8,
-              on_event: Callable[[str, dict], None] | None = None
-              ) -> AgentResult:
+              on_event: Callable[[str, dict], None] | None = None,
+              policy: Policy | None = None) -> AgentResult:
     emit = on_event or (lambda kind, data: None)
     messages = [Message('system', system), Message('user', task)]
     seen: dict[str, int] = {}
@@ -58,7 +64,13 @@ def run_agent(model: ChatModel, registry: ToolRegistry, system: str,
             seen[key] = seen.get(key, 0) + 1
             emit('tool_call', {'turn': turn, 'name': call.name,
                                'arguments': call.arguments})
-            if seen[key] > REPEAT_LIMIT:
+            refusal = policy(call.name, call.arguments) if policy else None
+            if refusal:
+                emit('policy_refused', {'turn': turn, 'name': call.name,
+                                        'reason': refusal})
+                result = ToolResult(False, json.dumps({'error': refusal},
+                                                      ensure_ascii=False))
+            elif seen[key] > REPEAT_LIMIT:
                 result = ToolResult(False, json.dumps({
                     'error': 'same call already made '
                              f'{REPEAT_LIMIT} times; use the earlier '

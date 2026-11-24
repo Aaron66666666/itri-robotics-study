@@ -14,24 +14,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from robot_agent.acceptance_tools import build_real_tools  # noqa: E402
+from robot_agent.acceptance_tools import (  # noqa: E402
+    build_real_tools, scenario_policy)
 from robot_agent.fake_tools import build_fake_tools  # noqa: E402
 from robot_agent.llm import ModelError, OllamaChat  # noqa: E402
 from robot_agent.loop import run_agent  # noqa: E402
+from robot_agent.prompts import SYSTEM_PROMPT  # noqa: E402
 from robot_agent.tools import ToolRegistry  # noqa: E402
-
-SYSTEM_PROMPT = """You are a test engineer for a ROS 2 / Gazebo robot. \
-A differential-drive vehicle uses a camera and YOLO to find a cup, approach \
-it and stop; it must stop whenever a person is visible.
-
-Use the tools to answer the user's request. Rules:
-- Only state results that come from tool outputs; never invent numbers.
-- Running a scenario takes about 1.5 minutes, so run only what the request \
-needs, one at a time.
-- If a tool returns an error, read it and fix the call or explain the problem.
-- Finish with a short report: each scenario or run, PASS/FAIL, the key facts, \
-and any failed check by name."""
-
 
 def print_event(kind: str, data: dict) -> None:
     if kind == 'model_call':
@@ -48,6 +37,8 @@ def print_event(kind: str, data: dict) -> None:
               f"{text[:300]}{'...' if len(text) > 300 else ''}")
     elif kind == 'final':
         print(f"\n=== final answer ===\n{data['text']}")
+    elif kind == 'policy_refused':
+        print(f"[policy] refused {data['name']}: {data['reason']}")
     elif kind == 'model_error':
         print(f"[model error] {data['error']}")
     elif kind == 'max_turns':
@@ -59,7 +50,7 @@ def main() -> int:
                                      formatter_class=argparse.
                                      RawDescriptionHelpFormatter)
     parser.add_argument('task', help='What the agent should do.')
-    parser.add_argument('--model', default='qwen2.5:7b')
+    parser.add_argument('--model', default='llama3.1:8b')
     parser.add_argument('--ollama-url', default=None,
                         help='Default: OLLAMA_HOST, localhost, WSL host IP.')
     parser.add_argument('--max-turns', type=int, default=8)
@@ -76,7 +67,8 @@ def main() -> int:
     print(f'model={model.name} url={model.base_url} '
           f"tools={'fake' if args.fake else 'real'}")
     result = run_agent(model, ToolRegistry(tools), SYSTEM_PROMPT, args.task,
-                       max_turns=args.max_turns, on_event=print_event)
+                       max_turns=args.max_turns, on_event=print_event,
+                       policy=scenario_policy(args.task))
     print(f'\n[{result.stop_reason}] turns={result.turns} '
           f'tool_calls={result.tool_calls}')
     return 0 if result.stop_reason == 'final' else 1
