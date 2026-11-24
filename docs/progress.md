@@ -15,7 +15,8 @@
 | 人物模型端到端測試（真實影像人員停止） | 完成，連續 2 次通過 |
 | GPU 加速（RTX 4070） | 完成 |
 | GUI 目視確認 | 待完成 |
-| AI Agent / Multi-Agent | 尚未開始 |
+| 階段 1：AI Agent（本機 Ollama） | 進行中：迴圈與工具完成，待安裝 Ollama |
+| 階段 2–4：YOLO 訓練、Isaac Sim、microduck RL | 尚未開始 |
 
 詳細報告：`projects/diff_drive_yolo/docs/stage_report_2026-11-24.md`。
 
@@ -34,6 +35,7 @@
 
 - `projects/diff_drive_yolo`：差速車 + 相機 + YOLO 自主控制（`~/robot_ws` 的版本控制副本）。
 - `projects/ur5e_gazebo_pick_place`：UR5e + 二指夾爪 + MoveIt 2 取放。
+- `ai-agent`：本機 Ollama 工具呼叫 Agent（驗收助理）。
 - `docs/ros2-architecture.md`：ROS 2 程式架構與資料流筆記。
 
 ## 已完成項目
@@ -113,11 +115,72 @@
 - [ ] 使用者以 GUI 目視確認車輛閉環（`worlds/diff_drive_camera_cup.sdf`）。
 - [ ] 使用者以 GUI（Gazebo + RViz）目視確認一次完整 pick-and-place。
 
-### 後續模擬與機器人學習方向
+## 後續階段路線圖
 
-- [ ] 評估 Isaac Sim/USD 或 Microduck RL 作為延伸項目；目前不列入已完成成果。
+依經理建議排定的順序；全部使用本機與免費資源，不使用付費 API。
 
-### 後續學習階段：AI Agent 與 Multi-Agent
+### 階段 1：AI Agent（本機 Ollama）— 進行中
 
-- [ ] 學習 AI Agent、工具呼叫與任務規劃。
-- [ ] 學習 Multi-Agent 協作程式開發。
+模型在 Windows 的 Ollama（RTX 4070）執行，WSL 的 Agent 透過 HTTP 呼叫；程式在 `ai-agent/`。
+
+- [x] （2026-11-24）自己撰寫 Agent 迴圈：工具定義、tool call、結果回傳、最多輪數、重複呼叫保護；模型呼叫層獨立（`ChatModel`），以後換模型只需新增一個類別。
+- [x] （2026-11-24）以假工具（同名稱、同 schema）及假 Ollama 伺服器測試迴圈；28 項測試通過，不需網路。
+- [x] （2026-11-24）接上真實驗收工具：執行／摘要 Gazebo 情境（approach、target_loss、person_stop）與 GPU 狀態，只回傳 JSON 摘要。直接呼叫 `run_scenario` 實測：person_stop PASS（GPU，人物出現後 114 ms 停車）。
+- [ ] 在 Windows 安裝 Ollama 並下載 Qwen 2.5 7B／Llama 3.1 8B（需使用者操作，見下方步驟）。
+- [ ] 以本機模型先跑假工具、再跑真工具；比較兩個模型的工具呼叫正確率與回報品質。
+- [ ] Multi-Agent：規劃者／執行者／審查者分工，審查者核對報告數字是否都來自工具結果。
+
+### 階段 2：YOLO 自訂資料訓練
+
+- [ ] 用 Gazebo 自動產生瓶子／杯子影像（不同距離、角度、光線、背景），並自動產生標註（由已知物體位置與相機投影計算 bbox，或使用 Gazebo 的 bounding box 相機）。
+- [ ] 切分 train／val／test，以 GPU 微調 YOLO26n。
+- [ ] 評估 mAP，並在原 bottle 場景驗證整段接近路徑都能穩定辨識 bottle（修好瓶子辨識）。
+- [ ] 以微調後的模型重跑自主控制驗收。
+
+### 階段 3：Isaac Sim（Windows 原生，不在 WSL）
+
+- [ ] 先執行 Isaac Sim 相容性檢查（Compatibility Checker）。注意：先前查到 Isaac Sim 6.2 文件列出的最低規格為 32 GB RAM 與 RTX 4080；本機為 RTX 4070 Laptop（8 GB VRAM），需以檢查結果決定是否可行。
+- [ ] 在 Windows 安裝 Isaac Sim（安裝前先確認）。
+- [ ] 匯入 UR 手臂（UR5／UR5e）USD，完成關節控制與物件取放。
+- [ ] 取得達明 TM5S-900 的官方模型，轉成 USD 匯入，完成控制與取放。
+
+### 階段 4：microduck RL
+
+- [ ] 研讀 [microduck_rl](https://github.com/pollen-robotics/microduck_rl)（MuJoCo／mjlab + PPO），在本機重現模擬與訓練。
+
+## 需要在 Windows 操作的步驟
+
+每一項安裝前都會先確認。
+
+| 項目 | 階段 | 狀態 |
+|---|---|---|
+| 更新 NVIDIA 驅動（Studio 621.24，CUDA 13.5） | GPU | 完成 |
+| 安裝 Ollama 並下載模型 | 1 | 待確認 |
+| Isaac Sim 相容性檢查與安裝 | 3 | 之後 |
+
+### 安裝 Ollama（階段 1）
+
+1. 從 <https://ollama.com/download/windows> 下載 `OllamaSetup.exe` 並安裝（安裝到使用者帳號，不需系統管理員）。
+2. 讓 WSL 連得到 Ollama。WSL 目前是 NAT 網路模式，`localhost` 連不到 Windows，二選一：
+   - **A（建議，不影響 ROS 2/Gazebo）**：在 PowerShell 設定 Ollama 監聽所有介面，再從系統匣結束並重新開啟 Ollama：
+
+     ```powershell
+     [Environment]::SetEnvironmentVariable("OLLAMA_HOST", "0.0.0.0:11434", "User")
+     ```
+
+     再以**系統管理員** PowerShell 加入防火牆規則，只允許 WSL 網段連入：
+
+     ```powershell
+     New-NetFirewallRule -DisplayName "Ollama from WSL" -Direction Inbound -Protocol TCP -LocalPort 11434 -RemoteAddress 172.16.0.0/12 -Action Allow
+     ```
+
+   - **B**：在 `C:\Users\<使用者>\.wslconfig` 加入 `[wsl2]` 與 `networkingMode=mirrored`，執行 `wsl --shutdown`。之後 `localhost:11434` 可直接使用，但網路模式改變後需要重新驗證 ROS 2/Gazebo。
+3. 在 PowerShell 下載模型（各約 5 GB，8 GB VRAM 可完整放入 GPU）：
+
+   ```powershell
+   ollama pull qwen2.5:7b
+   ollama pull llama3.1:8b
+   ```
+
+4. 確認：`ollama run qwen2.5:7b "hello"` 有回應，`ollama ps` 顯示 `100% GPU`。
+5. 在 WSL 確認：`python3 ~/itri-robotics-study/ai-agent/run_agent.py --fake "列出所有情境"`（Agent 會自動找 localhost 或 Windows 主機 IP）。
