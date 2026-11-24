@@ -1,0 +1,8 @@
+Collision scene: pedestal, table top z=0.700, 4 legs, cube at (0.4, 0.5, 0.73)
+joint goal: ready pose: planned+executed (MoveIt code 1)
+joint goal: ready pose: max joint error after execution 0.0038 rad
+gripper open: command q=0.000, actual [0.0000, 0.0000], controller error_code=0
+pose goal: pre-grasp above cube: planned+executed (MoveIt code 1)
+gripper close (no object): command q=0.036, actual [-0.0000, -0.0000], controller error_code=-4
+gripper open: command q=0.000, actual [-0.0000, -0.0000], controller error_code=0
+Stage "ee" finished

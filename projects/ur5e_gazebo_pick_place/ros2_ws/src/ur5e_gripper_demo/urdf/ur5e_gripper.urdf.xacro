@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="$(arg name)">
+  <xacro:arg name="name" default="ur"/>
+  <xacro:arg name="ur_type" default="ur5e"/>
+  <xacro:arg name="tf_prefix" default=""/>
+  <xacro:arg name="safety_limits" default="true"/>
+  <xacro:arg name="safety_pos_margin" default="0.15"/>
+  <xacro:arg name="safety_k_position" default="20"/>
+  <xacro:arg name="simulation_controllers" default="$(find ur_simulation_gz)/config/ur_controllers.yaml"/>
+  <xacro:arg name="ros_namespace" default=""/>
+  <!-- Robot base height. The work table top is at z=0.70; with the base on
+       the floor (0.0) top-down grasps on the table are out of UR5e reach, so
+       the arm stands on a pedestal (pick_place_world.sdf) at table height. -->
+  <xacro:arg name="mount_z" default="0.70"/>
+
+  <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
+  <xacro:include filename="$(find ur_simulation_gz)/urdf/ur_gz.ros2_control.xacro"/>
+
+  <xacro:arg name="joint_limit_params" default="$(find ur_description)/config/$(arg ur_type)/joint_limits.yaml"/>
+  <xacro:arg name="kinematics_params" default="$(find ur_description)/config/$(arg ur_type)/default_kinematics.yaml"/>
+  <xacro:arg name="physical_params" default="$(find ur_description)/config/$(arg ur_type)/physical_parameters.yaml"/>
+  <xacro:arg name="visual_params" default="$(find ur_description)/config/$(arg ur_type)/visual_parameters.yaml"/>
+
+  <link name="world"/>
+  <xacro:ur_robot
+    name="$(arg name)"
+    tf_prefix="$(arg tf_prefix)"
+    parent="world"
+    joint_limits_parameters_file="$(arg joint_limit_params)"
+    kinematics_parameters_file="$(arg kinematics_params)"
+    physical_parameters_file="$(arg physical_params)"
+    visual_parameters_file="$(arg visual_params)"
+    safety_limits="$(arg safety_limits)"
+    safety_pos_margin="$(arg safety_pos_margin)"
+    safety_k_position="$(arg safety_k_position)"
+    force_abs_paths="true">
+    <origin xyz="0 0 $(arg mount_z)" rpy="0 0 0"/>
+  </xacro:ur_robot>
+
+  <link name="gripper_base">
+    <inertial>
+      <origin xyz="0 0 0.025"/>
+      <mass value="0.18"/>
+      <inertia ixx="0.00035" ixy="0" ixz="0" iyy="0.00035" iyz="0" izz="0.00025"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.025"/>
+      <geometry><box size="0.09 0.04 0.05"/></geometry>
+      <material name="gripper_dark"><color rgba="0.12 0.14 0.17 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.025"/>
+      <geometry><box size="0.09 0.04 0.05"/></geometry>
+    </collision>
+  </link>
+  <joint name="gripper_mount_joint" type="fixed">
+    <parent link="tool0"/>
+    <child link="gripper_base"/>
+    <origin xyz="0 0 0.075" rpy="0 0 0"/>
+  </joint>
+
+  <link name="left_finger">
+    <inertial>
+      <origin xyz="0 0 0.045"/>
+      <mass value="0.035"/>
+      <inertia ixx="0.00003" ixy="0" ixz="0" iyy="0.00003" iyz="0" izz="0.000004"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.045"/>
+      <geometry><box size="0.035 0.018 0.09"/></geometry>
+      <material name="finger_black"><color rgba="0.08 0.09 0.1 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.045"/>
+      <geometry><box size="0.035 0.018 0.09"/></geometry>
+    </collision>
+  </link>
+  <joint name="left_finger_joint" type="prismatic">
+    <parent link="gripper_base"/>
+    <child link="left_finger"/>
+    <origin xyz="0 -0.07 0.045"/>
+    <axis xyz="0 1 0"/>
+    <!-- 2 mm margin past the open position (q=0). A finger that starts
+         exactly on its joint limit stayed pinned there in Gazebo/DART
+         (the right finger never moved). Open is still commanded as q=0. -->
+    <limit lower="-0.002" upper="0.04" effort="20" velocity="0.08"/>
+    <dynamics damping="2.0" friction="0.2"/>
+  </joint>
+
+  <link name="right_finger">
+    <inertial>
+      <origin xyz="0 0 0.045"/>
+      <mass value="0.035"/>
+      <inertia ixx="0.00003" ixy="0" ixz="0" iyy="0.00003" iyz="0" izz="0.000004"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.045"/>
+      <geometry><box size="0.035 0.018 0.09"/></geometry>
+      <material name="finger_black"><color rgba="0.08 0.09 0.1 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.045"/>
+      <geometry><box size="0.035 0.018 0.09"/></geometry>
+    </collision>
+  </link>
+  <joint name="right_finger_joint" type="prismatic">
+    <parent link="gripper_base"/>
+    <child link="right_finger"/>
+    <origin xyz="0 0.07 0.045"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-0.04" upper="0.002" effort="20" velocity="0.08"/>
+    <dynamics damping="2.0" friction="0.2"/>
+  </joint>
+
+  <xacro:ur_ros2_control name="ur" tf_prefix="$(arg tf_prefix)"/>
+  <ros2_control name="parallel_gripper" type="system">
+    <hardware><plugin>gz_ros2_control/GazeboSimSystem</plugin></hardware>
+    <joint name="left_finger_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="right_finger_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(arg simulation_controllers)</parameters>
+      <parameters>$(find ur5e_gripper_demo)/config/gripper_controllers.yaml</parameters>
+      <ros><namespace>$(arg ros_namespace)</namespace></ros>
+    </plugin>
+
+  </gazebo>
+</robot>

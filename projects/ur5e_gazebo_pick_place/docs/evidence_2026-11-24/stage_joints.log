@@ -1,0 +1,8 @@
+Collision scene: pedestal, table top z=0.700, 4 legs, cube at (0.4, 0.5, 0.73)
+joint goal: ready pose: planned+executed (MoveIt code 1)
+joint goal: ready pose: max joint error after execution 0.0049 rad
+joint goal: second pose: planned+executed (MoveIt code 1)
+joint goal: second pose: max joint error after execution 0.0046 rad
+joint goal: back to ready: planned+executed (MoveIt code 1)
+joint goal: back to ready: max joint error after execution 0.0048 rad
+Stage "joints" finished

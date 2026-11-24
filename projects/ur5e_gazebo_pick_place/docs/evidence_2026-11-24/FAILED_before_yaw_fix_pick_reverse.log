@@ -1,0 +1,11 @@
+Collision scene: pedestal, table top z=0.700, 4 legs, cube at (0.3, 0.65, 0.73)
+joint goal: ready pose: planned+executed (MoveIt code 1)
+joint goal: ready pose: max joint error after execution 0.0045 rad
+gripper open: command q=0.000, actual [-0.0000, -0.0000], controller error_code=0
+pose goal: pre-grasp above cube: planned+executed (MoveIt code 1)
+approach down: cartesian 1.00 executed
+grasp: command q=0.036, actual [0.0310, -0.0310], controller error_code=0
+Attached pick_cube in the MoveIt planning scene
+lift: cartesian 1.00 executed
+pose goal: above place position: planned+executed (MoveIt code 1)
+lower to place: cartesian fraction 0.06

@@ -1,0 +1,23 @@
+controller_manager:
+  ros__parameters:
+    parallel_gripper_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+parallel_gripper_controller:
+  ros__parameters:
+    joints:
+      - left_finger_joint
+      - right_finger_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 50.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    constraints:
+      stopped_velocity_tolerance: 0.02
+      goal_time: 1.0
+      left_finger_joint: {trajectory: 0.02, goal: 0.01}
+      right_finger_joint: {trajectory: 0.02, goal: 0.01}
