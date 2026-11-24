@@ -13,6 +13,7 @@
 | Camera→YOLO→Controller→Gazebo 自主控制閉環 | 完成，8 項驗收通過 |
 | UR5e 碰撞場景、關節／末端控制、Pick-and-Place | 完成，連續 3 次成功 |
 | 人物模型端到端測試（真實影像人員停止） | 完成，連續 2 次通過 |
+| GPU 加速（RTX 4070） | 完成 |
 | GUI 目視確認 | 待完成 |
 | AI Agent / Multi-Agent | 尚未開始 |
 
@@ -25,7 +26,7 @@
 - ROS 2：Jazzy
 - 模擬器：Gazebo Harmonic（Gazebo Sim 8）
 - 機械手臂規劃：MoveIt 2（`ur_simulation_gz`、`ur_moveit_config`）
-- 物件辨識：YOLO26n（Ultralytics，CPU 推論；venv `~/yolo_project/.venv`）
+- 物件辨識：YOLO26n（Ultralytics；RTX 4070 Laptop GPU，驅動 621.24／CUDA 13.5；venv `~/yolo_project/.venv`）
 - 主要程式語言：Python
 - 版本控制：Git + GitHub（WSL 以 SSH 金鑰推送）
 
@@ -84,6 +85,7 @@
 - [x] （2026-11-24）修正 Launch 參數洩漏（YOLO conf 覆寫控制器門檻）、人員離開後不再接近目標、目標閃爍重複觸發動作；新增 odometry bridge 與 `stop_bbox_dimension`；robot_control 測試 21 passed。
 - [x] （2026-11-24）Camera→YOLO→Controller→Gazebo 閉環驗收 8 項全部通過：偵測 cup、接近 0.526 m 後停止（odometry 與 Gazebo world pose 一致）、短暫漏檢停車、長時間失去目標進入限時搜尋、人員最高優先停止、stale 停止。
 - [x] （2026-11-24）Gazebo 人物模型端到端測試：新增 `worlds/diff_drive_camera_cup_person.sdf`（Fuel「Casual female」）。接近途中人物進入畫面，YOLO 以真實相機影像偵測 person 0.915，車輛 94／180 ms 內停車並維持 vx=0；人物離開後恢復接近，最終停在杯子前（x=0.531／0.523 m）。連續 2 次通過。
+- [x] （2026-11-24）GPU 加速：Windows NVIDIA 驅動更新為 Studio 621.24（CUDA 13.5）後，YOLO 可使用 RTX 4070 Laptop GPU（PyTorch cu130，venv 未修改）。離線推論 21.4 → 11.2 ms；實機推論中位數 27 → 20 ms。修正 `device:=0` 被 ROS 當成整數導致相機節點無法啟動。GPU 版人物情境測試通過。
 - [x] （2026-11-24）差速車 YOLO 專案程式與文件納入版本控制：`projects/diff_drive_yolo`（`~/robot_ws` 的副本）。
 
 ### 獨立專案：UR5e Gazebo 模擬與取放
@@ -110,7 +112,6 @@
 
 - [ ] 使用者以 GUI 目視確認車輛閉環（`worlds/diff_drive_camera_cup.sdf`）。
 - [ ] 使用者以 GUI（Gazebo + RViz）目視確認一次完整 pick-and-place。
-- [ ] WSL 當前 PyTorch `torch.cuda.is_available()` 為 False；YOLO 可在 CPU 運行，RTX 4070 加速尚未驗證。
 
 ### 後續模擬與機器人學習方向
 

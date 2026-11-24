@@ -1,0 +1,5 @@
+torch 2.14.1+cu130 (built for CUDA 13.0)
+cuda available: True
+device 0: NVIDIA GeForce RTX 4070 Laptop GPU
+device=cpu mean=  21.7 ms median=  21.4 ms (~ 46.7 FPS) detections=[('person', 0.902), ('cup', 0.716)]
+device=0   mean=  11.0 ms median=  11.2 ms (~ 89.3 FPS) detections=[('person', 0.902), ('cup', 0.716)]

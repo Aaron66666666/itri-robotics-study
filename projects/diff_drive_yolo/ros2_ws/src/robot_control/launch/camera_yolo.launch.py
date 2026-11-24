@@ -58,7 +58,9 @@ def generate_launch_description():
                     LaunchConfiguration('confidence_threshold'),
                     value_type=float,
                 ),
-                'device': LaunchConfiguration('device'),
+                # Keep device:=0 a string; ROS would otherwise type it INTEGER.
+                'device': ParameterValue(
+                    LaunchConfiguration('device'), value_type=str),
                 'display': ParameterValue(
                     LaunchConfiguration('display'),
                     value_type=bool,

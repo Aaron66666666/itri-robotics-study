@@ -81,6 +81,14 @@
 
 證據：`docs/evidence/2026-11-24/D1_person.*`、`D2_person.*`、`person_world_frame_person_in_view.png`。
 
+### GPU 加速（2026-11-24）
+
+- 原因：Windows NVIDIA 驅動 566.07 只支援 CUDA 12.7，而 YOLO venv 的 PyTorch 2.14.1 為 cu130，導致 `torch.cuda.is_available()` 為 False。使用者將驅動更新為 Studio 621.24（CUDA 13.5）後即可使用 RTX 4070 Laptop GPU；venv 未修改。
+- 修正 `camera_yolo.launch.py`：`device:=0` 會被 ROS 解析為整數，使 `camera_yolo` 啟動即結束；改以 `ParameterValue(..., value_type=str)` 傳入。
+- 離線（`tools/acceptance/gpu_check.py`，同一影格 30 次）：CPU 中位數 21.4 ms、GPU 11.2 ms，偵測結果相同（person 0.902、cup 0.716）。
+- 實機（人物情境，Gazebo 同時執行）：推論中位數 CPU 27 ms → GPU 20 ms；`/yolo/detections` 皆約 6 Hz（受相機影格速率限制）。GPU 版人物情境通過：出現→停車 93 ms、離開→恢復 52 ms、停在 x=0.523 m（D3_person_gpu）。
+- `device` 預設 `auto`，現在會自動使用 GPU。
+
 ### 仍待處理
 
 - 使用者以 GUI（Gazebo + RViz）目視確認一次車輛閉環與 UR5e pick-and-place。

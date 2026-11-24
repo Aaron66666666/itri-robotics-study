@@ -54,6 +54,9 @@
 | D1 | 94 ms | 位移 2.6 mm 後 vx=0；38/38 影格 person 0.915 | 147 ms | x=0.531 m |
 | D2 | 180 ms | 停車 | 82 ms | x=0.523 m |
 
+### 4c. GPU 加速
+驅動更新為 621.24（CUDA 13.5）後，YOLO 可使用 RTX 4070 Laptop GPU：離線推論 21.4 → 11.2 ms；實機推論中位數 27 → 20 ms（偵測頻率受相機約 6 Hz 限制）。GPU 版人物情境通過（93 ms 停車、52 ms 恢復）。另修正 `device:=0` 被當成整數導致相機節點無法啟動的問題。
+
 ### 5. UR5e Gazebo／MoveIt（`~/itri-robotics-study/projects/ur5e_gazebo_pick_place`）
 | 項目 | 結果 |
 |---|---|

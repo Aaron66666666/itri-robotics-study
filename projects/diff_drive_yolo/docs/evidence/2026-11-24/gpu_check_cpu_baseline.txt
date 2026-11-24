@@ -1,0 +1,3 @@
+torch 2.14.1+cu130 (built for CUDA 13.0)
+cuda available: False
+device=cpu mean=  25.0 ms median=  25.0 ms (~ 40.0 FPS) detections=[('person', 0.902), ('cup', 0.716)]

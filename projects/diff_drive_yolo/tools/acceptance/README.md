@@ -12,6 +12,7 @@
 | `hook_loss.sh`、`movecup.sh` | 以 `gz service set_pose` 把杯子移出／移回畫面（短暫／長時間失去目標）。 |
 | `sweep.sh`、`grab.py`、`yscan.py` | 把車放在不同 x 位置擷取影格，離線用 YOLO 評分（距離對信心的影響）。 |
 | `person_probe.sh`、`moveperson.sh`、`hook_person.sh` | 人物模型測試：探測人物各位置的 YOLO 分數；接近途中讓人物進出畫面（場景 `worlds/diff_drive_camera_cup_person.sdf`）。 |
+| `gpu_check.py PNG [RUNS]` | 顯示 PyTorch／CUDA 狀態，並比較 CPU 與 GPU 推論延遲及偵測結果（以 YOLO venv 的 python 執行）。 |
 | `offline.py PNG...` | 同模型、CPU、conf 0.35／0.05 離線推論。 |
 
 ## 重現驗收
