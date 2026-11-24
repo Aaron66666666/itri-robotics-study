@@ -147,7 +147,19 @@
 
 ### 階段 3：Isaac Sim（Windows 原生，不在 WSL）
 
-- [ ] 先執行 Isaac Sim 相容性檢查（Compatibility Checker）。注意：先前查到 Isaac Sim 6.2 文件列出的最低規格為 32 GB RAM 與 RTX 4080；本機為 RTX 4070 Laptop（8 GB VRAM），需以檢查結果決定是否可行。
+- [x] （2026-11-24）比對 Isaac Sim 6.2 官方需求（[requirements](https://docs.isaacsim.omniverse.nvidia.com/latest/installation/requirements.html)，文件更新於 2026-10-14）與本機規格：
+
+  | 項目 | 最低需求 | 本機 | 結果 |
+  |---|---|---|---|
+  | 作業系統 | Windows 11 | Windows 11（build 26200） | 符合 |
+  | CPU／核心數 | Core i7 第 7 代，4 核 | i7-13620H，10 核 16 執行緒 | 符合 |
+  | 記憶體 | 32 GB | 31.6 GB | 約等於最低需求 |
+  | 儲存空間 | 50 GB SSD | C: 剩 1.7 TB | 符合 |
+  | GPU／VRAM | RTX 4080，16 GB | RTX 4070 Laptop，8 GB | **低於最低需求** |
+  | 驅動程式 | 測試版本 595.97 | 621.24 | 較新 |
+
+  文件提到「低於最低規格的 GPU 可能無法執行部分教學與 benchmark」，但沒有說 8 GB 不支援；需以相容性檢查結果決定。Windows 端目前沒有 Python 3.12，長路徑支援也未開啟（`LongPathsEnabled = 0`）。
+- [ ] 執行 Isaac Sim 相容性檢查（Compatibility Checker），步驟見下方「Isaac Sim 相容性檢查」，等待使用者確認後執行。
 - [ ] 在 Windows 安裝 Isaac Sim（安裝前先確認）。
 - [ ] 匯入 UR 手臂（UR5／UR5e）USD，完成關節控制與物件取放。
 - [ ] 取得達明 TM5S-900 的官方模型，轉成 USD 匯入，完成控制與取放。
@@ -164,7 +176,8 @@
 |---|---|---|
 | 更新 NVIDIA 驅動（Studio 621.24，CUDA 13.5） | GPU | 完成 |
 | 安裝 Ollama 並下載模型（含防火牆規則） | 1 | 完成 |
-| Isaac Sim 相容性檢查與安裝 | 3 | 之後 |
+| Isaac Sim 相容性檢查 | 3 | 待確認 |
+| Isaac Sim 完整安裝 | 3 | 依檢查結果決定 |
 
 ### 安裝 Ollama（階段 1）
 
@@ -198,3 +211,29 @@
 ```powershell
 Get-NetFirewallRule -Direction Inbound -Action Block | Where-Object { $_.DisplayName -like "*ollama*" } | Remove-NetFirewallRule
 ```
+
+### Isaac Sim 相容性檢查（階段 3，待確認）
+
+採用最小的 pip 安裝 `isaacsim[compatibility-check]`，只取得檢查工具，不下載完整的 Isaac Sim。步驟依官方文件（[pip 安裝](https://docs.isaacsim.omniverse.nvidia.com/latest/installation/install_python.html)、[工作站安裝](https://docs.isaacsim.omniverse.nvidia.com/latest/installation/install_workstation.html)）：
+
+1. 從 python.org 安裝 **Python 3.12**（Windows 64 位元），安裝時勾選「Add python.exe to PATH」與「py launcher」。
+2. 以系統管理員 PowerShell 開啟長路徑支援（需重新開機或重新登入才生效）：
+
+   ```powershell
+   New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name LongPathsEnabled -Value 1 -PropertyType DWORD -Force
+   ```
+
+3. 以一般 PowerShell 建立獨立虛擬環境並安裝檢查工具（安裝時需同意 NVIDIA EULA）：
+
+   ```powershell
+   mkdir C:\isaacsim
+   py -3.12 -m venv C:\isaacsim\env_check
+   C:\isaacsim\env_check\Scripts\activate
+   pip install "isaacsim[compatibility-check]==6.2.0.0" --extra-index-url https://pypi.nvidia.com
+   isaacsim isaacsim.exp.compatibility_check
+   ```
+
+4. 檢查結果以顏色標示：綠／淺綠表示良好，橘色表示勉強可用，紅色表示不足或不支援。截圖回報，並按「Test Kit」確認最小的 Kit 應用程式能執行。
+
+預期 VRAM 會顯示紅色或橘色。之後依結果決定：安裝完整 Isaac Sim（官方 zip 安裝在 `C:\isaacsim`，只做簡單場景，例如 UR 手臂取放）、改用其他環境，或延後此階段。
+
