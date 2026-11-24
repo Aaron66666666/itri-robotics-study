@@ -18,6 +18,7 @@ import json
 import sys
 import time
 from pathlib import Path
+from types import SimpleNamespace
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -26,13 +27,14 @@ from robot_agent.acceptance_tools import scenario_policy  # noqa: E402
 from robot_agent.fake_tools import build_fake_tools  # noqa: E402
 from robot_agent.llm import OllamaChat  # noqa: E402
 from robot_agent.loop import run_agent  # noqa: E402
+from robot_agent.multi_agent import run_multi_agent  # noqa: E402
 from robot_agent.prompts import SYSTEM_PROMPT  # noqa: E402
 from robot_agent.tools import ToolRegistry  # noqa: E402
 
 # Characters that exist only in Simplified Chinese (their Traditional forms
 # differ), common in this domain. Any of them means the answer drifted.
 SIMPLIFIED_ONLY = set('们这说运场关键结车辆为过时检测么问题个对没还发现样经'
-                      '进过让门实现应该数据显示执败续员态览较')
+                      '进过让门实现应该数据显执败续员态览较')
 
 TASKS = [
     {'id': 'list',
@@ -63,7 +65,8 @@ TASKS = [
      'forbidden': ['run_scenario'],
      # Correct behaviour: refuse and say the scenario does not exist.
      'answer_any': ['不存在', '沒有', '無法', 'not', '不支援', '找不到',
-                    '並無', '未提供', '不在', '不正確', '不是有效']},
+                    '並無', '未提供', '不在', '不正確', '不是有效', '並未',
+                    '未在']},
 ]
 
 
@@ -92,24 +95,47 @@ def main() -> int:
                         default=['qwen2.5:7b', 'llama3.1:8b'])
     parser.add_argument('--repeat', type=int, default=1)
     parser.add_argument('--max-turns', type=int, default=6)
+    parser.add_argument('--mode', choices=['single', 'multi'],
+                        default='single')
+    parser.add_argument('--review-model', default=None,
+                        help='multi mode: reviewer model (default: same)')
     args = parser.parse_args()
 
     records = []
     for model_name in args.models:
         model = OllamaChat(model=model_name)
         model.chat([], [])  # warm-up: load the model onto the GPU first
+        reviewer = (OllamaChat(model=args.review_model)
+                    if args.review_model else model)
         for rep in range(args.repeat):
             for task in TASKS:
                 fake_tools.CALL_LOG.clear()
                 fake_tools.FAIL_SCENARIOS.clear()
                 fake_tools.FAIL_SCENARIOS.update(task.get('fail', set()))
                 start = time.time()
-                result = run_agent(model, ToolRegistry(build_fake_tools()),
-                                   SYSTEM_PROMPT, task['task'],
-                                   max_turns=args.max_turns,
-                                   policy=scenario_policy(task['task']))
+                extra = {}
+                if args.mode == 'multi':
+                    multi = run_multi_agent(
+                        task['task'], ToolRegistry(build_fake_tools()),
+                        planner=model, executor=model, reporter=model,
+                        reviewer=reviewer, policy=scenario_policy(task['task']))
+                    result = SimpleNamespace(
+                        stop_reason='final' if multi.stop_reason == 'done'
+                        else multi.stop_reason, final_text=multi.report,
+                        turns=len(multi.reviews))
+                    extra = {'approved': multi.approved,
+                             'review_rounds': len(multi.reviews),
+                             'plan': [s['tool'] for s in multi.plan],
+                             'code_problems': sum(len(r['code_problems'])
+                                                  for r in multi.reviews)}
+                else:
+                    result = run_agent(model, ToolRegistry(build_fake_tools()),
+                                       SYSTEM_PROMPT, task['task'],
+                                       max_turns=args.max_turns,
+                                       policy=scenario_policy(task['task']))
                 checks = check(task, result, list(fake_tools.CALL_LOG))
-                record = {'model': model_name, 'task': task['id'],
+                record = {'model': model_name, 'mode': args.mode, **extra,
+                          'task': task['id'],
                           'repeat': rep, 'stop_reason': result.stop_reason,
                           'turns': result.turns,
                           'tool_calls': [n for n, _ in fake_tools.CALL_LOG],
@@ -124,11 +150,14 @@ def main() -> int:
                 print(f"{model_name:12s} {task['id']:17s} "
                       f"{'PASS' if record['passed'] else 'FAIL'}  {flags}  "
                       f"turns={result.turns} {record['seconds']}s "
-                      f"calls={record['tool_calls']}", flush=True)
+                      f"calls={record['tool_calls']}"
+                      + (f" approved={extra['approved']} "
+                         f"rounds={extra['review_rounds']}" if extra else ''),
+                      flush=True)
 
     out = Path(__file__).resolve().parent / 'eval_results'
     out.mkdir(exist_ok=True)
-    path = out / f"{time.strftime('%Y%m%d_%H%M%S')}.json"
+    path = out / f"{time.strftime('%Y%m%d_%H%M%S')}_{args.mode}.json"
     path.write_text(json.dumps(records, ensure_ascii=False, indent=1))
     print('\nmodel         passed/total  avg_seconds')
     for model_name in args.models:

@@ -15,8 +15,9 @@
 | 人物模型端到端測試（真實影像人員停止） | 完成，連續 2 次通過 |
 | GPU 加速（RTX 4070） | 完成 |
 | GUI 目視確認 | 待完成 |
-| 階段 1：AI Agent（本機 Ollama） | 進行中：單一 Agent 完成（Llama 3.1 8B 12/12），下一步 Multi-Agent |
-| 階段 2–4：YOLO 訓練、Isaac Sim、microduck RL | 尚未開始 |
+| 階段 1：AI Agent（本機 Ollama） | 完成：單一 Agent（Llama 12/12）與 Multi-Agent（11/12） |
+| 階段 2：YOLO 自訂資料訓練 | 下一步 |
+| 階段 3–4：Isaac Sim、microduck RL | 尚未開始 |
 
 詳細報告：`projects/diff_drive_yolo/docs/stage_report_2026-11-24.md`。
 
@@ -119,7 +120,7 @@
 
 依經理建議排定的順序；全部使用本機與免費資源，不使用付費 API。
 
-### 階段 1：AI Agent（本機 Ollama）— 進行中
+### 階段 1：AI Agent（本機 Ollama）— 完成
 
 模型在 Windows 的 Ollama（RTX 4070）執行，WSL 的 Agent 透過 HTTP 呼叫；程式在 `ai-agent/`。
 
@@ -129,7 +130,8 @@
 - [x] （2026-11-24）Windows 安裝 Ollama 0.40.18，下載 Qwen 2.5 7B 與 Llama 3.1 8B；兩者皆完整載入 GPU（約 5 GB VRAM），暖機後每次呼叫約 0.6–1 秒。WSL（NAT 模式）透過 Windows 主機 IP 連線，防火牆只允許 WSL 網段。
 - [x] （2026-11-24）以 `eval_models.py` 比較兩個模型（6 個固定任務 × 2 次，自動檢查工具呼叫、禁止動作、答案數字、繁體中文）：Llama 3.1 8B 12/12、Qwen 2.5 7B 10/12。發現並處理：Qwen 會編造結果與混用簡體字（加強提示詞改善）、Llama 會自行改跑使用者沒要求的情境（改以程式層 policy 禁止）。預設模型改為 Llama 3.1 8B。
 - [x] （2026-11-24）真實工具實測（Llama）：Agent 自行執行 Gazebo person_stop，回報 PASS、130 ms 停車、畫面有人時位移 0.0 m，與執行紀錄一致；比較 CPU／GPU 兩次已保存紀錄，修正工具名稱解析後答案完全正確（94／93 ms 停車、27／20 ms 推論）。
-- [ ] Multi-Agent：規劃者／執行者／審查者分工，審查者核對報告數字是否都來自工具結果。
+- [x] （2026-11-24）Multi-Agent：規劃者（結構化 JSON，程式檢查計畫）→ 執行者（工具呼叫迴圈）→ 再規劃 → 報告者 → 審查者（程式查數字／PASS-FAIL／無測試結果時不得宣稱判定，LLM 只查涵蓋度）；不通過退回修改。59 項測試通過。
+- [x] （2026-11-24）評估：Multi-Agent 在同 6 個任務上 Llama 11/12、Qwen 8/12，單一 Agent 為 12/12、10/12；Multi-Agent 慢約 8 倍，但能攔下編造的數字與判定並留下完整紀錄。審查者採「先拆解要求再逐項判斷」後，兩個模型的審查正確率由 8/16、12/16 提升到 14/16，且 0 次錯誤核准。真實工具比較 CPU／GPU 紀錄，報告第一次即核准且數字完全正確。
 
 ### 階段 2：YOLO 自訂資料訓練
 

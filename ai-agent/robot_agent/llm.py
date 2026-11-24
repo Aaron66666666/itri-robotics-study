@@ -37,6 +37,11 @@ class ChatModel:
         """
         raise NotImplementedError
 
+    def chat_json(self, messages: list[Message],
+                  schema: dict[str, Any]) -> dict[str, Any]:
+        """Return a JSON object that follows `schema` (structured output)."""
+        raise NotImplementedError
+
 
 # --------------------------------------------------------------- Ollama
 def _windows_host_ip() -> str | None:
@@ -179,6 +184,33 @@ class OllamaChat(ChatModel):
             return f'call_{counter}'
         return self.from_wire(data, {t['name'] for t in tools}, next_id)
 
+    def chat_json(self, messages: list[Message],
+                  schema: dict[str, Any]) -> dict[str, Any]:
+        """Ollama structured outputs: 'format' carries the JSON schema."""
+        payload = {
+            'model': self.model, 'messages': self.to_wire(messages),
+            'format': schema, 'stream': False,
+            'options': {'temperature': self.temperature,
+                        'num_ctx': self.num_ctx},
+        }
+        try:
+            data = _http_json(f'{self.base_url}/api/chat', payload,
+                              self.timeout)
+        except urllib.error.HTTPError as exc:
+            body = exc.read().decode(errors='replace')[:300]
+            raise ModelError(f'Ollama HTTP {exc.code}: {body}') from exc
+        except (urllib.error.URLError, OSError, ValueError) as exc:
+            raise ModelError(f'Ollama request failed: {exc}') from exc
+        text = (data.get('message') or {}).get('content') or ''
+        try:
+            value = json.loads(text)
+        except json.JSONDecodeError as exc:
+            raise ModelError(f'model did not return JSON: {text[:200]}') \
+                from exc
+        if not isinstance(value, dict):
+            raise ModelError('model returned JSON that is not an object')
+        return value
+
 
 def _tool_call_from_text(text: str,
                          tool_names: set[str]) -> tuple[str, dict] | None:
@@ -218,6 +250,14 @@ class ScriptedModel(ChatModel):
         self.calls: list[list[Message]] = []
 
     def chat(self, messages, tools):
+        self.calls.append(list(messages))
+        if not self.steps:
+            raise ModelError('ScriptedModel has no more replies')
+        step = self.steps.pop(0)
+        return step(messages) if callable(step) else step
+
+    def chat_json(self, messages, schema):
+        """Steps for JSON calls are dicts (or functions returning dicts)."""
         self.calls.append(list(messages))
         if not self.steps:
             raise ModelError('ScriptedModel has no more replies')
