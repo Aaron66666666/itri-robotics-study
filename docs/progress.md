@@ -17,7 +17,7 @@
 | GUI 目視確認 | 待完成 |
 | 階段 1：AI Agent（本機 Ollama） | 完成：單一 Agent（Llama 12/12）與 Multi-Agent（11/12） |
 | 階段 2：YOLO 自訂資料訓練 | 完成：瓶子辨識修好，人員未退化（v3） |
-| 階段 3：Isaac Sim（Windows 原生） | 下一步，需使用者在 Windows 操作 |
+| 階段 3：Isaac Sim（Windows 原生） | 延後到最後（使用者決定，2026-11-25）；檢查工具已安裝，停在 EULA |
 | 階段 4：microduck RL | 進行中：平地行走訓練 8000 次迭代完成，策略可匯出 ONNX |
 
 詳細報告：`projects/diff_drive_yolo/docs/stage_report_2026-11-24.md`。
@@ -147,6 +147,8 @@
 
 ### 階段 3：Isaac Sim（Windows 原生，不在 WSL）
 
+> 2026-11-25：使用者決定 Isaac Sim 放到最後再做，其他階段先進行。相容性檢查工具已裝在 `C:\isaacsim\env_check`，停在 EULA 確認畫面，恢復時從那裡繼續。
+
 - [x] （2026-11-24）比對 Isaac Sim 6.2 官方需求（[requirements](https://docs.isaacsim.omniverse.nvidia.com/latest/installation/requirements.html)，文件更新於 2026-10-14）與本機規格：
 
   | 項目 | 最低需求 | 本機 | 結果 |
@@ -183,7 +185,7 @@
 |---|---|---|
 | 更新 NVIDIA 驅動（Studio 621.24，CUDA 13.5） | GPU | 完成 |
 | 安裝 Ollama 並下載模型（含防火牆規則） | 1 | 完成 |
-| Isaac Sim 相容性檢查 | 3 | 檢查工具已安裝，等使用者回答 EULA |
+| Isaac Sim 相容性檢查 | 3 | 延後到最後；檢查工具已安裝，停在 EULA |
 | Isaac Sim 完整安裝 | 3 | 依檢查結果決定 |
 
 ### 安裝 Ollama（階段 1）
@@ -219,7 +221,7 @@
 Get-NetFirewallRule -Direction Inbound -Action Block | Where-Object { $_.DisplayName -like "*ollama*" } | Remove-NetFirewallRule
 ```
 
-### Isaac Sim 相容性檢查（階段 3，待確認）
+### Isaac Sim 相容性檢查（階段 3，延後到最後）
 
 採用最小的 pip 安裝 `isaacsim[compatibility-check]`，只取得檢查工具，不下載完整的 Isaac Sim。步驟依官方文件（[pip 安裝](https://docs.isaacsim.omniverse.nvidia.com/latest/installation/install_python.html)、[工作站安裝](https://docs.isaacsim.omniverse.nvidia.com/latest/installation/install_workstation.html)）：
 
