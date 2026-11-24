@@ -1,0 +1,70 @@
+{
+ "bottle": [
+  "bottle_world",
+  "bottle_1",
+  "bottle_2",
+  "bottle_3",
+  "bottle_4",
+  "bottle_5",
+  "bottle_6",
+  "bottle_7"
+ ],
+ "cup": [
+  "cup_world",
+  "cup_1",
+  "cup_2",
+  "cup_3",
+  "cup_4",
+  "cup_5",
+  "cup_6"
+ ],
+ "person": [
+  "person_1",
+  "person_2"
+ ],
+ "table": {
+  "table_1": {
+   "height": 0.15,
+   "size": [
+    0.7,
+    0.9
+   ]
+  },
+  "table_2": {
+   "height": 0.45,
+   "size": [
+    0.8,
+    0.6
+   ]
+  },
+  "table_3": {
+   "height": 0.3,
+   "size": [
+    0.5,
+    0.5
+   ]
+  }
+ },
+ "distractor": [
+  "box_1",
+  "box_2",
+  "box_3",
+  "ball_1",
+  "ball_2",
+  "disc_1",
+  "disc_2"
+ ],
+ "mat": [
+  "mat_1",
+  "mat_2",
+  "mat_3",
+  "mat_4",
+  "mat_5",
+  "mat_6"
+ ],
+ "wall": [
+  "wall_1",
+  "wall_2",
+  "wall_3"
+ ]
+}

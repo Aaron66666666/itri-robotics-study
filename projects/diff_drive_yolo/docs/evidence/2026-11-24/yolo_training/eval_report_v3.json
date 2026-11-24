@@ -1,0 +1,172 @@
+{
+ "base": {
+  "test": {
+   "mAP50": 0.379,
+   "mAP50-95": 0.349,
+   "per_class": {
+    "person": {
+     "mAP50": 0.923,
+     "mAP50-95": 0.866
+    },
+    "bottle": {
+     "mAP50": 0.137,
+     "mAP50-95": 0.116
+    },
+    "cup": {
+     "mAP50": 0.076,
+     "mAP50-95": 0.065
+    }
+   }
+  },
+  "frames": {
+   "bottle_x0.0": {
+    "cup": 0.452,
+    "person": 0.202
+   },
+   "bottle_x0.2": {
+    "cup": 0.133,
+    "person": 0.128
+   },
+   "bottle_x0.4": {
+    "person": 0.099,
+    "umbrella": 0.066
+   },
+   "bottle_x0.6": {
+    "person": 0.143
+   },
+   "bottle_x0.8": {
+    "person": 0.17,
+    "umbrella": 0.142
+   },
+   "bottle_x1.0": {
+    "umbrella": 0.16,
+    "chair": 0.114
+   },
+   "bottle_x1.2": {
+    "umbrella": 0.133,
+    "cake": 0.089,
+    "chair": 0.068,
+    "vase": 0.063,
+    "cup": 0.056
+   },
+   "bottle_x1.4": {
+    "vase": 0.213,
+    "chair": 0.089
+   },
+   "cup_x0.0": {
+    "cup": 0.709
+   },
+   "cup_x0.2": {
+    "cup": 0.788
+   },
+   "cup_x0.4": {
+    "cup": 0.773,
+    "dining table": 0.082
+   },
+   "cup_x0.55": {
+    "cup": 0.79,
+    "dining table": 0.076
+   },
+   "cup_x0.7": {
+    "cup": 0.466
+   },
+   "cup_x0.9": {
+    "cup": 0.259
+   },
+   "cup_x1.1": {
+    "cup": 0.457
+   },
+   "person_x0.0": {
+    "person": 0.902,
+    "cup": 0.716
+   },
+   "person_x0.3": {
+    "person": 0.909,
+    "cup": 0.618
+   },
+   "person_x0.6": {
+    "person": 0.905,
+    "cup": 0.747
+   }
+  }
+ },
+ "tuned": {
+  "test": {
+   "mAP50": 0.991,
+   "mAP50-95": 0.982,
+   "per_class": {
+    "person": {
+     "mAP50": 0.995,
+     "mAP50-95": 0.993
+    },
+    "bottle": {
+     "mAP50": 0.984,
+     "mAP50-95": 0.973
+    },
+    "cup": {
+     "mAP50": 0.994,
+     "mAP50-95": 0.979
+    }
+   }
+  },
+  "frames": {
+   "bottle_x0.0": {
+    "bottle": 0.955
+   },
+   "bottle_x0.2": {
+    "bottle": 0.959
+   },
+   "bottle_x0.4": {
+    "bottle": 0.956
+   },
+   "bottle_x0.6": {
+    "bottle": 0.963
+   },
+   "bottle_x0.8": {
+    "bottle": 0.953
+   },
+   "bottle_x1.0": {
+    "bottle": 0.956
+   },
+   "bottle_x1.2": {
+    "bottle": 0.945
+   },
+   "bottle_x1.4": {
+    "bottle": 0.931
+   },
+   "cup_x0.0": {
+    "cup": 0.947
+   },
+   "cup_x0.2": {
+    "cup": 0.94
+   },
+   "cup_x0.4": {
+    "cup": 0.925
+   },
+   "cup_x0.55": {
+    "cup": 0.761
+   },
+   "cup_x0.7": {
+    "cup": 0.932
+   },
+   "cup_x0.9": {
+    "cup": 0.957
+   },
+   "cup_x1.1": {
+    "cup": 0.869
+   },
+   "person_x0.0": {
+    "person": 0.941,
+    "cup": 0.924
+   },
+   "person_x0.3": {
+    "person": 0.944,
+    "cup": 0.914
+   },
+   "person_x0.6": {
+    "person": 0.898,
+    "cup": 0.654
+   }
+  }
+ }
+}

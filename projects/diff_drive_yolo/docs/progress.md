@@ -89,11 +89,15 @@
 - 實機（人物情境，Gazebo 同時執行）：推論中位數 CPU 27 ms → GPU 20 ms；`/yolo/detections` 皆約 6 Hz（受相機影格速率限制）。GPU 版人物情境通過：出現→停車 93 ms、離開→恢復 52 ms、停在 x=0.523 m（D3_person_gpu）。
 - `device` 預設 `auto`，現在會自動使用 GPU。
 
+### 階段 2：YOLO 自訂資料訓練（2026-11-24）
+
+詳見 `docs/yolo_training.md`。用 Gazebo `boundingbox_camera` 自動標註，產生 2800 張隨機場景影像（瓶子、杯子、人物、干擾物、隨機光線與背景），並以 GPU 微調 YOLO26n。共訓練三版：v1（僅合成資料）修好瓶子，但出現人員遺忘；v2（加補光與白地墊、凍結骨幹）沒有解決遺忘；v3（加 COCO128 真實影像回放）三類都達標。機器人場景 18 張影格中各類最低分數：bottle 0.00 → 0.93、cup 0.26 → 0.76、person 0.90 → 0.90。閉環實測（v3）：原瓶子場景接近並停在 x = 1.004 m（bottle ≥ 0.5 佔 100%）；杯子 PASS（≥ 0.5 佔 99.4%，略低於原模型的 100%）；人物停止 PASS（478 ms，位移 0.0 m）。停止門檻須依模型重新校正（v3 杯子框含把手，較寬）。launch 預設模型維持不變。
+
 ### 仍待處理
 
 - 使用者以 GUI（Gazebo + RViz）目視確認一次車輛閉環與 UR5e pick-and-place。
 - `autonomous_yolo.launch.py` 預設 `target_class` 仍為 `bottle`；cup 場景需使用上表參數。是否把 cup 場景參數做成預設，待使用者決定。
-- 原 bottle 場景若要繼續使用，需要更像瓶子的模型；YOLO26n 對目前的圓柱瓶子不穩定。
+- 是否把 v3 模型設為 launch 預設（瓶子大幅改善，杯子略不穩），待使用者決定。
 - `itri-robotics-study/projects/` 尚未加入 git（未提交任何變更）。
 
 ---
