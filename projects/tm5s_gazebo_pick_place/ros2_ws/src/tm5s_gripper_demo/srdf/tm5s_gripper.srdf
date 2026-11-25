@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!-- Arm group and collision exclusions adapted from Techman's tm5s_moveit_config
+     (tm2_ros2, BSD-3); link_0 is base_link in the tm_gazebo description. -->
+<robot name="tm5s">
+  <group name="tmr_arm">
+    <chain base_link="base_link" tip_link="flange"/>
+  </group>
+  <group name="gripper">
+    <joint name="left_finger_joint"/>
+    <joint name="right_finger_joint"/>
+  </group>
+  <group_state name="ready" group="tmr_arm">
+    <joint name="joint_1" value="1.1"/>
+    <joint name="joint_2" value="0"/>
+    <joint name="joint_3" value="1.5708"/>
+    <joint name="joint_4" value="0"/>
+    <joint name="joint_5" value="1.5708"/>
+    <joint name="joint_6" value="0"/>
+  </group_state>
+  <group_state name="open" group="gripper">
+    <joint name="left_finger_joint" value="0.0"/>
+    <joint name="right_finger_joint" value="0.0"/>
+  </group_state>
+  <group_state name="closed" group="gripper">
+    <joint name="left_finger_joint" value="0.04"/>
+    <joint name="right_finger_joint" value="-0.04"/>
+  </group_state>
+  <end_effector name="parallel_gripper" parent_link="flange" group="gripper" parent_group="tmr_arm"/>
+
+  <disable_collisions link1="base_link" link2="link_1" reason="Adjacent"/>
+  <disable_collisions link1="link_1" link2="link_2" reason="Adjacent"/>
+  <disable_collisions link1="link_1" link2="link_3" reason="Never"/>
+  <disable_collisions link1="link_1" link2="link_4" reason="Never"/>
+  <disable_collisions link1="link_2" link2="link_3" reason="Adjacent"/>
+  <disable_collisions link1="link_3" link2="link_4" reason="Adjacent"/>
+  <disable_collisions link1="link_4" link2="link_5" reason="Adjacent"/>
+  <disable_collisions link1="link_4" link2="link_6" reason="Never"/>
+  <disable_collisions link1="link_5" link2="link_6" reason="Adjacent"/>
+  <disable_collisions link1="link_6" link2="gripper_adapter" reason="Adjacent"/>
+  <disable_collisions link1="link_6" link2="gripper_base" reason="Adjacent"/>
+  <disable_collisions link1="link_5" link2="gripper_adapter" reason="Never"/>
+  <disable_collisions link1="gripper_adapter" link2="gripper_base" reason="Adjacent"/>
+  <disable_collisions link1="gripper_adapter" link2="left_finger" reason="Never"/>
+  <disable_collisions link1="gripper_adapter" link2="right_finger" reason="Never"/>
+  <disable_collisions link1="gripper_base" link2="left_finger" reason="Adjacent"/>
+  <disable_collisions link1="gripper_base" link2="right_finger" reason="Adjacent"/>
+  <disable_collisions link1="left_finger" link2="right_finger" reason="Never"/>
+</robot>

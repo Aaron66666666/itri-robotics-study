@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.8)
+project(tm5s_gripper_demo)
+find_package(ament_cmake REQUIRED)
+install(DIRECTORY config launch urdf srdf worlds DESTINATION share/${PROJECT_NAME})
+install(PROGRAMS scripts/pick_place_demo.py DESTINATION lib/${PROJECT_NAME})
+ament_package()

@@ -17,7 +17,7 @@
 | GUI 目視確認 | 待完成 |
 | 階段 1：AI Agent（本機 Ollama） | 完成：單一 Agent（Llama 12/12）與 Multi-Agent（11/12） |
 | 階段 2：YOLO 自訂資料訓練 | 完成：瓶子辨識修好，人員未退化（v3） |
-| 階段 3：Isaac Sim（Windows 原生） | 依經理建議（2026-11-25）不在這台筆電上跑；TM5S-900 取放改用 Gazebo + MoveIt 2 |
+| 階段 3：機械手臂取放（原 Isaac Sim） | 完成：依經理建議改用 Gazebo + MoveIt 2；TM5S-900 連續 3 次取放成功，誤差 0.1–1.4 mm |
 | 階段 4：microduck RL | 進行中：平地行走訓練 8000 次迭代完成，策略可匯出 ONNX |
 
 詳細報告：`projects/diff_drive_yolo/docs/stage_report_2026-11-24.md`。問題與排除紀錄：`docs/troubleshooting.md`。
@@ -167,7 +167,8 @@
 - [ ] 執行 Isaac Sim 相容性檢查（Compatibility Checker），步驟見下方「Isaac Sim 相容性檢查」，等待使用者確認後執行。
 - [ ] 在 Windows 安裝 Isaac Sim（安裝前先確認）。
 - [ ] 匯入 UR 手臂（UR5／UR5e）USD，完成關節控制與物件取放。
-- [ ] 達明 TM5S-900：用官方 tm2_ros2 模型，在 Gazebo + MoveIt 2 完成控制與取放（取代 Isaac Sim）。
+- [x] （2026-11-25）達明 TM5S-900：用官方 tm2_ros2 模型（BSD-3），在 Gazebo Harmonic + MoveIt 2 完成控制與取放（取代 Isaac Sim）。三個控制器全部啟動；關節控制誤差 ≤ 0.0046 rad；末端控制誤差約 2 mm；連續 3 次取放全部成功，方塊誤差 0.1–1.4 mm。附末端路徑與夾爪開合圖。專案：`projects/tm5s_gazebo_pick_place`。
+- [ ] 使用者錄製 TM5S 取放的 GUI 影片（`scripts/demo_pick_place_gui.sh`）。
 
 ### 階段 4：microduck RL
 

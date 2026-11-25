@@ -1,0 +1,45 @@
+# TM5S velocity limits from the official description (tm5s-nominal).
+# Acceleration limits added here: MoveIt time parameterization needs them.
+default_velocity_scaling_factor: 0.2
+default_acceleration_scaling_factor: 0.2
+joint_limits:
+  joint_1:
+    has_velocity_limits: true
+    max_velocity: 3.6652
+    has_acceleration_limits: true
+    max_acceleration: 5.0
+  joint_2:
+    has_velocity_limits: true
+    max_velocity: 3.6652
+    has_acceleration_limits: true
+    max_acceleration: 5.0
+  joint_3:
+    has_velocity_limits: true
+    max_velocity: 3.6652
+    has_acceleration_limits: true
+    max_acceleration: 5.0
+  joint_4:
+    has_velocity_limits: true
+    max_velocity: 3.9270
+    has_acceleration_limits: true
+    max_acceleration: 5.0
+  joint_5:
+    has_velocity_limits: true
+    max_velocity: 3.9270
+    has_acceleration_limits: true
+    max_acceleration: 5.0
+  joint_6:
+    has_velocity_limits: true
+    max_velocity: 7.8540
+    has_acceleration_limits: true
+    max_acceleration: 5.0
+  left_finger_joint:
+    has_velocity_limits: true
+    max_velocity: 0.08
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+  right_finger_joint:
+    has_velocity_limits: true
+    max_velocity: 0.08
+    has_acceleration_limits: true
+    max_acceleration: 1.0

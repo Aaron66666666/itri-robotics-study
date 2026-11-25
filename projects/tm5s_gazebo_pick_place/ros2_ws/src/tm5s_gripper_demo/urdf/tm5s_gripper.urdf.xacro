@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<!-- Techman TM5S (TM5S-900 class, official tm2_ros2 description, BSD-3) on a
+     0.70 m pedestal, with the same two-finger gripper as the UR5e project,
+     controlled in Gazebo Harmonic through gz_ros2_control (ROS 2 Jazzy). -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="tm5s">
+  <xacro:arg name="mount_z" default="0.70"/>
+  <xacro:arg name="controllers_file" default="$(find tm5s_gripper_demo)/config/ros2_controllers.yaml"/>
+
+  <!-- Official TM5S kinematics, meshes and inertias (tm_gazebo variant: base_link root). -->
+  <xacro:include filename="$(find tm_gazebo)/xacro/macro.materials.xacro"/>
+  <xacro:include filename="$(find tm_gazebo)/xacro/macro.inertial.xacro"/>
+  <xacro:include filename="$(find tm_gazebo)/xacro/macro.tm5s-nominal.urdf.xacro"/>
+
+  <link name="world"/>
+  <joint name="world_joint" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 $(arg mount_z)" rpy="0 0 0"/>
+  </joint>
+  <xacro:tm5s ns="" prefix="" color="emeraldgreen" format="obj" dae_parse_gzskin="false"/>
+
+  <!-- Two-finger parallel gripper (same geometry as the UR5e project). -->
+  <link name="gripper_base">
+    <inertial>
+      <origin xyz="0 0 0.025"/>
+      <mass value="0.18"/>
+      <inertia ixx="0.00035" ixy="0" ixz="0" iyy="0.00035" iyz="0" izz="0.00025"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.025"/>
+      <geometry><box size="0.09 0.04 0.05"/></geometry>
+      <material name="gripper_dark"><color rgba="0.12 0.14 0.17 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.025"/>
+      <geometry><box size="0.09 0.04 0.05"/></geometry>
+    </collision>
+  </link>
+  <!-- Adapter plate between the TM flange and the gripper (7.5 cm, as on the UR5e). -->
+  <link name="gripper_adapter">
+    <inertial>
+      <origin xyz="0 0 0.0375"/>
+      <mass value="0.1"/>
+      <inertia ixx="0.00005" ixy="0" ixz="0" iyy="0.00005" iyz="0" izz="0.00003"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.0375"/>
+      <geometry><cylinder radius="0.03" length="0.075"/></geometry>
+      <material name="adapter_grey"><color rgba="0.55 0.57 0.6 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.0375"/>
+      <geometry><cylinder radius="0.03" length="0.075"/></geometry>
+    </collision>
+  </link>
+  <joint name="gripper_adapter_joint" type="fixed">
+    <parent link="flange"/>
+    <child link="gripper_adapter"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <joint name="gripper_mount_joint" type="fixed">
+    <parent link="flange"/>
+    <child link="gripper_base"/>
+    <origin xyz="0 0 0.075" rpy="0 0 0"/>
+  </joint>
+
+  <link name="left_finger">
+    <inertial>
+      <origin xyz="0 0 0.045"/>
+      <mass value="0.035"/>
+      <inertia ixx="0.00003" ixy="0" ixz="0" iyy="0.00003" iyz="0" izz="0.000004"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.045"/>
+      <geometry><box size="0.035 0.018 0.09"/></geometry>
+      <material name="finger_black"><color rgba="0.08 0.09 0.1 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.045"/>
+      <geometry><box size="0.035 0.018 0.09"/></geometry>
+    </collision>
+  </link>
+  <joint name="left_finger_joint" type="prismatic">
+    <parent link="gripper_base"/>
+    <child link="left_finger"/>
+    <origin xyz="0 -0.07 0.045"/>
+    <axis xyz="0 1 0"/>
+    <!-- 2 mm margin past open (q=0): a finger starting exactly on its limit
+         stays pinned in Gazebo/DART (found on the UR5e project). -->
+    <limit lower="-0.002" upper="0.04" effort="20" velocity="0.08"/>
+    <dynamics damping="2.0" friction="0.2"/>
+  </joint>
+
+  <link name="right_finger">
+    <inertial>
+      <origin xyz="0 0 0.045"/>
+      <mass value="0.035"/>
+      <inertia ixx="0.00003" ixy="0" ixz="0" iyy="0.00003" iyz="0" izz="0.000004"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.045"/>
+      <geometry><box size="0.035 0.018 0.09"/></geometry>
+      <material name="finger_black"><color rgba="0.08 0.09 0.1 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.045"/>
+      <geometry><box size="0.035 0.018 0.09"/></geometry>
+    </collision>
+  </link>
+  <joint name="right_finger_joint" type="prismatic">
+    <parent link="gripper_base"/>
+    <child link="right_finger"/>
+    <origin xyz="0 0.07 0.045"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-0.04" upper="0.002" effort="20" velocity="0.08"/>
+    <dynamics damping="2.0" friction="0.2"/>
+  </joint>
+
+  <!-- ros2_control: arm (position) + gripper (position), both simulated by gz_ros2_control. -->
+  <ros2_control name="tm5s_arm" type="system">
+    <hardware><plugin>gz_ros2_control/GazeboSimSystem</plugin></hardware>
+    <xacro:macro name="arm_joint" params="name initial">
+      <joint name="${name}">
+        <command_interface name="position"/>
+        <state_interface name="position"><param name="initial_value">${initial}</param></state_interface>
+        <state_interface name="velocity"/>
+      </joint>
+    </xacro:macro>
+    <!-- Start in the ready pose used by the pick-and-place demo. -->
+    <xacro:arm_joint name="joint_1" initial="1.1"/>
+    <xacro:arm_joint name="joint_2" initial="0.0"/>
+    <xacro:arm_joint name="joint_3" initial="1.5708"/>
+    <xacro:arm_joint name="joint_4" initial="0.0"/>
+    <xacro:arm_joint name="joint_5" initial="1.5708"/>
+    <xacro:arm_joint name="joint_6" initial="0.0"/>
+  </ros2_control>
+  <ros2_control name="parallel_gripper" type="system">
+    <hardware><plugin>gz_ros2_control/GazeboSimSystem</plugin></hardware>
+    <joint name="left_finger_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="right_finger_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(arg controllers_file)</parameters>
+    </plugin>
+  </gazebo>
+</robot>

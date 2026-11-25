@@ -34,6 +34,16 @@
 
 **方塊位置誤差的單位是 mm（公釐），不是 cm。** 這是用 Gazebo 讀出方塊放下後的實際座標，和目標位置相比：例如目標 (0.55, 0.30)，實測 (0.5502, 0.2988)，y 方向差 1.2 mm。2026-11-25 錄影時連續 3 次的誤差是 0.1–1.5 mm（`projects/ur5e_gazebo_pick_place/docs/evidence_2026-11-25_gui_video/results.csv`），所以整體寫成「2 mm 以內」比較準確。
 
+## 2b. 達明 TM5S-900（Gazebo + MoveIt 2）
+
+| 問題 | 原因 | 排除方式 | 驗證 |
+|---|---|---|---|
+| 官方 Gazebo 外掛在 Jazzy 不存在 | 達明官方套件是 ROS 2 Humble 版，用 `ign_ros2_control` | 自己寫 URDF，改用 Jazzy 的 `gz_ros2_control` | 三個控制器全部 active |
+| 官方 Gazebo 巨集是舊版 Gazebo Classic 的 | `macro.gazebo.xacro` 用 `libgazebo_ros_control.so` | 只引用官方的運動學、網格和慣量巨集 | URDF 檢查通過，Gazebo 正常產生手臂 |
+| MoveIt 規劃後無法加上時間參數 | 官方關節限制沒有開加速度限制 | 自己的 `joint_limits.yaml` 補上加速度限制 | 關節、末端、取放三個階段都成功 |
+| 官方 MoveIt 設定的連桿名稱對不上 | 官方 MoveIt 用 `link_0`／`base`，Gazebo 版模型的 root 是 `base_link` | SRDF 改成 `base_link` → `flange` | 末端誤差約 2 mm，取放 3/3 |
+| 預備姿態要讓夾爪朝下、位在桌子上方 | 不同手臂的關節定義不同，UR5e 的姿態不能直接用 | 先用正向運動學算出 (0, 0, 90°, 0, 90°, 0) 時法蘭朝下，再轉第 1 軸對準桌子 | 法蘭在 (0.37, 0.39, 1.14)，朝下 |
+
 ## 3. 階段 1：AI Agent（本機 Ollama）
 
 | 問題 | 原因 | 排除方式 | 驗證 |
@@ -74,4 +84,4 @@
 |---|---|---|
 | `git push` 失敗 | GitHub 已經不支援密碼登入 | 建立 SSH 金鑰並加到 GitHub |
 | YOLO 無法使用 GPU | 舊版驅動不支援 PyTorch 的 CUDA 版本 | 更新 NVIDIA Studio 驅動 621.24；推論 21.4 → 11.2 ms |
-| Isaac Sim 是否能用 | 筆電 GPU 只有 8 GB VRAM，低於官方最低需求 16 GB | 先比對官方需求、安裝相容性檢查工具；依經理建議，後續改用 Gazebo + MoveIt 2 |
+| Isaac Sim 是否能用 | 筆電 GPU 只有 8 GB VRAM，低於官方最低需求 16 GB | 先比對官方需求、安裝相容性檢查工具；依經理建議改用 Gazebo + MoveIt 2，TM5S-900 取放已完成 |
