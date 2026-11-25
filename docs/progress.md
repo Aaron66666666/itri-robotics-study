@@ -108,7 +108,7 @@
 - [x] （2026-11-24）修正右夾指在 Gazebo 中完全不動（起始位置在關節限制邊界被 DART 卡住，兩指限制各留 2 mm 餘量）。
 - [x] （2026-11-24）手臂改裝於 0.70 m 底座：原底座在地面、桌面 0.70 m，由上往下夾取超出 UR5e 可達範圍。
 - [x] （2026-11-24）工作桌、桌腳、方塊、底座加入 MoveIt 碰撞場景；關節控制誤差 ≤ 0.005 rad；末端位姿誤差約 1 mm。
-- [x] （2026-11-24）MoveIt pick-and-place 在 Gazebo 連續 3 次成功，方塊最終位置誤差 ≤ 1.2 mm（`scripts/run_pick_place.sh`）。
+- [x] （2026-11-24）MoveIt pick-and-place 在 Gazebo 連續 3 次成功，方塊最終位置誤差 ≤ 1.2 mm（`scripts/run_pick_place.sh`）。2026-11-25 錄影時再跑 3 次，誤差 0.1–1.5 mm，仍在 2 mm 以內。
 
 ## 待完成
 
@@ -116,7 +116,7 @@
 
 - [x] （2026-11-25）GUI 展示腳本：`projects/diff_drive_yolo/tools/demo/demo_person_gui.sh`（Gazebo 畫面 + YOLO 標註影像 + 終端機狀態）與 `projects/ur5e_gazebo_pick_place/scripts/demo_pick_place_gui.sh`（Gazebo + RViz，連續 3 次取放並用 Gazebo 量方塊位置）。試跑：車輛遇人停車、人離開後恢復、停在杯子前 x = 0.538 m；UR5e 3 次取放全部成功，誤差 0.1–1.1 mm（證據在兩個專案的 `evidence*2026-11-25_gui_demo_dryrun`）。
 - [x] （2026-11-25）開 GUI 時 Gazebo 畫面和感測器搶 GPU，偵測偶爾延遲約 1.2 s，會觸發 1.0 s 的偵測逾時安全停車；展示腳本改用 `stale_timeout:=2.0`（無畫面的驗收仍是 1.0，延遲 ≤ 0.4 s）。
-- [ ] 使用者錄製兩段 GUI 影片（車輛遇人停車與恢復、UR5e 連續取放）。
+- [x] （2026-11-25）錄製兩段 GUI 影片：車輛遇人停車、恢復後停在杯子前（Gazebo 實測 x = 0.548 m）；UR5e 連續 3 次取放全部成功，誤差 0.1–1.5 mm。錄影當次的紀錄在兩個專案的 `evidence*2026-11-25_gui_video`（影片本身不放在 git）。
 
 ## 後續階段路線圖
 
