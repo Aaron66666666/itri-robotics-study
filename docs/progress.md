@@ -4,7 +4,7 @@
 
 學習機器人開發所需的 Linux、ROS 2、Gazebo、YOLO 物件辨識，以及 AI Agent / Multi-Agent 程式開發。
 
-## 目前狀態（2026-11-24）
+## 目前狀態（2026-11-26）
 
 | 項目 | 狀態 |
 |---|---|
@@ -14,7 +14,7 @@
 | UR5e 碰撞場景、關節／末端控制、Pick-and-Place | 完成，連續 3 次成功 |
 | 人物模型端到端測試（真實影像人員停止） | 完成，連續 2 次通過 |
 | GPU 加速（RTX 4070） | 完成 |
-| GUI 目視確認 | 待完成 |
+| GUI 目視確認 | 完成：錄製自走車遇人停車、UR5e 與 TM5S 連續取放三段影片 |
 | 階段 1：AI Agent（本機 Ollama） | 完成：單一 Agent（Llama 12/12）與 Multi-Agent（11/12） |
 | 階段 2：YOLO 自訂資料訓練 | 完成：瓶子辨識修好，人員未退化（v3） |
 | 階段 3：機械手臂取放（原 Isaac Sim） | 完成：依經理建議改用 Gazebo + MoveIt 2；TM5S-900 連續 3 次取放成功，誤差 0.1–1.4 mm |
@@ -164,9 +164,7 @@
   | 驅動程式 | 測試版本 595.97 | 621.24 | 較新 |
 
   文件提到「低於最低規格的 GPU 可能無法執行部分教學與 benchmark」，但沒有說 8 GB 不支援；需以相容性檢查結果決定。Windows 端已安裝 Python 3.12（winget，個人安裝）並開啟長路徑支援（`LongPathsEnabled = 1`），檢查工具裝在 `C:\isaacsim\env_check`。
-- [ ] 執行 Isaac Sim 相容性檢查（Compatibility Checker），步驟見下方「Isaac Sim 相容性檢查」，等待使用者確認後執行。
-- [ ] 在 Windows 安裝 Isaac Sim（安裝前先確認）。
-- [ ] 匯入 UR 手臂（UR5／UR5e）USD，完成關節控制與物件取放。
+- 取消（依經理建議，2026-11-25）：Isaac Sim 相容性檢查、Windows 安裝、匯入 UR 手臂 USD。UR5e 與 TM5S 的取放改在 Gazebo + MoveIt 2 完成。若之後要用 Isaac Sim，需系統直接安裝 Linux 並使用 4.5 版。
 - [x] （2026-11-25）達明 TM5S-900：用官方 tm2_ros2 模型（BSD-3），在 Gazebo Harmonic + MoveIt 2 完成控制與取放（取代 Isaac Sim）。三個控制器全部啟動；關節控制誤差 ≤ 0.0046 rad；末端控制誤差約 2 mm；連續 3 次取放全部成功，方塊誤差 0.1–1.4 mm。附末端路徑與夾爪開合圖。專案：`projects/tm5s_gazebo_pick_place`。
 - [x] （2026-11-25）錄製 TM5S 取放的 GUI 影片：錄影當次連續 3 次全部成功，誤差 0.0–1.4 mm（`projects/tm5s_gazebo_pick_place/docs/evidence_2026-11-25_gui_video`，影片本身不放在 git）。
 
