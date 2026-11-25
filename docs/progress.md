@@ -168,7 +168,7 @@
 - [ ] 在 Windows 安裝 Isaac Sim（安裝前先確認）。
 - [ ] 匯入 UR 手臂（UR5／UR5e）USD，完成關節控制與物件取放。
 - [x] （2026-11-25）達明 TM5S-900：用官方 tm2_ros2 模型（BSD-3），在 Gazebo Harmonic + MoveIt 2 完成控制與取放（取代 Isaac Sim）。三個控制器全部啟動；關節控制誤差 ≤ 0.0046 rad；末端控制誤差約 2 mm；連續 3 次取放全部成功，方塊誤差 0.1–1.4 mm。附末端路徑與夾爪開合圖。專案：`projects/tm5s_gazebo_pick_place`。
-- [ ] 使用者錄製 TM5S 取放的 GUI 影片（`scripts/demo_pick_place_gui.sh`）。
+- [x] （2026-11-25）錄製 TM5S 取放的 GUI 影片：錄影當次連續 3 次全部成功，誤差 0.0–1.4 mm（`projects/tm5s_gazebo_pick_place/docs/evidence_2026-11-25_gui_video`，影片本身不放在 git）。
 
 ### 階段 4：microduck RL
 
