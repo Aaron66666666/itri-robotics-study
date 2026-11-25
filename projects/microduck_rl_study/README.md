@@ -53,6 +53,9 @@ $UV run --locked python scripts/export.py Mjlab-Velocity-Flat-MicroDuck \
 - `check_onnx.py model.onnx`：確認輸入輸出形狀和沒有 NaN。
 - `eval_fixed_cmd.py --checkpoints ... [--pushes on]`：固定指令評估（見下方）。
 - `train_tight_track.py`：用較嚴格的速度追蹤獎勵訓練（見「嘗試改善速度追蹤」）。
+- `tb_to_csv.py <run_dir> out.csv`：把 TensorBoard 的所有數值匯出成 CSV。
+
+原始紀錄在 `docs/raw_logs/`（gzip 壓縮，用 `zcat` 或解壓縮軟體開啟）：`train/` 是 4 次訓練的終端機輸出，`eval/` 是固定指令評估的輸出，`tensorboard_csv/` 是每次訓練全部的 TensorBoard 數值（step、tag、value）。
 
 ## 訓練結果（2026-11-24 22:09 → 11-25 05:17，共約 7 小時）
 

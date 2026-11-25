@@ -17,10 +17,10 @@
 | GUI 目視確認 | 待完成 |
 | 階段 1：AI Agent（本機 Ollama） | 完成：單一 Agent（Llama 12/12）與 Multi-Agent（11/12） |
 | 階段 2：YOLO 自訂資料訓練 | 完成：瓶子辨識修好，人員未退化（v3） |
-| 階段 3：Isaac Sim（Windows 原生） | 延後到最後（使用者決定，2026-11-25）；檢查工具已安裝，停在 EULA |
+| 階段 3：Isaac Sim（Windows 原生） | 依經理建議（2026-11-25）不在這台筆電上跑；TM5S-900 取放改用 Gazebo + MoveIt 2 |
 | 階段 4：microduck RL | 進行中：平地行走訓練 8000 次迭代完成，策略可匯出 ONNX |
 
-詳細報告：`projects/diff_drive_yolo/docs/stage_report_2026-11-24.md`。
+詳細報告：`projects/diff_drive_yolo/docs/stage_report_2026-11-24.md`。問題與排除紀錄：`docs/troubleshooting.md`。
 
 ## 開發環境
 
@@ -147,7 +147,9 @@
 
 ### 階段 3：Isaac Sim（Windows 原生，不在 WSL）
 
-> 2026-11-25：使用者決定 Isaac Sim 放到最後再做，其他階段先進行。相容性檢查工具已裝在 `C:\isaacsim\env_check`，停在 EULA 確認畫面，恢復時從那裡繼續。
+> 2026-11-25：經理建議 RTX 4070 筆電（8 GB VRAM）加 WSL2 不適合硬跑 Isaac Sim。達明 TM5S-900 的取放驗證改用已經架好的 Gazebo + MoveIt 2（或 MuJoCo）。若之後仍要用 Isaac Sim，需要系統直接安裝 Linux 並使用 4.5 版。相容性檢查工具（`C:\isaacsim\env_check`）停在 EULA 確認畫面，沒有繼續執行。
+>
+> 達明官方的 [tm2_ros2](https://github.com/TechmanRobotInc/tm2_ros2)（BSD-3）提供 TM5S 的模型（xacro、網格）、`tm5s_moveit_config` 和 `tm_gazebo`，可以沿用 UR5e 專案的架構。
 
 - [x] （2026-11-24）比對 Isaac Sim 6.2 官方需求（[requirements](https://docs.isaacsim.omniverse.nvidia.com/latest/installation/requirements.html)，文件更新於 2026-10-14）與本機規格：
 
@@ -164,7 +166,7 @@
 - [ ] 執行 Isaac Sim 相容性檢查（Compatibility Checker），步驟見下方「Isaac Sim 相容性檢查」，等待使用者確認後執行。
 - [ ] 在 Windows 安裝 Isaac Sim（安裝前先確認）。
 - [ ] 匯入 UR 手臂（UR5／UR5e）USD，完成關節控制與物件取放。
-- [ ] 取得達明 TM5S-900 的官方模型，轉成 USD 匯入，完成控制與取放。
+- [ ] 達明 TM5S-900：用官方 tm2_ros2 模型，在 Gazebo + MoveIt 2 完成控制與取放（取代 Isaac Sim）。
 
 ### 階段 4：microduck RL
 
