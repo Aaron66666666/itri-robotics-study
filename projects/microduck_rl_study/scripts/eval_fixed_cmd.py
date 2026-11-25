@@ -147,7 +147,7 @@ def main() -> None:
             base.common_step_counter = FINAL_STAGE_STEP
             wrapped.reset()
             r = evaluate(wrapped, policy, a.seconds)
-            r.update(checkpoint=ckpt.rsplit("/", 1)[-1], pushes=a.pushes)
+            r.update(checkpoint="/".join(ckpt.rstrip("/").split("/")[-2:]), pushes=a.pushes)  # run folder + file
             # Sanity check: -1.0 means the action_rate curriculum is at its final stage.
             r["action_rate_w"] = base.reward_manager.get_term_cfg("action_rate_l2").weight
             results.append(r)
