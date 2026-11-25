@@ -179,6 +179,8 @@ $UV run --locked python scripts/export.py Mjlab-Velocity-Flat-MicroDuck \
 
 ![檢查點 3999、5998、7997 的行走畫面](docs/gait_3999_5998_7997.png)
 
+> 圖中的機器人是用 [Pollen Robotics](https://github.com/pollen-robotics/microduck_rl) 的 microduck 3D 模型在模擬中渲染的。模型採用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 授權，這張圖（模擬畫面截圖，經裁切拼接）同樣以 CC BY-NC-SA 4.0 授權，僅供非商業用途。
+
 由上到下是檢查點 3999、5998、7997。每一列是同一支 10 秒影片（500 步）平均取 8 張畫面，裁切在機器人附近。
 
 - 三個檢查點在 10 秒內都保持直立，沒有跌倒。機器人會依指令轉向，所以每張畫面的朝向不同。
