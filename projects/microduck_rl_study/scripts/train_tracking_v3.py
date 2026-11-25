@@ -37,8 +37,11 @@ from mjlab.managers.reward_manager import RewardTermCfg
 from mjlab.tasks.registry import load_env_cfg, load_rl_cfg, load_runner_cls, register_mjlab_task
 from mjlab_microduck.tasks import mdp as microduck_mdp
 
-BASE_TASK = "Mjlab-Velocity-Flat-MicroDuck"
-NEW_TASK = "Mjlab-Velocity-Flat-MicroDuck-TrackV3"
+# ROUGH=1 uses the upstream rough-terrain task (same observations: it is "blind",
+# no height scan), so a flat checkpoint can be resumed on it.
+ROUGH = os.environ.get("ROUGH", "0") == "1"
+BASE_TASK = "Mjlab-Velocity-Rough-MicroDuck" if ROUGH else "Mjlab-Velocity-Flat-MicroDuck"
+NEW_TASK = BASE_TASK + "-TrackV3"
 LIN_STD2 = 0.05
 YAW_FINE_WEIGHT, YAW_FINE_STD = 2.0, 0.35
 FORWARD_BUCKET = float(os.environ.get("FORWARD_BUCKET", "0.0"))
@@ -103,7 +106,7 @@ register_mjlab_task(
     rl_cfg=load_rl_cfg(BASE_TASK),
     runner_cls=load_runner_cls(BASE_TASK),
 )
-print(f"[track_v3] registered {NEW_TASK}: forward bucket={FORWARD_BUCKET}, axis bucket={AXIS_BUCKET} "
+print(f"[track_v3] registered {NEW_TASK} (base {BASE_TASK}): forward bucket={FORWARD_BUCKET}, axis bucket={AXIS_BUCKET} "
       f"(lateral share {LATERAL_SHARE}), lin_fine w={LIN_FINE_WEIGHT} std={LIN_FINE_STD}, "
       f"yaw_fine w={YAW_FINE_WEIGHT}", flush=True)
 

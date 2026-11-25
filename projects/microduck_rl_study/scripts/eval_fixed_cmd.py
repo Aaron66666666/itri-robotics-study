@@ -127,6 +127,7 @@ def evaluate(env, policy, seconds: float) -> dict:
 
 
 def main() -> None:
+    global TASK
     p = argparse.ArgumentParser()
     p.add_argument("--checkpoints", nargs="+", required=True)
     p.add_argument("--commands", nargs="+", default=["0.2,0,0", "0.4,0,0", "-0.2,0,0", "0,0.2,0", "0,0,0.8", "0,0,0"])
@@ -134,7 +135,9 @@ def main() -> None:
     p.add_argument("--seconds", type=float, default=20.0)
     p.add_argument("--pushes", choices=["off", "on"], default="off")
     p.add_argument("--json-out")
+    p.add_argument("--task", default=TASK, help="e.g. Mjlab-Velocity-Rough-MicroDuck (same observations)")
     a = p.parse_args()
+    TASK = a.task
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
     results = []
