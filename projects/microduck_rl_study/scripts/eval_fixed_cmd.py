@@ -48,8 +48,14 @@ def make_env(num_envs: int, cmd: tuple[float, float, float], pushes: bool, devic
     twist.ranges.ang_vel_z = (wz, wz)
     twist.rel_standing_envs = 0.0
     twist.rel_heading_envs = 0.0
-    if hasattr(twist, "rel_turn_in_place_envs"):
-        twist.rel_turn_in_place_envs = 0.0
+    # Every bucket that would replace the fixed command must be off. mjlab's
+    # velocity cfg defaults rel_forward_envs to 0.2 (20% of resamples become
+    # forward-only, |vx| >= 0.3): before 2026-11-26 this was left on, so ~20% of
+    # envs walked forward in every test (that showed up as fake "standing
+    # drift" and too-low backward/lateral numbers).
+    for attr in ("rel_turn_in_place_envs", "rel_forward_envs", "rel_world_envs", "init_velocity_prob"):
+        if hasattr(twist, attr):
+            setattr(twist, attr, 0.0)
     # This curriculum would raise rel_standing_envs back to 0.25.
     cfg.curriculum.pop("standing_envs", None)
     if not pushes:
