@@ -114,8 +114,9 @@
 
 ### 目前專案收尾
 
-- [ ] 使用者以 GUI 目視確認車輛閉環（`worlds/diff_drive_camera_cup.sdf`）。
-- [ ] 使用者以 GUI（Gazebo + RViz）目視確認一次完整 pick-and-place。
+- [x] （2026-11-25）GUI 展示腳本：`projects/diff_drive_yolo/tools/demo/demo_person_gui.sh`（Gazebo 畫面 + YOLO 標註影像 + 終端機狀態）與 `projects/ur5e_gazebo_pick_place/scripts/demo_pick_place_gui.sh`（Gazebo + RViz，連續 3 次取放並用 Gazebo 量方塊位置）。試跑：車輛遇人停車、人離開後恢復、停在杯子前 x = 0.538 m；UR5e 3 次取放全部成功，誤差 0.1–1.1 mm（證據在兩個專案的 `evidence*2026-11-25_gui_demo_dryrun`）。
+- [x] （2026-11-25）開 GUI 時 Gazebo 畫面和感測器搶 GPU，偵測偶爾延遲約 1.2 s，會觸發 1.0 s 的偵測逾時安全停車；展示腳本改用 `stale_timeout:=2.0`（無畫面的驗收仍是 1.0，延遲 ≤ 0.4 s）。
+- [ ] 使用者錄製兩段 GUI 影片（車輛遇人停車與恢復、UR5e 連續取放）。
 
 ## 後續階段路線圖
 

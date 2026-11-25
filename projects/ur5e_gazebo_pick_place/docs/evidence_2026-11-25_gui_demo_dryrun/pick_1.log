@@ -1,0 +1,17 @@
+[INFO] [1795600874.325791393] [pick_place_demo]: Collision scene: pedestal, table top z=0.700, 4 legs, cube at (0.4, 0.5, 0.73)
+[INFO] [1795600880.125449721] [pick_place_demo]: joint goal: ready pose: planned+executed (MoveIt code 1)
+[INFO] [1795600880.125861717] [pick_place_demo]: joint goal: ready pose: max joint error after execution 0.0049 rad
+[INFO] [1795600882.677749547] [pick_place_demo]: gripper open: command q=0.000, actual [0.0000, 0.0000], controller error_code=0
+[INFO] [1795600884.707978378] [pick_place_demo]: pose goal: pre-grasp above cube: planned+executed (MoveIt code 1)
+[INFO] [1795600885.814584559] [pick_place_demo]: approach down: cartesian 1.00 executed
+[INFO] [1795600888.316260615] [pick_place_demo]: grasp: command q=0.036, actual [0.0310, -0.0310], controller error_code=0
+[INFO] [1795600888.317546643] [pick_place_demo]: Attached pick_cube in the MoveIt planning scene
+[INFO] [1795600889.423674819] [pick_place_demo]: lift: cartesian 1.00 executed
+[INFO] [1795600890.561687372] [pick_place_demo]: pose goal: above place position: planned+executed (MoveIt code 1)
+[INFO] [1795600891.618386396] [pick_place_demo]: lower to place: cartesian 1.00 executed
+[INFO] [1795600894.169887607] [pick_place_demo]: release: command q=0.000, actual [0.0000, -0.0000], controller error_code=0
+[INFO] [1795600894.171138035] [pick_place_demo]: Detached pick_cube in the MoveIt planning scene
+[INFO] [1795600895.228558514] [pick_place_demo]: retreat: cartesian 1.00 executed
+[INFO] [1795600896.896646506] [pick_place_demo]: joint goal: back to ready: planned+executed (MoveIt code 1)
+[INFO] [1795600896.897020417] [pick_place_demo]: joint goal: back to ready: max joint error after execution 0.0044 rad
+[INFO] [1795600896.897294687] [pick_place_demo]: Stage "pick" finished
