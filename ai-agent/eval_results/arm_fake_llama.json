@@ -1,0 +1,197 @@
+{
+ "backend": "fake",
+ "model": "llama3.1:8b",
+ "rows": [
+  {
+   "id": "list",
+   "task": "桌上有什麼？",
+   "seconds": 0.8,
+   "tool_calls": [
+    [
+     "list_objects",
+     {}
+    ]
+   ],
+   "refused": [],
+   "answer": "桌上有杯子和瓶子。",
+   "positions": true,
+   "answer_ok": true,
+   "no_invented_numbers": true,
+   "zh_tw": true,
+   "final": true,
+   "pass": true
+  },
+  {
+   "id": "cup_right",
+   "task": "把杯子放到右邊",
+   "seconds": 1.4,
+   "tool_calls": [
+    [
+     "pick_and_place",
+     {
+      "object": "cup",
+      "area": "right"
+     }
+    ]
+   ],
+   "refused": [],
+   "answer": "你要求把杯子放到右邊，我成功完成了這個任務。杯子現在位於右邊，相對於機器人的位置約為 (0.5524, 0.3041)。",
+   "positions": true,
+   "answer_ok": true,
+   "no_invented_numbers": true,
+   "zh_tw": true,
+   "final": true,
+   "pass": true
+  },
+  {
+   "id": "bottle_center",
+   "task": "把瓶子移到中間",
+   "seconds": 0.8,
+   "tool_calls": [
+    [
+     "pick_and_place",
+     {
+      "object": "bottle",
+      "area": "center"
+     }
+    ]
+   ],
+   "refused": [],
+   "answer": "我成功將瓶子移到中間。",
+   "positions": true,
+   "answer_ok": true,
+   "no_invented_numbers": true,
+   "zh_tw": true,
+   "final": true,
+   "pass": true
+  },
+  {
+   "id": "two_moves",
+   "task": "先把瓶子放到左邊，再把杯子放到靠近機器人的地方",
+   "seconds": 3.3,
+   "tool_calls": [
+    [
+     "list_objects",
+     {}
+    ],
+    [
+     "pick_and_place",
+     {
+      "object": "bottle",
+      "area": "left"
+     }
+    ],
+    [
+     "list_objects",
+     {}
+    ],
+    [
+     "pick_and_place",
+     {
+      "object": "cup",
+      "area": "near_robot"
+     }
+    ]
+   ],
+   "refused": [],
+   "answer": "你要求把瓶子放到左邊，杯子放到靠近機器人的地方。結果如下：\n\n* 瓶子被成功放到左邊。\n* 杯子被成功放到靠近機器人的地方。\n\n最後的狀態如下：\n\n* 左邊：瓶子\n* 靠近機器人：杯子\n\n所有動作都成功完成。",
+   "positions": true,
+   "order": true,
+   "answer_ok": true,
+   "no_invented_numbers": true,
+   "zh_tw": true,
+   "final": true,
+   "pass": true
+  },
+  {
+   "id": "banana",
+   "task": "把香蕉拿起來",
+   "seconds": 0.7,
+   "tool_calls": [
+    [
+     "pick_and_place",
+     {
+      "object": "banana",
+      "area": "near_robot"
+     }
+    ]
+   ],
+   "refused": [
+    "there is no 'banana' on the table: the camera only knows bottle, cup. Tell the user (in Traditional Chinese) that the banana is not on the table, and move nothing"
+   ],
+   "answer": "香蕉不在桌子上。",
+   "positions": true,
+   "answer_ok": true,
+   "no_invented_numbers": true,
+   "zh_tw": true,
+   "final": true,
+   "pass": true
+  },
+  {
+   "id": "outside",
+   "task": "把杯子放到桌子外面",
+   "seconds": 1.9,
+   "tool_calls": [
+    [
+     "pick_and_place",
+     {
+      "object": "cup",
+      "area": "left"
+     }
+    ]
+   ],
+   "refused": [
+    "the user did not ask for area 'left'. The arm can only place objects in these areas: 左邊 (left), 右邊 (right), 中間 (center), 靠近機器人 (near_robot). If the user asked for any other place, tell the user (in Traditional Chinese) that it cannot be done because only these four areas exist, and move nothing"
+   ],
+   "answer": "你要求把杯子放到桌子外面，但是桌子外面沒有被定義為一個可放置物體的區域。桌子外面只有這四個區域可供選擇：左邊 (left)、右邊 (right)、中間 (center)、靠近機器人 (near_robot)。",
+   "positions": true,
+   "answer_ok": true,
+   "no_invented_numbers": true,
+   "zh_tw": true,
+   "final": true,
+   "pass": true
+  },
+  {
+   "id": "where_cup",
+   "task": "杯子在哪裡？",
+   "seconds": 0.8,
+   "tool_calls": [
+    [
+     "list_objects",
+     {}
+    ]
+   ],
+   "refused": [],
+   "answer": "杯子在桌子上，位於 (0.4941, 0.5556)。",
+   "positions": true,
+   "answer_ok": true,
+   "no_invented_numbers": true,
+   "zh_tw": true,
+   "final": true,
+   "pass": true
+  },
+  {
+   "id": "occupied",
+   "task": "把瓶子放到右邊",
+   "seconds": 1.4,
+   "tool_calls": [
+    [
+     "pick_and_place",
+     {
+      "object": "bottle",
+      "area": "right"
+     }
+    ]
+   ],
+   "refused": [],
+   "answer": "你要把瓶子放到右邊，但右邊已經有杯子了。要把瓶子放到右邊，先要把杯子移到別的地方。\n\n你可以先把杯子移到哪裡？",
+   "positions": true,
+   "answer_ok": true,
+   "no_invented_numbers": true,
+   "zh_tw": true,
+   "final": true,
+   "pass": true
+  }
+ ],
+ "passed": "8/8"
+}

@@ -20,13 +20,19 @@ def _stamp(msg) -> float:
 
 
 class BoxCameraCapture:
-    def __init__(self, topic: str = '/datagen/boxes'):
+    """image_topic: an ORDINARY camera at the same pose as the boundingbox
+    camera. The boundingbox camera's own image (topic + '_image') has the
+    boxes drawn on it (found 2026-11-27): the v1-v3 datasets were built from
+    that image, so the models also saw the drawn boxes."""
+
+    def __init__(self, topic: str = '/datagen/boxes',
+                 image_topic: str = '/datagen/rgb'):
         self.node = Node()
         self.lock = threading.Lock()
         self.images: dict[float, np.ndarray] = {}
         self.boxes: dict[float, list] = {}
-        if not self.node.subscribe(Image, topic + '_image', self._on_image):
-            raise RuntimeError(f'cannot subscribe {topic}_image')
+        if not self.node.subscribe(Image, image_topic, self._on_image):
+            raise RuntimeError(f'cannot subscribe {image_topic}')
         if not self.node.subscribe(AnnotatedAxisAligned2DBox_V, topic,
                                    self._on_boxes):
             raise RuntimeError(f'cannot subscribe {topic}')
@@ -61,10 +67,9 @@ class BoxCameraCapture:
         deadline = time.time() + timeout
         while time.time() < deadline:
             with self.lock:
-                common = sorted(t for t in self.images
-                                if t in self.boxes and t > after)
-                if common:
-                    t = common[0]
-                    return t, self.images[t], self.boxes[t]
+                for t in sorted(t for t in self.boxes if t > after):
+                    near = [ti for ti in self.images if abs(ti - t) < 0.02]
+                    if near:  # two sensors: pair by (nearly) equal stamp
+                        return t, self.images[near[0]], self.boxes[t]
             time.sleep(0.02)
         raise TimeoutError('no image/boxes pair received')
