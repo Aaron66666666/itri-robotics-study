@@ -13,12 +13,15 @@ def generate_launch_description():
     launch_dir = os.path.join(get_package_share_directory('tm5s_gripper_demo'), 'launch')
     sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(launch_dir, 'tm5s_gripper_sim.launch.py')),
-        launch_arguments={'gazebo_gui': LaunchConfiguration('gazebo_gui')}.items())
+        launch_arguments={'gazebo_gui': LaunchConfiguration('gazebo_gui'),
+                          'world_file': LaunchConfiguration('world_file')}.items())
     moveit = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(launch_dir, 'tm5s_moveit.launch.py')),
         launch_arguments={'launch_rviz': LaunchConfiguration('launch_rviz')}.items())
     return LaunchDescription([
         DeclareLaunchArgument('gazebo_gui', default_value='true'),
         DeclareLaunchArgument('launch_rviz', default_value='true'),
+        DeclareLaunchArgument('world_file', default_value=os.path.join(
+            get_package_share_directory('tm5s_gripper_demo'), 'worlds', 'pick_place_world.sdf')),
         sim, moveit,
     ])

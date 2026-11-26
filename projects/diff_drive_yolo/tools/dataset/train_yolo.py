@@ -24,9 +24,13 @@ def main() -> None:
     parser.add_argument('--freeze', type=int, default=10,
                         help='freeze the first N layers (backbone) to keep '
                              'COCO features, e.g. person; 0 = train all')
+    parser.add_argument('--weights', default='yolo26n.pt',
+                        help='starting weights (default: COCO-pretrained '
+                             'yolo26n.pt; e.g. yolo26n_gazebo_v3.pt to '
+                             'fine-tune further)')
     args = parser.parse_args()
     os.chdir(Path.home() / 'yolo_project')
-    model = YOLO('yolo26n.pt')   # COCO-pretrained starting point
+    model = YOLO(args.weights)
     model.train(
         data=args.data, epochs=args.epochs, imgsz=640, batch=args.batch,
         device=0, workers=4, patience=15, seed=0, deterministic=True,

@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<sdf version="1.8">
+  <world name="tm5s_vision">
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors"><render_engine>ogre2</render_engine></plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <light name="sun" type="directional">
+      <pose>0 0 8 0 0 0</pose>
+      <direction>-0.5 0.1 -0.9</direction>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+    </light>
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="ground">
+        <collision name="collision"><geometry><plane><normal>0 0 1</normal><size>20 20</size></plane></geometry></collision>
+        <visual name="visual"><geometry><plane><normal>0 0 1</normal><size>20 20</size></plane></geometry><material><diffuse>0.75 0.75 0.75 1</diffuse></material></visual>
+      </link>
+    </model>
+    <!-- Robot pedestal: top at z=0.69 (TM5S base_link mounted at 0.70). -->
+    <model name="robot_pedestal">
+      <static>true</static>
+      <pose>0 0 0.345 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.22 0.22 0.69</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.22 0.22 0.69</size></box></geometry><material><diffuse>0.3 0.3 0.32 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <model name="work_table">
+      <static>true</static>
+      <pose>0.65 0.75 0.35 0 0 0</pose>
+      <link name="table">
+        <collision name="top_collision"><pose>0 0 0.32 0 0 0</pose><geometry><box><size>1.0 1.2 0.06</size></box></geometry></collision>
+        <visual name="top"><pose>0 0 0.32 0 0 0</pose><geometry><box><size>1.0 1.2 0.06</size></box></geometry><material><diffuse>0.35 0.22 0.12 1</diffuse></material></visual>
+        <collision name="leg_a_collision"><pose>-0.42 -0.52 0.14 0 0 0</pose><geometry><box><size>0.06 0.06 0.28</size></box></geometry></collision>
+        <visual name="leg_a"><pose>-0.42 -0.52 0.14 0 0 0</pose><geometry><box><size>0.06 0.06 0.28</size></box></geometry><material><diffuse>0.2 0.2 0.2 1</diffuse></material></visual>
+        <collision name="leg_b_collision"><pose>0.42 -0.52 0.14 0 0 0</pose><geometry><box><size>0.06 0.06 0.28</size></box></geometry></collision>
+        <visual name="leg_b"><pose>0.42 -0.52 0.14 0 0 0</pose><geometry><box><size>0.06 0.06 0.28</size></box></geometry><material><diffuse>0.2 0.2 0.2 1</diffuse></material></visual>
+        <collision name="leg_c_collision"><pose>-0.42 0.52 0.14 0 0 0</pose><geometry><box><size>0.06 0.06 0.28</size></box></geometry></collision>
+        <visual name="leg_c"><pose>-0.42 0.52 0.14 0 0 0</pose><geometry><box><size>0.06 0.06 0.28</size></box></geometry><material><diffuse>0.2 0.2 0.2 1</diffuse></material></visual>
+        <collision name="leg_d_collision"><pose>0.42 0.52 0.14 0 0 0</pose><geometry><box><size>0.06 0.06 0.28</size></box></geometry></collision>
+        <visual name="leg_d"><pose>0.42 0.52 0.14 0 0 0</pose><geometry><box><size>0.06 0.06 0.28</size></box></geometry><material><diffuse>0.2 0.2 0.2 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="pick_cube">
+      <static>false</static>
+      <pose>0.95 1.20 0.73 0 0 0</pose>
+      <link name="cube">
+        <inertial><mass>0.06</mass><inertia><ixx>0.00003</ixx><iyy>0.00003</iyy><izz>0.00003</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+        <collision name="collision"><geometry><box><size>0.06 0.06 0.06</size></box></geometry><surface><friction><ode><mu>2.0</mu><mu2>2.0</mu2></ode></friction></surface></collision>
+        <visual name="visual"><geometry><box><size>0.06 0.06 0.06</size></box></geometry><material><diffuse>0.8 0.08 0.04 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="table_camera"><static>true</static>
+      <pose>1.45 0.5 1.45 0 0.6306 3.1416</pose>
+      <link name="link">
+        <visual name="body"><geometry><box><size>0.06 0.10 0.05</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse><specular>0.3 0.3 0.3 1</specular></material></visual>
+        <sensor name="table_camera" type="camera">
+          <always_on>1</always_on><update_rate>5</update_rate><visualize>false</visualize>
+          <topic>/table_camera/image</topic>
+          <camera><horizontal_fov>0.9</horizontal_fov>
+            <image><width>640</width><height>480</height><format>R8G8B8</format></image>
+            <clip><near>0.05</near><far>10</far></clip></camera>
+        </sensor>
+      </link></model>
+    <model name="cup"><pose>0.4 0.55 0.70 0 0 -0.7854</pose><link name="link"><inertial><pose>0 0 0.0525 0 0 0</pose><mass>0.15</mass><inertia><ixx>0.000214</ixx><iyy>0.000214</iyy><izz>0.000152</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial><visual name="body"><pose>0 0 0.0525 0 0 0</pose><geometry><cylinder><radius>0.045</radius><length>0.105</length></cylinder></geometry><material><ambient>0.92 0.92 0.92 1</ambient><diffuse>0.92 0.92 0.92 1</diffuse><specular>0.3 0.3 0.3 1</specular></material></visual><collision name="body_c"><pose>0 0 0.0525 0 0 0</pose><geometry><cylinder><radius>0.045</radius><length>0.105</length></cylinder></geometry><surface><friction><ode><mu>2.0</mu><mu2>2.0</mu2></ode></friction></surface></collision><visual name="coffee"><pose>0 0 0.103 0 0 0</pose><geometry><cylinder><radius>0.04</radius><length>0.004</length></cylinder></geometry><material><ambient>0.25 0.12 0.04 1</ambient><diffuse>0.25 0.12 0.04 1</diffuse><specular>0.3 0.3 0.3 1</specular></material></visual><visual name="handle_top"><pose>0.058499999999999996 0 0.084 0 0 0</pose><geometry><box><size>0.0315 0.012 0.012</size></box></geometry><material><ambient>0.92 0.92 0.92 1</ambient><diffuse>0.92 0.92 0.92 1</diffuse><specular>0.3 0.3 0.3 1</specular></material></visual><collision name="handle_top_c"><pose>0.058499999999999996 0 0.084 0 0 0</pose><geometry><box><size>0.0315 0.012 0.012</size></box></geometry></collision><visual name="handle_side"><pose>0.0715 0 0.0525 0 0 0</pose><geometry><box><size>0.012 0.012 0.0595</size></box></geometry><material><ambient>0.92 0.92 0.92 1</ambient><diffuse>0.92 0.92 0.92 1</diffuse><specular>0.3 0.3 0.3 1</specular></material></visual><collision name="handle_side_c"><pose>0.0715 0 0.0525 0 0 0</pose><geometry><box><size>0.012 0.012 0.0595</size></box></geometry></collision><visual name="handle_bottom"><pose>0.058499999999999996 0 0.021 0 0 0</pose><geometry><box><size>0.0315 0.012 0.012</size></box></geometry><material><ambient>0.92 0.92 0.92 1</ambient><diffuse>0.92 0.92 0.92 1</diffuse><specular>0.3 0.3 0.3 1</specular></material></visual><collision name="handle_bottom_c"><pose>0.058499999999999996 0 0.021 0 0 0</pose><geometry><box><size>0.0315 0.012 0.012</size></box></geometry></collision></link><plugin filename="gz-sim-label-system" name="gz::sim::systems::Label"><label>42</label></plugin></model>
+    <model name="bottle"><pose>0.5 0.35 0.70 0 0 0</pose><link name="link"><inertial><pose>0 0 0.055 0 0 0</pose><mass>0.2</mass><inertia><ixx>0.000303</ixx><iyy>0.000303</iyy><izz>0.000202</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial><visual name="body"><pose>0 0 0.055 0 0 0</pose><geometry><cylinder><radius>0.045</radius><length>0.11</length></cylinder></geometry><material><ambient>0.08 0.65 0.12 1</ambient><diffuse>0.08 0.65 0.12 1</diffuse><specular>0.3 0.3 0.3 1</specular></material></visual><collision name="body_c"><pose>0 0 0.055 0 0 0</pose><geometry><cylinder><radius>0.045</radius><length>0.11</length></cylinder></geometry><surface><friction><ode><mu>2.0</mu><mu2>2.0</mu2></ode></friction></surface></collision><visual name="neck"><pose>0 0 0.1275 0 0 0</pose><geometry><cylinder><radius>0.0225</radius><length>0.035</length></cylinder></geometry><material><ambient>0.08 0.65 0.12 1</ambient><diffuse>0.08 0.65 0.12 1</diffuse><specular>0.3 0.3 0.3 1</specular></material></visual><collision name="neck_c"><pose>0 0 0.1275 0 0 0</pose><geometry><cylinder><radius>0.0225</radius><length>0.035</length></cylinder></geometry><surface><friction><ode><mu>2.0</mu><mu2>2.0</mu2></ode></friction></surface></collision><visual name="cap"><pose>0 0 0.1525 0 0 0</pose><geometry><cylinder><radius>0.024</radius><length>0.015</length></cylinder></geometry><material><ambient>0.8 0.1 0.1 1</ambient><diffuse>0.8 0.1 0.1 1</diffuse><specular>0.3 0.3 0.3 1</specular></material></visual><collision name="cap_c"><pose>0 0 0.1525 0 0 0</pose><geometry><cylinder><radius>0.024</radius><length>0.015</length></cylinder></geometry><surface><friction><ode><mu>2.0</mu><mu2>2.0</mu2></ode></friction></surface></collision><visual name="label"><pose>0 0 0.06 0 0 0</pose><geometry><cylinder><radius>0.0455</radius><length>0.045</length></cylinder></geometry><material><ambient>0.95 0.95 0.95 1</ambient><diffuse>0.95 0.95 0.95 1</diffuse><specular>0.3 0.3 0.3 1</specular></material></visual></link><plugin filename="gz-sim-label-system" name="gz::sim::systems::Label"><label>40</label></plugin></model>
+    <model name="label_camera"><static>true</static>
+      <pose>1.45 0.5 1.45 0 0.6306 3.1416</pose>
+      <link name="link"><sensor name="bbox" type="boundingbox_camera"><update_rate>5</update_rate><always_on>1</always_on>
+        <topic>/table_camera/boxes</topic>
+        <camera><box_type>2d</box_type><horizontal_fov>0.9</horizontal_fov>
+          <image><width>640</width><height>480</height></image><clip><near>0.05</near><far>10</far></clip></camera>
+      </sensor></link></model>
+  </world>
+</sdf>

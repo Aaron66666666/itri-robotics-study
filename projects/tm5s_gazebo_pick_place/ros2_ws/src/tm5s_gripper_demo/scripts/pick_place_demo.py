@@ -58,6 +58,7 @@ PEDESTAL_SIZE = (0.22, 0.22, 0.69)   # robot_pedestal, top 1 cm below base
 # Gripper geometry (urdf/tm5s_gripper.urdf.xacro): finger centre is
 # 0.075 + 0.045 + 0.045 = 0.165 m along flange +z; finger tip at 0.21 m.
 FINGER_TIP_OFFSET = 0.21
+GRIPPER_BODY_BOTTOM = 0.125   # gripper_base spans 0.075-0.125 m along flange +z
 GRASP_TOOL_Z_ABOVE_CUBE_BOTTOM = FINGER_TIP_OFFSET + 0.012  # tips 12 mm above table
 APPROACH_HEIGHT = 0.12
 # Finger joint (left; right is mirrored: -q) at which the fingers touch a 6 cm
@@ -67,6 +68,13 @@ GRASP_Q = 0.036          # 5 mm total squeeze beyond contact (q=0.031)
 
 # flange +z pointing down (roll = pi).
 DOWN = Quaternion(x=1.0, y=0.0, z=0.0, w=0.0)
+
+
+def cylinder(name, radius, height, xyz):
+    obj = box(name, (0.0, 0.0, 0.0), xyz)
+    obj.primitives = [SolidPrimitive(type=SolidPrimitive.CYLINDER,
+                                     dimensions=[height, radius])]
+    return obj
 
 
 def box(name, size, xyz, operation=CollisionObject.ADD):
@@ -88,6 +96,14 @@ class PickPlace(Node):
     def __init__(self, args):
         super().__init__('pick_place_demo')
         self.args = args
+        # Finger joint q where a finger touches an object: inner face at
+        # 0.07 - q - 0.009 = radius (half-width) -> squeeze 5 mm past contact.
+        if args.grasp_q is not None:
+            self.grasp_q = args.grasp_q
+        elif args.object_shape == 'box':
+            self.grasp_q = GRASP_Q
+        else:
+            self.grasp_q = min(0.04, 0.061 - args.object_radius + 0.005)
         self.joint_state = None
         self.create_subscription(JointState, '/joint_states',
                                  self._on_joints, 10)
@@ -147,14 +163,23 @@ class PickPlace(Node):
                             (tx + dx, ty + dy, 0.35 + 0.14)))
         objs.append(box('robot_pedestal', PEDESTAL_SIZE,
                         (0.0, 0.0, PEDESTAL_SIZE[2] / 2)))
-        cube_xyz = (self.args.cube_x, self.args.cube_y,
-                    TABLE_TOP_Z + CUBE_SIZE / 2)
-        objs.append(box('pick_cube', (CUBE_SIZE,) * 3, cube_xyz))
+        a = self.args
+        if a.object_shape == 'box':
+            obj_xyz = (a.cube_x, a.cube_y, TABLE_TOP_Z + CUBE_SIZE / 2)
+            objs.append(box(a.object_id, (CUBE_SIZE,) * 3, obj_xyz))
+        else:
+            obj_xyz = (a.cube_x, a.cube_y, TABLE_TOP_Z + a.object_height / 2)
+            objs.append(cylinder(a.object_id, a.object_radius, a.object_height, obj_xyz))
+        for spec in a.obstacle or []:
+            name, ox, oy, orad, oh = spec.split(',')
+            objs.append(cylinder(name, float(orad), float(oh),
+                                 (float(ox), float(oy), TABLE_TOP_Z + float(oh) / 2)))
+        cube_xyz = obj_xyz
         scene = PlanningScene()
         scene.world.collision_objects = objs
         # Clear a cube that may still be attached from an earlier run.
         detach = AttachedCollisionObject(link_name=EE_LINK)
-        detach.object.id = 'pick_cube'
+        detach.object.id = self.args.object_id
         detach.object.operation = CollisionObject.REMOVE
         self.apply_scene(PlanningScene(
             robot_state=RobotState(attached_collision_objects=[detach],
@@ -162,7 +187,9 @@ class PickPlace(Node):
         self.apply_scene(scene)
         self.log(f'Collision scene: pedestal, table top z={TABLE_TOP_Z:.3f}, '
                  '4 legs, '
-                 f'cube at {cube_xyz}')
+                 f'{self.args.object_id} ({self.args.object_shape}) at '
+                 f'({cube_xyz[0]:.3f}, {cube_xyz[1]:.3f}, {cube_xyz[2]:.3f})'
+                 + (f', obstacles {self.args.obstacle}' if self.args.obstacle else ''))
 
     # ---------------------------------------------------------- motions
     def move_joints(self, target, label):
@@ -295,7 +322,7 @@ class PickPlace(Node):
 
     def attach_cube(self, attach):
         aco = AttachedCollisionObject(link_name=EE_LINK)
-        aco.object.id = 'pick_cube'
+        aco.object.id = self.args.object_id
         aco.object.header.frame_id = FRAME
         aco.touch_links = FINGER_LINKS
         # Attaching by id moves the existing world object onto the robot;
@@ -307,7 +334,7 @@ class PickPlace(Node):
                                        is_diff=True)
         self.apply_scene(scene)
         self.log(('Attached' if attach else 'Detached')
-                 + ' pick_cube in the MoveIt planning scene')
+                 + f' {self.args.object_id} in the MoveIt planning scene')
 
     # ------------------------------------------------------------- stages
     def run(self):
@@ -325,17 +352,22 @@ class PickPlace(Node):
                              'joint goal: second pose')
             self.move_joints(ready, 'joint goal: back to ready')
             return
-        grasp_z = TABLE_TOP_Z + GRASP_TOOL_Z_ABOVE_CUBE_BOTTOM
+        grasp_above = GRASP_TOOL_Z_ABOVE_CUBE_BOTTOM
+        if a.object_shape == 'cylinder':
+            # The fingers reach 8.5 cm below the gripper body (which ends
+            # 0.125 m below the flange): keep the body 5 mm above the top.
+            grasp_above = max(grasp_above, a.object_height + GRIPPER_BODY_BOTTOM + 0.005)
+        grasp_z = TABLE_TOP_Z + grasp_above
         pre = (a.cube_x, a.cube_y, grasp_z + APPROACH_HEIGHT)
         self.gripper(OPEN_Q, 'gripper open')
         self.ik(pre, 'pre-grasp')
         self.move_pose(pre, 'pose goal: pre-grasp above cube')
         if a.stage == 'ee':
-            self.gripper(GRASP_Q, 'gripper close (no object)')
+            self.gripper(self.grasp_q, 'gripper close (no object)')
             self.gripper(OPEN_Q, 'gripper open')
             return
         self.cartesian((a.cube_x, a.cube_y, grasp_z), 'approach down')
-        self.gripper(GRASP_Q, 'grasp')
+        self.gripper(self.grasp_q, 'grasp')
         self.attach_cube(True)
         self.cartesian(pre, 'lift', collisions=True)
         place_pre = (a.place_x, a.place_y, grasp_z + APPROACH_HEIGHT)
@@ -359,6 +391,14 @@ def main():
     parser.add_argument('--place-y', type=float, default=0.65)
     parser.add_argument('--speed', type=float, default=0.2,
                         help='velocity/acceleration scaling (0-1)')
+    parser.add_argument('--object-id', default='pick_cube')
+    parser.add_argument('--object-shape', choices=['box', 'cylinder'], default='box')
+    parser.add_argument('--object-radius', type=float, default=0.045)
+    parser.add_argument('--object-height', type=float, default=0.105)
+    parser.add_argument('--grasp-q', type=float, default=None,
+                        help='finger joint target for the grasp (default: from size)')
+    parser.add_argument('--obstacle', action='append',
+                        help='extra cylinder obstacle: name,x,y,radius,height')
     args, _ = parser.parse_known_args()
     rclpy.init()
     node = PickPlace(args)
