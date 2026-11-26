@@ -18,7 +18,11 @@ class AutonomyLogic:
                  search_speed=0.1, search_duration=5.0,
                  approach_speed=0.1, stop_bbox_ratio=0.55,
                  alignment_speed=0.25, alignment_deadband=0.08,
-                 target_loss_timeout=0.5, stop_bbox_dimension='height'):
+                 target_loss_timeout=0.5, stop_bbox_dimension='height',
+                 person_stop=True):
+        # person_stop=False hands person safety to an outside supervisor
+        # (the team Commander, team_nodes.py); default behaviour unchanged.
+        self.person_stop = person_stop
         self.target_class = target_class.lower()
         self.target_action = target_action
         self.confidence_threshold = confidence_threshold
@@ -76,7 +80,7 @@ class AutonomyLogic:
             if str(detection.get('class_name', '')).lower() == self.target_class
         ]
 
-        if person_visible:
+        if person_visible and self.person_stop:
             self.action_started = None
             self.search_started = None
             # Keep an existing latch (action already started/completed) so the
@@ -217,6 +221,7 @@ class AutonomousController(Node):
         self.declare_parameter('target_loss_timeout', 0.5)
         # 'width' suits targets whose bottom is cropped when close.
         self.declare_parameter('stop_bbox_dimension', 'height')
+        self.declare_parameter('person_stop', True)
 
         def get(name):
             return self.get_parameter(name).value
@@ -234,6 +239,7 @@ class AutonomousController(Node):
             alignment_speed=float(get('alignment_speed')),
             alignment_deadband=float(get('alignment_deadband')),
             target_loss_timeout=float(get('target_loss_timeout')),
+            person_stop=bool(get('person_stop')),
             stop_bbox_dimension=str(get('stop_bbox_dimension')),
         )
         self.publisher = self.create_publisher(Twist, get('cmd_vel_topic'), 10)

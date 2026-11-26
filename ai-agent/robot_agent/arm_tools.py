@@ -187,8 +187,24 @@ def mentioned(task: str) -> tuple[set[str], set[str]]:
     return objs, areas
 
 
+NEGATION = r"(不要|別|不准|不可以|不能|勿)(動|移動|碰|搬)|保持不動|留在原地"
+
+
+def forbidden_objects(task: str) -> set[str]:
+    """Objects the user said must not move, e.g. 「瓶子不要動」, "don't move the bottle"."""
+    out = set()
+    for n, (_, _, zh) in OBJECTS.items():
+        for z in zh + (n,):
+            if re.search(re.escape(z) + r".{0,3}?(" + NEGATION + ")", task) or \
+               re.search(r"(don'?t|do not|never)\s+(move|touch)\s+(the\s+)?" + n, task.lower()):
+                out.add(n)
+    return out
+
+
 def arm_policy(task: str, session: ArmSession):
     objs, areas = mentioned(task)
+    keep = forbidden_objects(task)
+    objs -= keep
 
     # pick_and_place itself looks with the camera before moving and refuses
     # objects that are not on the table, so "only detected objects" holds
@@ -201,6 +217,8 @@ def arm_policy(task: str, session: ArmSession):
         if o not in OBJECTS:
             return (f"there is no '{o}' on the table: the camera only knows {', '.join(sorted(OBJECTS))}. "
                     f"Tell the user (in Traditional Chinese) that the {o} is not on the table, and move nothing")
+        if o in keep:
+            return f"the user said the {o} must not move; do not move it, tell the user if the request cannot be done"
         if o not in objs:
             return (f"the user did not ask to move the {o}; do not move it. Move only what the user named, "
                     "or tell the user the requested object is not on the table")

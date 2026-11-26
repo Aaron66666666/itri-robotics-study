@@ -37,6 +37,10 @@ def generate_launch_description():
         DeclareLaunchArgument('alignment_deadband', default_value='0.08'),
         DeclareLaunchArgument('target_loss_timeout', default_value='0.5'),
         DeclareLaunchArgument('stop_bbox_dimension', default_value='height'),
+        # The team launch (autonomous_team.launch.py) redirects the controller
+        # to /autonomy/cmd_vel_raw and lets the team Commander handle people.
+        DeclareLaunchArgument('cmd_vel_topic', default_value='/model/vehicle_blue/cmd_vel'),
+        DeclareLaunchArgument('person_stop', default_value='true'),
     ]
     # Scoped so the include's 'confidence_threshold' (YOLO conf) does not
     # overwrite the controller's own 'confidence_threshold' launch argument.
@@ -94,6 +98,8 @@ def generate_launch_description():
             'target_loss_timeout': ParameterValue(
                 LaunchConfiguration('target_loss_timeout'), value_type=float),
             'stop_bbox_dimension': LaunchConfiguration('stop_bbox_dimension'),
+            'cmd_vel_topic': LaunchConfiguration('cmd_vel_topic'),
+            'person_stop': ParameterValue(LaunchConfiguration('person_stop'), value_type=bool),
         }],
     )
     return LaunchDescription(arguments + [camera, cmd_vel_bridge, autonomy])

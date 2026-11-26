@@ -36,6 +36,9 @@ setup(
             'read_odom = robot_control.read_odom:main',
             'camera_yolo = camera_subscriber:main',
             'autonomy_controller = robot_control.autonomous_controller:main',
+            'team_tracker = robot_control.team_nodes:tracker_main',
+            'team_predictor = robot_control.team_nodes:predictor_main',
+            'team_commander = robot_control.team_nodes:commander_main',
         ],
     },
 )
