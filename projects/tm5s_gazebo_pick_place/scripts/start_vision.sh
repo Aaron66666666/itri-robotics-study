@@ -10,4 +10,19 @@ GUI_ARGS="gazebo_gui:=false launch_rviz:=false"; [ "${2:-${1:-}}" = gui ] && GUI
 setsid bash "$S/start_moveit.sh" $GUI_ARGS world_file:=$WORLD > "$LOG_DIR/launch.log" 2>&1 < /dev/null &
 setsid ros2 run ros_gz_image image_bridge /table_camera/image > "$LOG_DIR/bridge.log" 2>&1 < /dev/null &
 for i in $(seq 120); do grep -q "You can start planning now" "$LOG_DIR/launch.log" 2>/dev/null && break; sleep 1; done
-grep -q "You can start planning now" "$LOG_DIR/launch.log" && { sleep 5; echo "ready ($WORLD)"; } || { echo "MoveIt not ready, see $LOG_DIR/launch.log"; exit 1; }
+grep -q "You can start planning now" "$LOG_DIR/launch.log" || { echo "MoveIt not ready, see $LOG_DIR/launch.log"; exit 1; }
+sleep 5
+# Every controller must be active (a slow start-up once left joint_state_broadcaster inactive).
+for c in joint_state_broadcaster tmr_arm_controller parallel_gripper_controller; do
+  for try in 1 2 3; do
+    state=$(timeout 10 ros2 service call /controller_manager/list_controllers controller_manager_msgs/srv/ListControllers 2>/dev/null \
+            | grep -oE "name='$c'[^)]*state='[a-z]+'" | grep -oE "state='[a-z]+'" | head -1)
+    [ "$state" = "state='active'" ] && break
+    echo "$c is ${state:-missing}, activating (try $try)"
+    timeout 20 ros2 service call /controller_manager/switch_controller controller_manager_msgs/srv/SwitchController \
+      "{activate_controllers: ['$c'], strictness: 1, timeout: {sec: 10}}" > /dev/null 2>&1
+    sleep 2
+  done
+done
+timeout 10 ros2 topic echo --once /joint_states > /dev/null 2>&1 || { echo "no /joint_states"; exit 1; }
+echo "ready ($WORLD)"

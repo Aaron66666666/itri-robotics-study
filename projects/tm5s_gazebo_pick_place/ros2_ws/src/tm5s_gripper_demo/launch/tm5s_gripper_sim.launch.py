@@ -42,7 +42,11 @@ def generate_launch_description():
     def spawner(name):
         return Node(package='controller_manager', executable='spawner', output='screen',
                     arguments=[name, '-c', '/controller_manager',
-                               '--controller-manager-timeout', '60'])
+                               '--controller-manager-timeout', '60',
+                               # The vision world also renders a camera; at start-up
+                               # the switch can take longer than the 5 s default
+                               # (joint_state_broadcaster failed to activate once).
+                               '--switch-timeout', '30'])
 
     jsb = spawner('joint_state_broadcaster')
     # Start the trajectory controllers only after the broadcaster is up.

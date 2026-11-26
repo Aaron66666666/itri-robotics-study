@@ -7,9 +7,17 @@ import subprocess
 from make_vision_world import CUP_YAW
 
 WORLD = "tm5s_vision"
-# Reachable, collision-free area for top-down grasps (same region the cube used).
+# Work area on the table for top-down grasps.
 X_RANGE = (0.30, 0.60)
 Y_RANGE = (0.28, 0.70)
+# TM5S reach limit for a top-down grasp of the taller object (bottle, pre-grasp
+# 1.11 m high): a bottle at (0.52, 0.69), 0.865 m from the base, had no IK
+# solution (vision trial 6, 2026-11-27). Keep objects within 0.80 m.
+MAX_REACH_XY = 0.80
+
+
+def reachable(x: float, y: float) -> bool:
+    return math.hypot(x, y) <= MAX_REACH_XY
 
 
 def set_pose(name: str, x: float, y: float, z: float = 0.70, yaw: float = 0.0) -> bool:
@@ -34,5 +42,6 @@ def random_placement(rng: random.Random):
     while True:
         c = (rng.uniform(*X_RANGE), rng.uniform(*Y_RANGE))
         b = (rng.uniform(*X_RANGE), rng.uniform(*Y_RANGE))
-        if math.hypot(c[0] - b[0], c[1] - b[1]) >= 0.15 and abs(c[1] - b[1]) >= 0.12:
+        if (math.hypot(c[0] - b[0], c[1] - b[1]) >= 0.15 and abs(c[1] - b[1]) >= 0.12
+                and reachable(*c) and reachable(*b)):
             return (round(c[0], 3), round(c[1], 3)), (round(b[0], 3), round(b[1], 3))

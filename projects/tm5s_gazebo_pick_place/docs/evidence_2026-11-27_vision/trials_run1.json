@@ -1,0 +1,350 @@
+{
+ "rows": [
+  {
+   "trial": 1,
+   "target": "cup",
+   "placed": {
+    "cup": [
+     0.427,
+     0.627
+    ],
+    "bottle": [
+     0.337,
+     0.374
+    ]
+   },
+   "est": [
+    0.4259,
+    0.6217
+   ],
+   "loc_err_cm": 0.54,
+   "place": [
+    0.3,
+    0.65
+   ],
+   "pick_seconds": 22.8,
+   "script_ok": true,
+   "place_err_cm": 0.32,
+   "upright": true,
+   "final": [
+    0.3011,
+    0.647,
+    0.7
+   ],
+   "other_moved_cm": 0.0,
+   "success": true
+  },
+  {
+   "trial": 2,
+   "target": "bottle",
+   "placed": {
+    "cup": [
+     0.473,
+     0.447
+    ],
+    "bottle": [
+     0.593,
+     0.3
+    ]
+   },
+   "est": [
+    0.5997,
+    0.3014
+   ],
+   "loc_err_cm": 0.68,
+   "place": [
+    0.3,
+    0.65
+   ],
+   "pick_seconds": 23.2,
+   "script_ok": true,
+   "place_err_cm": 0.57,
+   "upright": true,
+   "final": [
+    0.2952,
+    0.6469,
+    0.7
+   ],
+   "other_moved_cm": 0.0,
+   "success": true
+  },
+  {
+   "trial": 3,
+   "target": "cup",
+   "placed": {
+    "cup": [
+     0.545,
+     0.356
+    ],
+    "bottle": [
+     0.474,
+     0.548
+    ]
+   },
+   "est": [
+    0.5447,
+    0.3437
+   ],
+   "loc_err_cm": 1.23,
+   "place": [
+    0.35,
+    0.35
+   ],
+   "pick_seconds": 22.2,
+   "script_ok": true,
+   "place_err_cm": 0.32,
+   "upright": true,
+   "final": [
+    0.3503,
+    0.3468,
+    0.7
+   ],
+   "other_moved_cm": 0.0,
+   "success": true
+  },
+  {
+   "trial": 4,
+   "target": "bottle",
+   "placed": {
+    "cup": [
+     0.534,
+     0.314
+    ],
+    "bottle": [
+     0.39,
+     0.488
+    ]
+   },
+   "est": [
+    0.3957,
+    0.4873
+   ],
+   "loc_err_cm": 0.57,
+   "place": [
+    0.55,
+    0.62
+   ],
+   "pick_seconds": 29.8,
+   "script_ok": true,
+   "place_err_cm": 0.6,
+   "upright": true,
+   "final": [
+    0.5447,
+    0.6173,
+    0.7
+   ],
+   "other_moved_cm": 0.0,
+   "success": true
+  },
+  {
+   "trial": 5,
+   "target": "cup",
+   "placed": {
+    "cup": [
+     0.474,
+     0.472
+    ],
+    "bottle": [
+     0.552,
+     0.677
+    ]
+   },
+   "est": [
+    0.4733,
+    0.4615
+   ],
+   "loc_err_cm": 1.05,
+   "place": [
+    0.4,
+    0.62
+   ],
+   "pick_seconds": 28.3,
+   "script_ok": true,
+   "place_err_cm": 0.29,
+   "upright": true,
+   "final": [
+    0.4007,
+    0.6172,
+    0.7
+   ],
+   "other_moved_cm": 0.0,
+   "success": true
+  },
+  {
+   "trial": 6,
+   "target": "bottle",
+   "placed": {
+    "cup": [
+     0.429,
+     0.511
+    ],
+    "bottle": [
+     0.512,
+     0.694
+    ]
+   },
+   "est": [
+    0.5188,
+    0.692
+   ],
+   "loc_err_cm": 0.71,
+   "place": [
+    0.35,
+    0.35
+   ],
+   "pick_seconds": 9.0,
+   "script_ok": false,
+   "place_err_cm": 38.02,
+   "upright": true,
+   "final": [
+    0.512,
+    0.694,
+    0.7
+   ],
+   "other_moved_cm": 0.0,
+   "success": false,
+   "reason": "pick script failed: [ERROR] [1795709748.931787254] [pick_place_demo]: IK failed for pre-grasp at (0.5188, 0.692, 1.1099999999999999) (code -31)"
+  },
+  {
+   "trial": 7,
+   "target": "cup",
+   "placed": {
+    "cup": [
+     0.565,
+     0.682
+    ],
+    "bottle": [
+     0.345,
+     0.354
+    ]
+   },
+   "est": [
+    0.5637,
+    0.6788
+   ],
+   "loc_err_cm": 0.35,
+   "place": [
+    0.55,
+    0.3
+   ],
+   "pick_seconds": 30.6,
+   "script_ok": true,
+   "place_err_cm": 0.38,
+   "upright": true,
+   "final": [
+    0.5516,
+    0.2965,
+    0.7
+   ],
+   "other_moved_cm": 0.0,
+   "success": true
+  },
+  {
+   "trial": 8,
+   "target": "bottle",
+   "placed": {
+    "cup": [
+     0.385,
+     0.341
+    ],
+    "bottle": [
+     0.46,
+     0.536
+    ]
+   },
+   "est": [
+    0.4655,
+    0.5351
+   ],
+   "loc_err_cm": 0.56,
+   "place": [
+    0.55,
+    0.62
+   ],
+   "pick_seconds": 29.4,
+   "script_ok": true,
+   "place_err_cm": 0.55,
+   "upright": true,
+   "final": [
+    0.5454,
+    0.617,
+    0.7
+   ],
+   "other_moved_cm": 0.0,
+   "success": true
+  },
+  {
+   "trial": 9,
+   "target": "cup",
+   "placed": {
+    "cup": [
+     0.503,
+     0.303
+    ],
+    "bottle": [
+     0.57,
+     0.608
+    ]
+   },
+   "est": [
+    0.5017,
+    0.2894
+   ],
+   "loc_err_cm": 1.37,
+   "place": [
+    0.4,
+    0.62
+   ],
+   "pick_seconds": 26.7,
+   "script_ok": true,
+   "place_err_cm": 0.34,
+   "upright": true,
+   "final": [
+    0.4014,
+    0.6169,
+    0.7
+   ],
+   "other_moved_cm": 0.0,
+   "success": true
+  },
+  {
+   "trial": 10,
+   "target": "bottle",
+   "placed": {
+    "cup": [
+     0.357,
+     0.694
+    ],
+    "bottle": [
+     0.432,
+     0.326
+    ]
+   },
+   "est": [
+    0.4386,
+    0.3262
+   ],
+   "loc_err_cm": 0.66,
+   "place": [
+    0.55,
+    0.62
+   ],
+   "pick_seconds": 24.7,
+   "script_ok": true,
+   "place_err_cm": 0.7,
+   "upright": true,
+   "final": [
+    0.5435,
+    0.6174,
+    0.7
+   ],
+   "other_moved_cm": 0.0,
+   "success": true
+  }
+ ],
+ "summary": {
+  "success": "9/10",
+  "mean_loc_err_cm": 0.77,
+  "mean_place_err_cm_successful": 0.45
+ }
+}

@@ -139,8 +139,11 @@ class PickPlace(Node):
         for ac in (self.move_ac, self.exec_ac, self.grip_ac):
             if not ac.wait_for_server(timeout_sec=30.0):
                 raise RuntimeError('action server unavailable')
+        end = time.time() + 30.0
         while self.joint_state is None:
             rclpy.spin_once(self, timeout_sec=0.1)
+            if time.time() > end:
+                raise RuntimeError('no /joint_states for 30 s (is joint_state_broadcaster active?)')
 
     def joints(self, names):
         rclpy.spin_once(self, timeout_sec=0.05)

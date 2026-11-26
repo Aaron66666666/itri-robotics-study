@@ -24,7 +24,7 @@ import scene_tools as st
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RADIUS = 0.045
-PLACE_SPOTS = [(0.30, 0.65), (0.55, 0.30), (0.45, 0.50), (0.35, 0.35), (0.55, 0.62), (0.40, 0.62)]
+PLACE_SPOTS = [(0.30, 0.65), (0.55, 0.30), (0.45, 0.50), (0.35, 0.35), (0.50, 0.60), (0.40, 0.62)]  # all within scene_tools.MAX_REACH_XY
 
 
 def free_spot(start, other, rng):
@@ -71,7 +71,11 @@ def main():
                "--place-x", str(spot[0]), "--place-y", str(spot[1]),
                "--obstacle", f"{other},{other_xy[0]:.4f},{other_xy[1]:.4f},{RADIUS},{det.CLASS_HEIGHT[other]}"]
         t_start = time.time()
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=400)
+        try:
+            r = subprocess.run(cmd, capture_output=True, text=True, timeout=400)
+        except subprocess.TimeoutExpired as e:
+            r = subprocess.CompletedProcess(cmd, 124, (e.stdout or b"").decode() if isinstance(e.stdout, bytes) else (e.stdout or ""),
+                                            "pick script timed out after 400 s")
         row["pick_seconds"] = round(time.time() - t_start, 1)
         if a.log_dir:
             open(os.path.join(a.log_dir, f"trial_{i + 1:02d}.log"), "w").write(r.stdout + r.stderr)
