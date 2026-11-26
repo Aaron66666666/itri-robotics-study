@@ -77,6 +77,8 @@ class _TrackView:
 class PredictorNode(Node, _OdomMixin):
     def __init__(self):
         super().__init__('team_predictor')
+        self.declare_parameter('stop_radius', 0.0)
+        self.stop_radius = float(self.get_parameter('stop_radius').value)
         self._init_odom()
         self.tracks_msg = None
         self.tracks_time = None
@@ -95,7 +97,8 @@ class PredictorNode(Node, _OdomMixin):
                     'reason': 'tracker silent (no camera detections for 1 s)'}
         else:
             views = [_TrackView(d, self.tracks_msg['t']) for d in self.tracks_msg['tracks']]
-            pred = assess(views, now, self.pose, max(0.0, self.speed))
+            pred = assess(views, now, self.pose, max(0.0, self.speed),
+                          stop_radius=self.stop_radius)
         pred['n_tracks'] = len(self.tracks_msg['tracks']) if self.tracks_msg else 0
         self.pub.publish(String(data=json.dumps(pred)))
 

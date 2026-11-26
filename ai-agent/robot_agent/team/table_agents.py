@@ -117,7 +117,12 @@ class Predictor:
         ok, n = self.stats["in_reach"]
         return round((ok + 1) / (n + 2), 3)  # Laplace smoothing
 
-    def predict_move(self, obj: str, area: str) -> dict:
+    def predict_move(self, obj: str, area: str, preferred: dict | None = None) -> dict:
+        if self.tracker.version == 0:
+            # Never predict from an empty view: the Commander (Llama) sometimes
+            # skips observe_table and every prediction then said "not on the
+            # table" (team 8/24 on the fake table, 2026-11-27).
+            self.tracker.observe()
         pos = self.tracker.positions()
         v = self.tracker.version
         pred = {"object": obj, "area": area, "table_version": v}
@@ -143,12 +148,16 @@ class Predictor:
                     b = blockers[0]
                     # Where could the blocker go? Any other area with room, keeping clear of everything else.
                     rest = [p for n, p in pos.items() if n != b]
-                    for a2 in AREAS:
+                    # Prefer the area the user wants the blocker in (move it there first).
+                    order = sorted(AREAS, key=lambda a2: a2 != (preferred or {}).get(b))
+                    for a2 in order:
                         if a2 != area and area_of(*pos[b]) != a2:
                             s2 = free_spot(a2, rest)
                             if s2 and math.dist(s2, centre) >= MIN_CLEARANCE:
                                 suggestion = {"move": b, "to_area": a2}
                                 break
+                if suggestion:
+                    suggestion["then"] = f"after moving the {suggestion['move']}, predict and move the {obj} to {area} again"
                 pred.update(feasible=False, reason="area_occupied", blocking=blockers,
                             suggested_clearing=suggestion,
                             detail=f"{area} is occupied by {', '.join(blockers) or 'another object'}")

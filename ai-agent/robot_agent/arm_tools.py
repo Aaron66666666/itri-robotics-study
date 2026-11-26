@@ -187,6 +187,32 @@ def mentioned(task: str) -> tuple[set[str], set[str]]:
     return objs, areas
 
 
+def requested_pairs(task: str) -> dict[str, str]:
+    """Object -> area the user asked for, by order in the sentence: each object
+    goes to the first area named after it (「把杯子放到右邊，再把瓶子放到中間」)."""
+    hits = []
+    for n, (_, _, zh) in OBJECTS.items():
+        for z in zh:
+            i = task.find(z)
+            if i >= 0:
+                hits.append((i, "obj", n))
+                break
+    for n, (_, zh) in AREAS.items():
+        for z in sorted(zh, key=len, reverse=True):
+            i = task.find(z)
+            if i >= 0:
+                hits.append((i, "area", n))
+                break
+    hits.sort()
+    pairs = {}
+    for k, (i, kind, n) in enumerate(hits):
+        if kind == "obj":
+            nxt = next((h for h in hits[k + 1:] if h[1] == "area"), None)
+            if nxt:
+                pairs[n] = nxt[2]
+    return pairs
+
+
 NEGATION = r"(不要|別|不准|不可以|不能|勿)(動|移動|碰|搬)|保持不動|留在原地"
 
 

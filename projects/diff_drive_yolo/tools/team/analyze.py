@@ -29,6 +29,11 @@ def main(prefix):
     # only the part of the run while the person is near (x > -2): the parked person is far away
     near = [r for r in rows if r['px'] > -2.0]
     min_clear = min((clearance(r) for r in near), default=None)
+    # Clearance while the vehicle itself is moving: a person walking up to a
+    # vehicle that has already stopped is not the vehicle closing the gap.
+    moving = [b for a, b in zip(rows, rows[1:]) if b['px'] > -2.0
+              and math.hypot(b['vx'] - a['vx'], b['vy'] - a['vy']) / max(1e-3, b['t'] - a['t']) > 0.01]
+    min_clear_moving = min((clearance(r) for r in moving), default=None)
     stopped = 0.0
     for a, b in zip(rows, rows[1:]):
         if done and a['t'] > done:
@@ -40,6 +45,7 @@ def main(prefix):
     out = {'reached_cup_s': round(done - t_start, 1) if done else None,
            'stopped_s': round(stopped, 1),
            'min_clearance_m': round(min_clear, 3) if min_clear is not None else None,
+           'min_clearance_moving_m': round(min_clear_moving, 3) if min_clear_moving is not None else None,
            'final_x': round(rows[-1]['vx'], 3),
            'person_stops': len(re.findall(r'Autonomy state: person_detected', log)),
            'team_decisions': [f'{m}: {r[:70]}' for m, r in decisions][:30]}

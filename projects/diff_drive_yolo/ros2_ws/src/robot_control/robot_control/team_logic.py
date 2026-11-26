@@ -22,7 +22,7 @@ FOCAL = (IMG_W / 2) / math.tan(HFOV / 2)  # ~554 px
 CAM_X = 0.65
 # range = RANGE_K / box height (px); calibrated with Gazebo ground truth
 # (tools/team/calibrate_person.py). Pinhole value for a 1.7 m person: 554*1.7.
-RANGE_K = 942.0
+RANGE_K = 989.1  # calibrated 2026-11-27 (tools/team/calibrate_person.py)
 
 # Vehicle footprint (chassis 2.0 x 1.0 m, centred 0.15 m behind the origin).
 HALF_WIDTH = 0.5
@@ -146,7 +146,8 @@ def to_vehicle(p, pose):
     return dx * math.cos(yaw) + dy * math.sin(yaw), -dx * math.sin(yaw) + dy * math.cos(yaw)
 
 
-def assess(tracks, t, pose, speed, horizon=3.0, step=0.1, stop_ttc=2.0, min_obs=3):
+def assess(tracks, t, pose, speed, horizon=3.0, step=0.1, stop_ttc=2.0, min_obs=3,
+           stop_radius=0.0):
     """-> dict(risk CLEAR|SLOW|STOP, ttc, track, reason). The vehicle is."""
     # predicted along its heading at `speed`, each person with its Kalman state.
     worst = {'risk': 'CLEAR', 'ttc': None, 'track': None, 'reason': 'no person near the path'}
@@ -166,6 +167,10 @@ def assess(tracks, t, pose, speed, horizon=3.0, step=0.1, stop_ttc=2.0, min_obs=
         dist_front = math.hypot(max(0.0, rx - FRONT), max(0.0, abs(ry) - HALF_WIDTH))
         if in_corridor(rx, ry):
             take('STOP', 0.0, tr.tid, f'person {tr.tid} is in the path {rx - FRONT:.1f} m ahead')
+            continue
+        # Conservative mode: stop whenever a person is this close, wherever.
+        if dist_front < stop_radius:
+            take('STOP', None, tr.tid, f'person {tr.tid} within {dist_front:.1f} m (stop radius)')
             continue
         if tr.n < min_obs:  # too new to trust a velocity: be conservative
             if dist_front < 3.0:

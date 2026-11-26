@@ -56,14 +56,12 @@ def test_predictor_verdicts():
 
 
 def test_move_needs_current_prediction():
-    t = team(FREE, "把杯子放到右邊")
+    t = team({"cup": (0.38, 0.62), "bottle": AREAS["right"][0]}, "把杯子放到右邊")
     t.observe_table()
-    assert "predict_move first" in t.move_object("cup", "right")["error"]
-    t.predict_move("cup", "right")
-    t.backend.pos["bottle"] = (0.30, 0.66)   # table changes after the prediction
+    r0 = t.move_object("cup", "right")        # no prediction yet: predicts itself, area occupied
+    assert r0["not_moved"] and r0["prediction"]["reason"] == "area_occupied" and t.backend.moves == []
+    t.backend.pos["bottle"] = (0.33, 0.45)    # the table changes: the bottle is gone from the right
     t.observe_table()
-    assert "predict_move first" in t.move_object("cup", "right")["error"]
-    t.predict_move("cup", "right")
     r = t.move_object("cup", "right")
     assert r["success"] and r["area_after"] == "right" and t.placed == {"cup": "right"}
 
@@ -106,8 +104,16 @@ def test_full_run_clears_blocker_then_places():
         Message("assistant", "已先把杯子移開，再把瓶子放到右邊。"),
     ])
     res = t.run(model)
-    assert res.stop_reason == "final"
+    assert res.stop_reason == "final" and "已先把杯子移開" in res.final_text
     assert t.placed["bottle"] == "right" and t.backend.moves[0][0] == "cup"
     kinds = [n.kind for n in t.board.notes]
     assert kinds[0] == "request" and "prediction" in kinds and "result" in kinds and kinds[-1] == "report"
     assert "tracker" in t.board.transcript()
+
+
+def test_fact_check_replaces_false_success():
+    t = team({"cup": (0.38, 0.62), "bottle": AREAS["right"][0]}, "把杯子放到右邊")
+    model = ScriptedModel([call("observe_table", "c1"), Message("assistant", "杯子已經放到右邊，成功。")])
+    res = t.run(model)
+    assert "claims success for cup" in t.board.last("report", "commander").content["problems"][0]
+    assert "成功" not in res.final_text and "桌上" in res.final_text
