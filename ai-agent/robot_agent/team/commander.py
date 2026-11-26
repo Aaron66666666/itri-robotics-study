@@ -237,10 +237,14 @@ class TableTeam:
         if invented:
             problems.append(f"numbers not in any tool result: {invented[:4]}")
         ok_objs = {n.content["object"] for n in self.board.notes if n.kind == "result" and n.content["success"]}
+        moved = r"(成功|已經放|已放到|放好|移到了|完成|被移到|被放到|被搬到|移動到|搬到|放在了)"
+        negated = r"(不能|無法|沒有|沒能|未能|不可以|失敗|不會)"
         for o, zh in self.ZH_OBJ.items():
-            claims = re.search(zh + r"[^。，\n]{0,15}(成功|已經放|已放到|放好|移到了|完成)", text)
-            if claims and o not in ok_objs:
-                problems.append(f"claims success for {o} without a successful move")
+            for sentence in re.split(r"[。！\n；;]", text):
+                if zh in sentence and re.search(moved, sentence) and not re.search(negated, sentence) \
+                        and o not in ok_objs:
+                    problems.append(f"claims a move of the {o} without a successful move")
+                    break
         return problems
 
     def open_requests(self) -> list[tuple[str, str]]:

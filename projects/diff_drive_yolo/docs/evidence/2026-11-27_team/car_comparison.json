@@ -1,0 +1,112 @@
+{
+ "S1": {
+  "reached_cup_s": [
+   "21.0",
+   "23.6"
+  ],
+  "stopped_s": [
+   "7.0",
+   "9.5"
+  ],
+  "min_clearance_m": [
+   "0.37",
+   "0.42"
+  ],
+  "min_clearance_moving_m": [
+   "0.37",
+   "0.42"
+  ],
+  "n": [
+   2,
+   2
+  ]
+ },
+ "S2": {
+  "reached_cup_s": [
+   "25.9",
+   "23.3"
+  ],
+  "stopped_s": [
+   "11.9",
+   "8.5"
+  ],
+  "min_clearance_m": [
+   "0.65",
+   "0.65"
+  ],
+  "min_clearance_moving_m": [
+   "0.65",
+   "0.65"
+  ],
+  "n": [
+   2,
+   2
+  ]
+ },
+ "S3": {
+  "reached_cup_s": [
+   "未到達",
+   "18.2"
+  ],
+  "stopped_s": [
+   "86.0",
+   "4.3"
+  ],
+  "min_clearance_m": [
+   "2.52",
+   "2.01"
+  ],
+  "min_clearance_moving_m": [
+   "n/a",
+   "2.01"
+  ],
+  "n": [
+   2,
+   2
+  ]
+ },
+ "S4": {
+  "reached_cup_s": [
+   "35.8",
+   "32.8"
+  ],
+  "stopped_s": [
+   "21.8",
+   "18.6"
+  ],
+  "min_clearance_m": [
+   "0.80",
+   "0.54"
+  ],
+  "min_clearance_moving_m": [
+   "0.94",
+   "0.80"
+  ],
+  "n": [
+   2,
+   2
+  ]
+ },
+ "S5": {
+  "reached_cup_s": [
+   "26.4",
+   "25.5"
+  ],
+  "stopped_s": [
+   "12.4",
+   "11.1"
+  ],
+  "min_clearance_m": [
+   "2.27",
+   "2.23"
+  ],
+  "min_clearance_moving_m": [
+   "2.27",
+   "2.23"
+  ],
+  "n": [
+   2,
+   2
+  ]
+ }
+}

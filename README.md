@@ -4,6 +4,7 @@ ITRI Robotics Self-Study: ROS 2, Gazebo, YOLO, AI Agents and reinforcement learn
 
 - 進度：[`docs/progress.md`](docs/progress.md)
 - 問題與排除紀錄：[`docs/troubleshooting.md`](docs/troubleshooting.md)
+- 三代理（Tracker／Predictor／Commander）結果：[`docs/three_agents_results.md`](docs/three_agents_results.md)
 - ROS 2 架構筆記：[`docs/ros2-architecture.md`](docs/ros2-architecture.md)
 
 ## 各階段的程式、測試與原始紀錄

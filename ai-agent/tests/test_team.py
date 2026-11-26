@@ -115,5 +115,12 @@ def test_fact_check_replaces_false_success():
     t = team({"cup": (0.38, 0.62), "bottle": AREAS["right"][0]}, "把杯子放到右邊")
     model = ScriptedModel([call("observe_table", "c1"), Message("assistant", "杯子已經放到右邊，成功。")])
     res = t.run(model)
-    assert "claims success for cup" in t.board.last("report", "commander").content["problems"][0]
+    assert "claims a move of the cup" in t.board.last("report", "commander").content["problems"][0]
     assert "成功" not in res.final_text and "桌上" in res.final_text
+
+
+def test_fact_check_catches_passive_move_claim_but_not_negation():
+    t = team(FREE, "把瓶子移到中間")
+    t.observe_table()
+    assert t.fact_check("杯子被移到靠近機器人的地方。")
+    assert not t.fact_check("杯子不能移到右邊，因為右邊被瓶子佔據。")

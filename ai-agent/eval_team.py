@@ -104,7 +104,13 @@ def run_case(case, mode, backend_name, model, rep):
         backend = GazeboArm()
         st.place(case["setup"]["cup"], case["setup"]["bottle"])
         time.sleep(2.5)
-        truth = lambda: {k: v[:2] for k, v in truth_positions().items()}  # noqa: E731
+        def truth():
+            for _ in range(5):  # one pose message sometimes misses a model
+                t = {k: v[:2] for k, v in truth_positions().items()}
+                if {"cup", "bottle"} <= set(t):
+                    return t
+                time.sleep(1.0)
+            raise RuntimeError(f"Gazebo truth incomplete: {sorted(t)}")
     before = truth()
     tool_texts, calls, refused = [], [], []
 
@@ -152,6 +158,9 @@ def main():
             for mode in a.modes:
                 row = run_case(case, mode, a.backend, model, rep)
                 rows.append(row)
+                if a.out:  # keep every finished case even if a later one crashes
+                    with open(a.out + ".partial.jsonl", "a") as f:
+                        f.write(json.dumps(row, ensure_ascii=False) + "\n")
                 short = {k: v for k, v in row.items() if k in ("id", "mode", "rep", "pass", "positions", "answer_ok",
                                                                "no_invented_numbers", "zh_tw", "n_tool_calls", "seconds")}
                 print(json.dumps(short, ensure_ascii=False), "|", (row["answer"] or "")[:110].replace("\n", " "),

@@ -1,0 +1,23 @@
+/autonomy_controller:
+  ros__parameters:
+    action_duration: 1.5
+    alignment_deadband: 0.08
+    alignment_speed: 0.15
+    angular_speed: 0.6
+    approach_speed: 0.05
+    cmd_vel_topic: /model/vehicle_blue/cmd_vel
+    confidence_threshold: 0.5
+    detections_topic: /yolo/detections
+    linear_speed: 0.2
+    person_stop: true
+    search_duration: 5.0
+    search_speed: 0.05
+    stale_timeout: 1.0
+    start_type_description_service: true
+    stop_bbox_dimension: width
+    stop_bbox_ratio: 0.185
+    target_action: stop
+    target_class: cup
+    target_loss_timeout: 0.5
+    use_sim_time: false
+

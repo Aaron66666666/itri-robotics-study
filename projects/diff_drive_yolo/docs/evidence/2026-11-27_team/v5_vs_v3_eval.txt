@@ -1,0 +1,25 @@
+data: 2000 train, 400 val, 400 test
+50 epochs completed in 0.241 hours.
+base clean test 0.884 {'person': 0.981, 'bottle': 0.955, 'cup': 0.717}
+tuned clean test 0.988 {'person': 0.994, 'bottle': 0.984, 'cup': 0.985}
+bottle_x0.0 {'bottle': 0.955} {'bottle': 0.954}
+bottle_x0.2 {'bottle': 0.959} {'bottle': 0.955}
+bottle_x0.4 {'bottle': 0.956} {'bottle': 0.963, 'cup': 0.139}
+bottle_x0.6 {'bottle': 0.963} {'bottle': 0.967}
+bottle_x0.8 {'bottle': 0.953} {'bottle': 0.961}
+bottle_x1.0 {'bottle': 0.956} {'bottle': 0.962}
+bottle_x1.2 {'bottle': 0.945} {'bottle': 0.957}
+bottle_x1.4 {'bottle': 0.931} {'bottle': 0.96}
+cup_x0.0 {'cup': 0.947} {'cup': 0.956}
+cup_x0.2 {'cup': 0.94} {'cup': 0.934}
+cup_x0.4 {'cup': 0.925} {'cup': 0.948}
+cup_x0.55 {'cup': 0.761} {'cup': 0.852}
+cup_x0.7 {'cup': 0.932} {'cup': 0.944}
+cup_x0.9 {'cup': 0.957} {'cup': 0.94}
+cup_x1.1 {'cup': 0.869} {'cup': 0.957}
+person_x0.0 {'person': 0.941, 'cup': 0.924} {'person': 0.96, 'cup': 0.955}
+person_x0.3 {'person': 0.944, 'cup': 0.914} {'person': 0.959, 'cup': 0.945}
+person_x0.6 {'person': 0.898, 'cup': 0.654} {'person': 0.956, 'cup': 0.944}
+CHAIN DONE
+
+[exited with code 0]

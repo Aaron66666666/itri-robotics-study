@@ -78,7 +78,7 @@ def test_corridor():
 
 
 def test_commander_modes_and_failsafe():
-    c = CommanderLogic()
+    c = CommanderLogic(clear_hold=0.0)
     assert c.decide(0.1, 0.2, None, 0.0, 1.0)[:2] == (0.0, 0.0)          # no prediction
     assert c.decide(0.1, 0.2, {'risk': 'CLEAR', 'reason': ''}, 1.0, 1.0)[:2] == (0.1, 0.2)
     assert c.decide(0.1, 0.2, {'risk': 'SLOW', 'reason': ''}, 1.0, 1.0)[:2] == (0.05, 0.2)
@@ -91,3 +91,12 @@ def test_stop_radius_conservative_mode():
     side, t = tracked([(FRONT + 0.5, 1.3)] * 5)          # 0.8 m beside the path, not in it
     assert assess(side.tracks.values(), t, pose, 0.05)['risk'] != 'STOP'
     assert assess(side.tracks.values(), t, pose, 0.05, stop_radius=1.0)['risk'] == 'STOP'
+
+
+def test_commander_holds_stop_until_clear():
+    c = CommanderLogic(clear_hold=1.0)
+    stop, slow, clear = ({'risk': r, 'reason': ''} for r in ('STOP', 'SLOW', 'CLEAR'))
+    assert c.decide(0.1, 0.0, stop, 0.0, 0.0)[0] == 0.0
+    assert c.decide(0.1, 0.0, slow, 0.1, 0.1)[0] == 0.0       # SLOW does not release a stop
+    assert c.decide(0.1, 0.0, clear, 0.2, 0.2)[0] == 0.0      # clear, but not for 1 s yet
+    assert c.decide(0.1, 0.0, clear, 1.2, 1.25)[0] == 0.1     # clear for 1 s: move again

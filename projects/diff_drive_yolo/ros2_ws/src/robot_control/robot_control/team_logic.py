@@ -199,16 +199,32 @@ def assess(tracks, t, pose, speed, horizon=3.0, step=0.1, stop_ttc=2.0, min_obs=
 class CommanderLogic:
     """Base command + prediction -> final command, with reasons."""
 
-    def __init__(self, stale_after: float = 0.5, slow_factor: float = 0.5):
-        self.stale_after, self.slow_factor = stale_after, slow_factor
+    # After a STOP the vehicle only moves again once the prediction has been
+    # CLEAR for clear_hold seconds; SLOW does not release a STOP. Without it the
+    # vehicle resumed at half speed while a person who had just left the path
+    # was still ~0.6 m away (scenario S4, 2026-11-27).
+
+    def __init__(self, stale_after: float = 0.5, slow_factor: float = 0.5,
+                 clear_hold: float = 1.0):
+        self.stale_after, self.slow_factor, self.clear_hold = stale_after, slow_factor, clear_hold
         self.mode = 'STOP'
         self.reason = 'no prediction yet'
+        self.clear_since = None
 
     def decide(self, lin, ang, prediction, pred_time, now):
         if prediction is None or now - pred_time > self.stale_after:
             mode, reason = 'STOP', 'prediction missing or stale (fail-safe)'
         else:
             mode, reason = prediction['risk'], prediction['reason']
+        if mode == 'CLEAR':
+            self.clear_since = now if self.clear_since is None else self.clear_since
+        else:
+            self.clear_since = None
+        if self.mode == 'STOP' and mode != 'STOP':
+            held = self.clear_since is not None and now - self.clear_since >= self.clear_hold
+            if not held:
+                mode = 'STOP'
+                reason = f'holding stop until clear for {self.clear_hold:.0f} s ({reason})'
         changed = (mode != self.mode)
         self.mode, self.reason = mode, reason
         if mode == 'STOP':

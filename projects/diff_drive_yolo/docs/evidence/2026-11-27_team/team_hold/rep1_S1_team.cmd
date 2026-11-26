@@ -1,0 +1,1 @@
+ros2 launch robot_control autonomous_team.launch.py  target_class:=cup device:=0 search_speed:=0.05 approach_speed:=0.05 alignment_speed:=0.15 target_action:=stop stop_bbox_dimension:=width stop_bbox_ratio:=0.185 model_path:=/home/yulin/yolo_project/yolo26n_gazebo_v3.pt
