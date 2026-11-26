@@ -196,6 +196,13 @@
 - [ ] D 自然語言操作：8 句中文指令全部正確、不編造結果
 - [ ] E 展示影片與文件
 
+### 三代理（Tracker／Predictor／Commander，規劃中）
+
+使用者要求（2026-11-27）：TM5S 取放和自走車各做一個三代理版本，並和現有版本比較。詳細規劃：`docs/plan_three_agents.md`。
+
+- [ ] TM5S：程式 + 假桌面測試 → Gazebo 驗收（12 句指令，和單一 Agent 比較）
+- [ ] 自走車：Tracker／Predictor／Commander 三個 ROS 2 節點 → 移動人物場景 S1–S5（和原控制器比較安全與效率）
+
 ## 需要在 Windows 操作的步驟
 
 每一項安裝前都會先確認。
