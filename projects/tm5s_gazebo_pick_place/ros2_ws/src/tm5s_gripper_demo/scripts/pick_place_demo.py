@@ -180,12 +180,20 @@ class PickPlace(Node):
         cube_xyz = obj_xyz
         scene = PlanningScene()
         scene.world.collision_objects = objs
-        # Clear a cube that may still be attached from an earlier run.
-        detach = AttachedCollisionObject(link_name=EE_LINK)
-        detach.object.id = self.args.object_id
-        detach.object.operation = CollisionObject.REMOVE
+        # Clear every object that may still be attached from an earlier run:
+        # a run that failed while holding the cup left it attached, and the
+        # next run (picking the bottle) then failed with START_STATE_IN_COLLISION
+        # (2026-11-28).
+        ids = {self.args.object_id, 'pick_cube', 'cup', 'bottle'}
+        ids |= {spec.split(',')[0] for spec in self.args.obstacle or []}
+        detached = []
+        for oid in sorted(ids):
+            d = AttachedCollisionObject(link_name=EE_LINK)
+            d.object.id = oid
+            d.object.operation = CollisionObject.REMOVE
+            detached.append(d)
         self.apply_scene(PlanningScene(
-            robot_state=RobotState(attached_collision_objects=[detach],
+            robot_state=RobotState(attached_collision_objects=detached,
                                    is_diff=True)))
         self.apply_scene(scene)
         self.log(f'Collision scene: pedestal, table top z={TABLE_TOP_Z:.3f}, '
@@ -340,6 +348,29 @@ class PickPlace(Node):
                  + f' {self.args.object_id} in the MoveIt planning scene')
 
     # ------------------------------------------------------------- stages
+    def recover(self):
+        """After a failure: open the gripper, detach the object, go to ready.
+
+        If the arm was holding the object it is let go where it is (the
+        failures so far happened just above the table). Best effort: every
+        step may fail on its own."""
+        for step in (lambda: self.gripper(OPEN_Q, 'recover: gripper open'),
+                     lambda: self.attach_cube(False),
+                     self.remove_object,  # else the open fingers start in collision with it
+                     lambda: self.move_joints(READY, 'recover: back to ready')):
+            try:
+                step()
+            except Exception as exc:  # noqa: BLE001  (best effort)
+                self.log(f'recover step failed: {exc}')
+
+    def remove_object(self):
+        gone = CollisionObject()
+        gone.id = self.args.object_id
+        gone.operation = CollisionObject.REMOVE
+        scene = PlanningScene(is_diff=True)
+        scene.world.collision_objects = [gone]
+        self.apply_scene(scene)
+
     def run(self):
         self.wait_ready()
         a = self.args
@@ -348,7 +379,7 @@ class PickPlace(Node):
             return
         # Elbow-up pose above the table corner, flange pointing down
         # (flange at about (0.37, 0.39, 1.14) in the world frame).
-        ready = [1.1, 0.0, 1.5708, 0.0, 1.5708, 0.0]
+        ready = READY
         self.move_joints(ready, 'joint goal: ready pose')
         if a.stage == 'joints':
             self.move_joints([0.7, 0.2, 1.3, 0.0, 1.5708, 0.5],
@@ -384,6 +415,9 @@ class PickPlace(Node):
         self.move_joints(ready, 'joint goal: back to ready')
 
 
+READY = [1.1, 0.0, 1.5708, 0.0, 1.5708, 0.0]
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--stage', default='pick',
@@ -412,6 +446,8 @@ def main():
     except RuntimeError as exc:
         node.get_logger().error(str(exc))
         code = 1
+        if args.stage == 'pick':
+            node.recover()
     node.destroy_node()
     rclpy.shutdown()
     sys.exit(code)
