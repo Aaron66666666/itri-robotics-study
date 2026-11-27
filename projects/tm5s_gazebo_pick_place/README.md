@@ -108,7 +108,7 @@ bash scripts/demo_language_gui.sh
 - 需要本機 Ollama（`llama3.1:8b`），和 `ai-agent/eval_team.py` 一樣。
 - 錄影用相機的影片、字幕和每句的訊息板紀錄存在 `~/demo_videos/tm5s_team_<時間>/`（`demo_camera.mp4`、`demo.log`、`demo_steps.json`）。
 - `GUI=0` 不開視窗（只錄 mp4），`RECORD=0` 不錄 mp4，`AUTO=1` 不需要按 Enter。
-- 2026-11-28 已用 `GUI=0` 跑過 3 次：第 1 次第 3 句的清空移動放下時 Cartesian 路徑只完成 38%（瓶子離放置點只有 18 cm），把瓶子的起始位置改到離放置點至少 24 cm 後，後 2 次 5 句全部成功。紀錄與截圖：`docs/evidence_2026-11-28_demo/`。
+- 2026-11-28 用 `GUI=0` 跑過 5 次。第 3 句的清空移動曾把杯子移到左邊（離底座 0.73 m，接近可及範圍），往下放時 Cartesian 路徑只完成 38–61%，5 次中有 2 次在這裡失敗（第 4 次靠自動恢復重試後仍完成）。改成「清空時優先選離底座最近的空區域」後，第 5 次 5 句全部一次成功（杯子改移到中間）。紀錄與截圖：`docs/evidence_2026-11-28_demo/`（最後一次）。
 
 ## 架構
 

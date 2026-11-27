@@ -119,8 +119,11 @@ class GazeboArm:
         except subprocess.TimeoutExpired:
             return False, "pick-and-place timed out (400 s)"
         if r.returncode != 0:
-            last = (r.stdout + r.stderr).strip().splitlines()
-            return False, (last[-1] if last else "pick-and-place failed")[-200:]
+            lines = (r.stdout + r.stderr).strip().splitlines()
+            # the pick script's own error, not the recovery lines logged after it
+            errors = [ln for ln in lines if "[ERROR]" in ln and "pick_place_demo" in ln]
+            msg = errors[-1] if errors else (lines[-1] if lines else "pick-and-place failed")
+            return False, msg[-200:]
         return True, "ok"
 
 

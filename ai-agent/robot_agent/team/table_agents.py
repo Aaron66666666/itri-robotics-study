@@ -149,8 +149,12 @@ class Predictor:
                     b = blockers[0]
                     # Where could the blocker go? Any other area with room, keeping clear of everything else.
                     rest = [p for n, p in pos.items() if n != b]
-                    # Prefer the area the user wants the blocker in (move it there first).
-                    order = sorted(AREAS, key=lambda a2: a2 != (preferred or {}).get(b))
+                    # Prefer the area the user wants the blocker in (move it there first),
+                    # then the area nearest the robot base: placing near the reach
+                    # limit (the left spot, 0.73 m) failed its Cartesian descent
+                    # 3 times in the 2026-11-28 demo runs.
+                    order = sorted(AREAS, key=lambda a2: (a2 != (preferred or {}).get(b),
+                                                          math.hypot(*AREAS[a2][0])))
                     for a2 in order:
                         if a2 != area and area_of(*pos[b]) != a2:
                             s2 = free_spot(a2, rest)
