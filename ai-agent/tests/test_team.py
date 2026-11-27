@@ -175,3 +175,11 @@ def test_fact_check_catches_integer_coordinates():
     t.observe_table()
     assert any("numbers" in p for p in t.fact_check("杯子在 (10, 20)，瓶子在 (30, 40)。"))
     assert not t.fact_check("桌上有 2 樣東西。")
+
+
+def test_fact_check_catches_a_wrong_location():
+    t = team({"cup": (0.50, 0.55), "bottle": (0.32, 0.36)}, "桌上有什麼？")
+    t.observe_table()                       # cup in no area, bottle near the robot
+    assert any("says the cup" in p for p in t.fact_check("桌上有瓶子和杯子。瓶子位於靠近機器人的左邊，杯子位於右邊。"))
+    assert not t.fact_check("桌上有瓶子和杯子。瓶子在靠近機器人的地方。")
+    assert not t.fact_check("杯子放到右邊失敗，因為右邊被占用。")

@@ -85,6 +85,31 @@ python3 vision_pick_trials.py --trials 10 --out /tmp/trials.json
 bash stop_all.sh
 ```
 
+## 中文指令展示（三代理，錄影用）
+
+一鍵展示：Gazebo 視窗中手臂依序執行 5 句中文指令，終端機即時顯示每個代理在做什麼（Tracker 看到什麼、Predictor 判斷可不可行、Commander 下什麼動作、手臂結果）。另外有一台斜側視角的錄影相機（`vision_world_demo.sdf`，畫面上看不到它），會同時錄成有中文字幕的 mp4。
+
+| 句子 | 展示的重點 |
+|---|---|
+| 桌上有什麼？ | 相機 + YOLO 看桌面 |
+| 把杯子放到右邊 | 一般的搬運 |
+| 把瓶子放到右邊 | 右邊被杯子占住：Predictor 建議先把杯子移到空位，再放瓶子 |
+| 把杯子放到左邊（杯子先被移到 0.86 m 外） | 搆不到：動手前就判斷出來，不嘗試 |
+| 把手機放到左邊 | 桌上沒有的東西：安全規則直接拒絕 |
+
+```bash
+bash scripts/demo_language_gui.sh
+```
+
+1. 執行後約 1 分鐘，Gazebo 視窗出現，終端機顯示「已就緒」。
+2. 把 Gazebo 視窗和終端機並排，開始螢幕錄影，按 Enter。
+3. 5 句約 4 分鐘跑完；結束後按 Enter 關閉所有視窗。
+
+- 需要本機 Ollama（`llama3.1:8b`），和 `ai-agent/eval_team.py` 一樣。
+- 錄影用相機的影片、字幕和每句的訊息板紀錄存在 `~/demo_videos/tm5s_team_<時間>/`（`demo_camera.mp4`、`demo.log`、`demo_steps.json`）。
+- `GUI=0` 不開視窗（只錄 mp4），`RECORD=0` 不錄 mp4，`AUTO=1` 不需要按 Enter。
+- 2026-11-28 已用 `GUI=0` 跑過 3 次：第 1 次第 3 句的清空移動放下時 Cartesian 路徑只完成 38%（瓶子離放置點只有 18 cm），把瓶子的起始位置改到離放置點至少 24 cm 後，後 2 次 5 句全部成功。紀錄與截圖：`docs/evidence_2026-11-28_demo/`。
+
 ## 架構
 
 和 UR5e 專案相同的場景（0.70 m 底座、工作桌、6 cm 方塊）、相同的二指夾爪和取放流程，只換手臂：

@@ -17,7 +17,7 @@
   "team": {
    "passed": "18/24",
    "mean_tool_calls": 2.6,
-   "mean_seconds": 2.1,
+   "mean_seconds": 2.0,
    "failed": [
     "h2_all_near",
     "h2_by_place",
@@ -92,7 +92,7 @@
    "mode": "single",
    "rep": 0,
    "task": "杯子移到左側，謝謝",
-   "seconds": 0.8,
+   "seconds": 0.9,
    "tool_calls": [
     [
      "pick_and_place",
@@ -119,7 +119,7 @@
    "mode": "team",
    "rep": 0,
    "task": "杯子移到左側，謝謝",
-   "seconds": 2.0,
+   "seconds": 1.9,
    "tool_calls": [
     [
      "predict_move",
@@ -146,14 +146,14 @@
    "zh_tw": true,
    "final": true,
    "pass": true,
-   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"杯子移到左側，謝謝\", \"objects\": [\"cup\"], \"areas\": [\"left\"], \"keep\": []}\n[02 +   0.7s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3287, \"y\": 0.4461, \"confidence\": 0.95, \"area\": \"none\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": 1\n[03 +   0.7s]  predictor -> commander  prediction  {\"object\": \"cup\", \"area\": \"left\", \"table_version\": 1, \"feasible\": true, \"reason\": \"ok\", \"move_needed\": true, \"target\": [0.38, 0.62], \"p_success\": 0.95, \"expected_seconds\": 26.0, \"b\n[04 +   1.2s]  commander -> arm        action      {\"object\": \"cup\", \"area\": \"left\", \"from\": [0.505, 0.554], \"to\": [0.38, 0.62]}\n[05 +   1.2s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3296, \"y\": 0.4513, \"confidence\": 0.95, \"area\": \"none\", \"moved_since_last_look_cm\": 0.5, \"stable\": true, \"looks\": 2}\n[06 +   1.2s]        arm -> commander  result      {\"success\": true, \"object\": \"cup\", \"requested_area\": \"left\", \"arm_message\": \"ok\", \"camera_after\": [0.3847, 0.6159], \"area_after\": \"left\"}\n[07 +   2.0s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3265, \"y\": 0.4541, \"confidence\": 0.95, \"area\": \"none\", \"moved_since_last_look_cm\": 0.4, \"stable\": true, \"looks\": 3}\n[08 +   2.0s]  commander -> reporter   report      {\"text\": \"目前桌面上的物品有杯子。杯子被移到左側，成功。目前攝影機的位置是 (0.3847, 0.6159)。\", \"problems\": []}"
+   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"杯子移到左側，謝謝\", \"objects\": [\"cup\"], \"areas\": [\"left\"], \"keep\": []}\n[02 +   0.7s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3287, \"y\": 0.4461, \"confidence\": 0.95, \"area\": \"none\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": 1\n[03 +   0.7s]  predictor -> commander  prediction  {\"object\": \"cup\", \"area\": \"left\", \"table_version\": 1, \"feasible\": true, \"reason\": \"ok\", \"move_needed\": true, \"target\": [0.38, 0.62], \"p_success\": 0.95, \"expected_seconds\": 26.0, \"b\n[04 +   1.1s]  commander -> arm        action      {\"object\": \"cup\", \"area\": \"left\", \"from\": [0.505, 0.554], \"to\": [0.38, 0.62]}\n[05 +   1.1s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3296, \"y\": 0.4513, \"confidence\": 0.95, \"area\": \"none\", \"moved_since_last_look_cm\": 0.5, \"stable\": true, \"looks\": 2}\n[06 +   1.1s]        arm -> commander  result      {\"success\": true, \"object\": \"cup\", \"requested_area\": \"left\", \"arm_message\": \"ok\", \"camera_after\": [0.3847, 0.6159], \"area_after\": \"left\"}\n[07 +   1.9s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3265, \"y\": 0.4541, \"confidence\": 0.95, \"area\": \"none\", \"moved_since_last_look_cm\": 0.4, \"stable\": true, \"looks\": 3}\n[08 +   1.9s]  commander -> reporter   report      {\"text\": \"目前桌面上的物品有杯子。杯子被移到左側，成功。目前攝影機的位置是 (0.3847, 0.6159)。\", \"problems\": []}"
   },
   {
    "id": "h2_coords",
    "mode": "single",
    "rep": 0,
    "task": "可以告訴我杯子的座標嗎？",
-   "seconds": 3.0,
+   "seconds": 3.1,
    "tool_calls": [
     [
      "list_objects",
@@ -253,7 +253,7 @@
    "mode": "team",
    "rep": 0,
    "task": "Move the bottle to the center.",
-   "seconds": 1.5,
+   "seconds": 1.4,
    "tool_calls": [
     [
      "predict_move",
@@ -265,8 +265,8 @@
     [
      "move_object",
      {
-      "area": "center",
-      "object": "bottle"
+      "object": "bottle",
+      "area": "center"
      }
     ]
    ],
@@ -280,14 +280,14 @@
    "zh_tw": true,
    "final": true,
    "pass": true,
-   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"Move the bottle to the center.\", \"objects\": [\"bottle\"], \"areas\": [\"center\"], \"keep\": []}\n[02 +   0.7s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.5487, \"y\": 0.2961, \"confidence\": 0.95, \"area\": \"right\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": \n[03 +   0.7s]  predictor -> commander  prediction  {\"object\": \"bottle\", \"area\": \"center\", \"table_version\": 1, \"feasible\": true, \"reason\": \"ok\", \"move_needed\": true, \"target\": [0.45, 0.47], \"p_success\": 0.95, \"expected_seconds\": 26.\n[04 +   1.2s]  commander -> arm        action      {\"object\": \"bottle\", \"area\": \"center\", \"from\": [0.549, 0.296], \"to\": [0.45, 0.47]}\n[05 +   1.2s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.4497, \"y\": 0.4704, \"confidence\": 0.95, \"area\": \"center\", \"moved_since_last_look_cm\": 20.0, \"stable\": false, \"looks\"\n[06 +   1.2s]        arm -> commander  result      {\"success\": true, \"object\": \"bottle\", \"requested_area\": \"center\", \"arm_message\": \"ok\", \"camera_after\": [0.4497, 0.4704], \"area_after\": \"center\"}\n[07 +   1.4s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.4466, \"y\": 0.4731, \"confidence\": 0.95, \"area\": \"center\", \"moved_since_last_look_cm\": 0.4, \"stable\": true, \"looks\": \n[08 +   1.4s]  commander -> reporter   report      {\"text\": \"現在桌子上有瓶子在中間。\", \"problems\": []}"
+   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"Move the bottle to the center.\", \"objects\": [\"bottle\"], \"areas\": [\"center\"], \"keep\": []}\n[02 +   0.7s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.5487, \"y\": 0.2961, \"confidence\": 0.95, \"area\": \"right\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": \n[03 +   0.7s]  predictor -> commander  prediction  {\"object\": \"bottle\", \"area\": \"center\", \"table_version\": 1, \"feasible\": true, \"reason\": \"ok\", \"move_needed\": true, \"target\": [0.45, 0.47], \"p_success\": 0.95, \"expected_seconds\": 26.\n[04 +   1.1s]  commander -> arm        action      {\"object\": \"bottle\", \"area\": \"center\", \"from\": [0.549, 0.296], \"to\": [0.45, 0.47]}\n[05 +   1.1s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.4497, \"y\": 0.4704, \"confidence\": 0.95, \"area\": \"center\", \"moved_since_last_look_cm\": 20.0, \"stable\": false, \"looks\"\n[06 +   1.1s]        arm -> commander  result      {\"success\": true, \"object\": \"bottle\", \"requested_area\": \"center\", \"arm_message\": \"ok\", \"camera_after\": [0.4497, 0.4704], \"area_after\": \"center\"}\n[07 +   1.4s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.4466, \"y\": 0.4731, \"confidence\": 0.95, \"area\": \"center\", \"moved_since_last_look_cm\": 0.4, \"stable\": true, \"looks\": \n[08 +   1.4s]  commander -> reporter   report      {\"text\": \"現在桌子上有瓶子在中間。\", \"problems\": []}"
   },
   {
    "id": "h2_keep_blocked",
    "mode": "single",
    "rep": 0,
    "task": "瓶子不要動，把杯子放到中間",
-   "seconds": 2.3,
+   "seconds": 2.2,
    "tool_calls": [
     [
      "list_objects",
@@ -441,8 +441,8 @@
     [
      "predict_move",
      {
-      "area": "right",
-      "object": "bottle"
+      "object": "bottle",
+      "area": "right"
      }
     ],
     [
@@ -487,14 +487,14 @@
    "zh_tw": true,
    "final": true,
    "pass": true,
-   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"別碰杯子，把瓶子放到右邊\", \"objects\": [\"bottle\"], \"areas\": [\"right\"], \"keep\": [\"cup\"]}\n[02 +   0.7s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3787, \"y\": 0.6161, \"confidence\": 0.95, \"area\": \"left\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": 1\n[03 +   0.7s]  predictor -> commander  prediction  {\"object\": \"bottle\", \"area\": \"right\", \"table_version\": 1, \"feasible\": false, \"reason\": \"area_occupied\", \"blocking\": [\"cup\"], \"suggested_clearing\": {\"move\": \"cup\", \"to_area\": \"cente\n[04 +   1.2s]     policy -> commander  refusal     {\"object\": \"cup\", \"area\": \"center\", \"reason\": \"the user said the cup must not move\"}\n[05 +   1.6s]  predictor -> commander  prediction  {\"object\": \"bottle\", \"area\": \"right\", \"table_version\": 1, \"feasible\": false, \"reason\": \"area_occupied\", \"blocking\": [\"cup\"], \"suggested_clearing\": {\"move\": \"cup\", \"to_area\": \"cente\n[06 +   2.1s]     policy -> commander  refusal     {\"object\": \"cup\", \"area\": \"center\", \"reason\": \"the user said the cup must not move\"}\n[07 +   3.5s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3845, \"y\": 0.6169, \"confidence\": 0.95, \"area\": \"left\", \"moved_since_last_look_cm\": 0.6, \"stable\": true, \"looks\": 2}\n[08 +   3.5s]  predictor -> commander  prediction  {\"object\": \"bottle\", \"area\": \"right\", \"table_version\": 1, \"feasible\": false, \"reason\": \"area_occupied\", \"blocking\": [\"cup\"], \"suggested_clearing\": {\"move\": \"cup\", \"to_area\": \"cente\n[09 +   3.5s]  commander -> reporter   report      {\"text\": \"桌上有瓶子和杯子。杯子不能移動。瓶子被杯子阻擋在右邊。杯子被移到中間。瓶子被杯子阻擋在右邊。\", \"problems\": [\"claims a move of the cup without a successful move\"]}\n[10 +   3.5s]   reporter -> user       report      {\"text\": \"桌上：瓶子（0.385, 0.617，左邊）、杯子（0.550, 0.298，右邊）。\\n瓶子無法放到右邊：右邊已經被杯子占用，沒有空間。\\n你要求杯子不要動，所以沒有移動它。\", \"replaced_because\": [\"claims a move of the cup without a successful move\"]}"
+   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"別碰杯子，把瓶子放到右邊\", \"objects\": [\"bottle\"], \"areas\": [\"right\"], \"keep\": [\"cup\"]}\n[02 +   0.7s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3787, \"y\": 0.6161, \"confidence\": 0.95, \"area\": \"left\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": 1\n[03 +   0.7s]  predictor -> commander  prediction  {\"object\": \"bottle\", \"area\": \"right\", \"table_version\": 1, \"feasible\": false, \"reason\": \"area_occupied\", \"blocking\": [\"cup\"], \"suggested_clearing\": {\"move\": \"cup\", \"to_area\": \"cente\n[04 +   1.1s]     policy -> commander  refusal     {\"object\": \"cup\", \"area\": \"center\", \"reason\": \"the user said the cup must not move\"}\n[05 +   1.6s]  predictor -> commander  prediction  {\"object\": \"bottle\", \"area\": \"right\", \"table_version\": 1, \"feasible\": false, \"reason\": \"area_occupied\", \"blocking\": [\"cup\"], \"suggested_clearing\": {\"move\": \"cup\", \"to_area\": \"cente\n[06 +   2.0s]     policy -> commander  refusal     {\"object\": \"cup\", \"area\": \"center\", \"reason\": \"the user said the cup must not move\"}\n[07 +   3.5s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3845, \"y\": 0.6169, \"confidence\": 0.95, \"area\": \"left\", \"moved_since_last_look_cm\": 0.6, \"stable\": true, \"looks\": 2}\n[08 +   3.5s]  predictor -> commander  prediction  {\"object\": \"bottle\", \"area\": \"right\", \"table_version\": 1, \"feasible\": false, \"reason\": \"area_occupied\", \"blocking\": [\"cup\"], \"suggested_clearing\": {\"move\": \"cup\", \"to_area\": \"cente\n[09 +   3.5s]  commander -> reporter   report      {\"text\": \"桌上有瓶子和杯子。杯子不能移動。瓶子被杯子阻擋在右邊。杯子被移到中間。瓶子被杯子阻擋在右邊。\", \"problems\": [\"claims a move of the cup without a successful move\"]}\n[10 +   3.5s]   reporter -> user       report      {\"text\": \"桌上：瓶子（0.385, 0.617，左邊）、杯子（0.550, 0.298，右邊）。\\n瓶子無法放到右邊：右邊已經被杯子占用，沒有空間。\\n你要求杯子不要動，所以沒有移動它。\", \"replaced_because\": [\"claims a move of the cup without a successful move\"]}"
   },
   {
    "id": "h2_swap_words",
    "mode": "single",
    "rep": 0,
    "task": "把杯子跟瓶子的位置對調",
-   "seconds": 4.8,
+   "seconds": 4.9,
    "tool_calls": [
     [
      "list_objects",
@@ -544,15 +544,15 @@
     [
      "predict_move",
      {
-      "object": "cup",
-      "area": "right"
+      "area": "right",
+      "object": "cup"
      }
     ],
     [
      "predict_move",
      {
-      "object": "bottle",
-      "area": "left"
+      "area": "left",
+      "object": "bottle"
      }
     ],
     [
@@ -626,8 +626,8 @@
     [
      "move_object",
      {
-      "object": "cup",
-      "area": "near_robot"
+      "area": "near_robot",
+      "object": "cup"
      }
     ]
    ],
@@ -648,7 +648,7 @@
    "mode": "single",
    "rep": 0,
    "task": "把鉛筆放到右邊",
-   "seconds": 1.3,
+   "seconds": 1.4,
    "tool_calls": [
     [
      "pick_and_place",
@@ -677,13 +677,13 @@
    "mode": "team",
    "rep": 0,
    "task": "把鉛筆放到右邊",
-   "seconds": 1.4,
+   "seconds": 1.5,
    "tool_calls": [
     [
      "predict_move",
      {
-      "area": "right",
-      "object": "鉛筆"
+      "object": "鉛筆",
+      "area": "right"
      }
     ]
    ],
@@ -692,21 +692,21 @@
     "there is no '鉛筆' on the table: the camera only knows bottle, cup. Tell the user that the 鉛筆 is not on the table; move no"
    ],
    "moves": 0,
-   "answer": "鉛筆不在桌上。\n\n觀察桌面：瓶子在左邊，杯子在中間，靠近機器人。\n\n不能移動任何東西。",
+   "answer": "桌上：瓶子（0.329, 0.446，不在任何區域）、杯子（0.505, 0.554，不在任何區域）。\n桌上沒有 鉛筆，沒有移動任何東西。",
    "positions": true,
    "answer_ok": true,
    "no_invented_numbers": true,
    "zh_tw": true,
    "final": true,
    "pass": true,
-   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"把鉛筆放到右邊\", \"objects\": [], \"areas\": [\"right\"], \"keep\": []}\n[02 +   0.7s]     policy -> commander  refusal     {\"object\": \"鉛筆\", \"area\": \"right\", \"reason\": \"there is no '鉛筆' on the table: the camera only knows bottle, cup. Tell the user that the 鉛筆 is not on the table; move nothing\"}\n[03 +   1.4s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3287, \"y\": 0.4461, \"confidence\": 0.95, \"area\": \"none\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": 1\n[04 +   1.4s]  commander -> reporter   report      {\"text\": \"鉛筆不在桌上。\\n\\n觀察桌面：瓶子在左邊，杯子在中間，靠近機器人。\\n\\n不能移動任何東西。\", \"problems\": []}"
+   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"把鉛筆放到右邊\", \"objects\": [], \"areas\": [\"right\"], \"keep\": []}\n[02 +   0.7s]     policy -> commander  refusal     {\"object\": \"鉛筆\", \"area\": \"right\", \"reason\": \"there is no '鉛筆' on the table: the camera only knows bottle, cup. Tell the user that the 鉛筆 is not on the table; move nothing\"}\n[03 +   1.5s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3287, \"y\": 0.4461, \"confidence\": 0.95, \"area\": \"none\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": 1\n[04 +   1.5s]  commander -> reporter   report      {\"text\": \"鉛筆不在桌上。\\n\\n觀察桌面：瓶子在左邊，杯子在中間，靠近機器人。\\n\\n不能移動任何東西。\", \"problems\": [\"says the cup is in ['center'], the camera sees it in none\", \"says the bottle is in ['left'], the camera se\n[05 +   1.5s]   reporter -> user       report      {\"text\": \"桌上：瓶子（0.329, 0.446，不在任何區域）、杯子（0.505, 0.554，不在任何區域）。\\n桌上沒有 鉛筆，沒有移動任何東西。\", \"replaced_because\": [\"says the cup is in ['center'], the camera sees it in none\", \"says the bottl"
   },
   {
    "id": "h2_ceiling",
    "mode": "single",
    "rep": 0,
    "task": "把杯子放到天花板上",
-   "seconds": 1.8,
+   "seconds": 1.9,
    "tool_calls": [
     [
      "pick_and_place",
@@ -773,8 +773,8 @@
     [
      "pick_and_place",
      {
-      "area": "center",
-      "object": "bottle"
+      "object": "bottle",
+      "area": "center"
      }
     ],
     [
@@ -815,8 +815,8 @@
     [
      "predict_move",
      {
-      "object": "bottle",
-      "area": "center"
+      "area": "center",
+      "object": "bottle"
      }
     ],
     [
@@ -836,8 +836,8 @@
     [
      "move_object",
      {
-      "object": "cup",
-      "area": "left"
+      "area": "left",
+      "object": "cup"
      }
     ]
    ],
@@ -851,14 +851,14 @@
    "zh_tw": true,
    "final": true,
    "pass": true,
-   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"先把瓶子放到中間，接著把杯子放到左邊\", \"objects\": [\"bottle\", \"cup\"], \"areas\": [\"center\", \"left\"], \"keep\": []}\n[02 +   2.4s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3187, \"y\": 0.3561, \"confidence\": 0.95, \"area\": \"near_robot\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"loo\n[03 +   2.4s]  predictor -> commander  prediction  {\"object\": \"bottle\", \"area\": \"center\", \"table_version\": 1, \"feasible\": true, \"reason\": \"ok\", \"move_needed\": true, \"target\": [0.45, 0.47], \"p_success\": 0.95, \"expected_seconds\": 26.\n[04 +   2.4s]  commander -> arm        action      {\"object\": \"bottle\", \"area\": \"center\", \"from\": [0.319, 0.356], \"to\": [0.45, 0.47]}\n[05 +   2.4s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.4497, \"y\": 0.4704, \"confidence\": 0.95, \"area\": \"center\", \"moved_since_last_look_cm\": 17.4, \"stable\": false, \"looks\"\n[06 +   2.4s]        arm -> commander  result      {\"success\": true, \"object\": \"bottle\", \"requested_area\": \"center\", \"arm_message\": \"ok\", \"camera_after\": [0.4497, 0.4704], \"area_after\": \"center\", \"still_to_do\": [{\"object\": \"cup\", \"\n[07 +   2.4s]  predictor -> commander  prediction  {\"object\": \"cup\", \"area\": \"left\", \"table_version\": 2, \"feasible\": true, \"reason\": \"ok\", \"move_needed\": true, \"target\": [0.38, 0.62], \"p_success\": 0.95, \"expected_seconds\": 26.0, \"b\n[08 +   2.4s]  commander -> arm        action      {\"object\": \"cup\", \"area\": \"left\", \"from\": [0.554, 0.297], \"to\": [0.38, 0.62]}\n[09 +   2.4s]    tracker -> all        observation {\"version\": 3, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.452, \"y\": 0.4651, \"confidence\": 0.95, \"area\": \"center\", \"moved_since_last_look_cm\": 0.6, \"stable\": true, \"looks\": 3\n[10 +   2.4s]        arm -> commander  result      {\"success\": true, \"object\": \"cup\", \"requested_area\": \"left\", \"arm_message\": \"ok\", \"camera_after\": [0.3806, 0.6241], \"area_after\": \"left\"}\n[11 +   3.1s]    tracker -> all        observation {\"version\": 3, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.4551, \"y\": 0.4755, \"confidence\": 0.95, \"area\": \"center\", \"moved_since_last_look_cm\": 1.1, \"stable\": true, \"looks\": \n[12 +   3.1s]  commander -> reporter   report      {\"text\": \"瓶子和杯子都已經放好。瓶子現在在中間，杯子現在在左邊。\", \"problems\": []}"
+   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"先把瓶子放到中間，接著把杯子放到左邊\", \"objects\": [\"bottle\", \"cup\"], \"areas\": [\"center\", \"left\"], \"keep\": []}\n[02 +   2.3s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3187, \"y\": 0.3561, \"confidence\": 0.95, \"area\": \"near_robot\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"loo\n[03 +   2.3s]  predictor -> commander  prediction  {\"object\": \"bottle\", \"area\": \"center\", \"table_version\": 1, \"feasible\": true, \"reason\": \"ok\", \"move_needed\": true, \"target\": [0.45, 0.47], \"p_success\": 0.95, \"expected_seconds\": 26.\n[04 +   2.3s]  commander -> arm        action      {\"object\": \"bottle\", \"area\": \"center\", \"from\": [0.319, 0.356], \"to\": [0.45, 0.47]}\n[05 +   2.3s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.4497, \"y\": 0.4704, \"confidence\": 0.95, \"area\": \"center\", \"moved_since_last_look_cm\": 17.4, \"stable\": false, \"looks\"\n[06 +   2.3s]        arm -> commander  result      {\"success\": true, \"object\": \"bottle\", \"requested_area\": \"center\", \"arm_message\": \"ok\", \"camera_after\": [0.4497, 0.4704], \"area_after\": \"center\", \"still_to_do\": [{\"object\": \"cup\", \"\n[07 +   2.3s]  predictor -> commander  prediction  {\"object\": \"cup\", \"area\": \"left\", \"table_version\": 2, \"feasible\": true, \"reason\": \"ok\", \"move_needed\": true, \"target\": [0.38, 0.62], \"p_success\": 0.95, \"expected_seconds\": 26.0, \"b\n[08 +   2.3s]  commander -> arm        action      {\"object\": \"cup\", \"area\": \"left\", \"from\": [0.554, 0.297], \"to\": [0.38, 0.62]}\n[09 +   2.3s]    tracker -> all        observation {\"version\": 3, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.452, \"y\": 0.4651, \"confidence\": 0.95, \"area\": \"center\", \"moved_since_last_look_cm\": 0.6, \"stable\": true, \"looks\": 3\n[10 +   2.3s]        arm -> commander  result      {\"success\": true, \"object\": \"cup\", \"requested_area\": \"left\", \"arm_message\": \"ok\", \"camera_after\": [0.3806, 0.6241], \"area_after\": \"left\"}\n[11 +   3.0s]    tracker -> all        observation {\"version\": 3, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.4551, \"y\": 0.4755, \"confidence\": 0.95, \"area\": \"center\", \"moved_since_last_look_cm\": 1.1, \"stable\": true, \"looks\": \n[12 +   3.0s]  commander -> reporter   report      {\"text\": \"瓶子和杯子都已經放好。瓶子現在在中間，杯子現在在左邊。\", \"problems\": []}"
   },
   {
    "id": "h2_by_place",
    "mode": "single",
    "rep": 0,
    "task": "右邊的東西移到中間",
-   "seconds": 1.5,
+   "seconds": 1.4,
    "tool_calls": [
     [
      "pick_and_place",
@@ -909,7 +909,7 @@
    "zh_tw": true,
    "final": true,
    "pass": false,
-   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"右邊的東西移到中間\", \"objects\": [], \"areas\": [\"center\", \"right\"], \"keep\": []}\n[02 +   0.6s]     policy -> commander  refusal     {\"object\": \"東西\", \"area\": \"center\", \"reason\": \"there is no '東西' on the table: the camera only knows bottle, cup. Tell the user that the 東西 is not on the table; move nothing\"}\n[03 +   1.4s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3787, \"y\": 0.6161, \"confidence\": 0.95, \"area\": \"left\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": 1\n[04 +   1.4s]  commander -> reporter   report      {\"text\": \"東西不在桌子上。\\n\\n桌子上的東西：瓶子、杯子。\\n\\n右邊的東西移到中間：失敗，東西不在桌子上。\", \"problems\": []}"
+   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"右邊的東西移到中間\", \"objects\": [], \"areas\": [\"center\", \"right\"], \"keep\": []}\n[02 +   0.5s]     policy -> commander  refusal     {\"object\": \"東西\", \"area\": \"center\", \"reason\": \"there is no '東西' on the table: the camera only knows bottle, cup. Tell the user that the 東西 is not on the table; move nothing\"}\n[03 +   1.4s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3787, \"y\": 0.6161, \"confidence\": 0.95, \"area\": \"left\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": 1\n[04 +   1.4s]  commander -> reporter   report      {\"text\": \"東西不在桌子上。\\n\\n桌子上的東西：瓶子、杯子。\\n\\n右邊的東西移到中間：失敗，東西不在桌子上。\", \"problems\": []}"
   },
   {
    "id": "h2_push",
@@ -977,7 +977,7 @@
    "mode": "single",
    "rep": 1,
    "task": "杯子移到左側，謝謝",
-   "seconds": 0.9,
+   "seconds": 0.8,
    "tool_calls": [
     [
      "pick_and_place",
@@ -1004,7 +1004,7 @@
    "mode": "team",
    "rep": 1,
    "task": "杯子移到左側，謝謝",
-   "seconds": 1.5,
+   "seconds": 1.6,
    "tool_calls": [
     [
      "predict_move",
@@ -1031,14 +1031,14 @@
    "zh_tw": true,
    "final": true,
    "pass": true,
-   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"杯子移到左側，謝謝\", \"objects\": [\"cup\"], \"areas\": [\"left\"], \"keep\": []}\n[02 +   0.7s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3342, \"y\": 0.4461, \"confidence\": 0.95, \"area\": \"none\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": 1\n[03 +   0.7s]  predictor -> commander  prediction  {\"object\": \"cup\", \"area\": \"left\", \"table_version\": 1, \"feasible\": true, \"reason\": \"ok\", \"move_needed\": true, \"target\": [0.38, 0.62], \"p_success\": 0.95, \"expected_seconds\": 26.0, \"b\n[04 +   1.1s]  commander -> arm        action      {\"object\": \"cup\", \"area\": \"left\", \"from\": [0.494, 0.556], \"to\": [0.38, 0.62]}\n[05 +   1.1s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3235, \"y\": 0.4425, \"confidence\": 0.95, \"area\": \"none\", \"moved_since_last_look_cm\": 1.1, \"stable\": true, \"looks\": 2}\n[06 +   1.1s]        arm -> commander  result      {\"success\": true, \"object\": \"cup\", \"requested_area\": \"left\", \"arm_message\": \"ok\", \"camera_after\": [0.3824, 0.6241], \"area_after\": \"left\"}\n[07 +   1.5s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3342, \"y\": 0.442, \"confidence\": 0.95, \"area\": \"none\", \"moved_since_last_look_cm\": 1.1, \"stable\": true, \"looks\": 3},\n[08 +   1.5s]  commander -> reporter   report      {\"text\": \"目前桌面上的物體有杯子，杯子已經移到左側。\", \"problems\": []}"
+   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"杯子移到左側，謝謝\", \"objects\": [\"cup\"], \"areas\": [\"left\"], \"keep\": []}\n[02 +   0.7s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3342, \"y\": 0.4461, \"confidence\": 0.95, \"area\": \"none\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": 1\n[03 +   0.7s]  predictor -> commander  prediction  {\"object\": \"cup\", \"area\": \"left\", \"table_version\": 1, \"feasible\": true, \"reason\": \"ok\", \"move_needed\": true, \"target\": [0.38, 0.62], \"p_success\": 0.95, \"expected_seconds\": 26.0, \"b\n[04 +   1.1s]  commander -> arm        action      {\"object\": \"cup\", \"area\": \"left\", \"from\": [0.494, 0.556], \"to\": [0.38, 0.62]}\n[05 +   1.1s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3235, \"y\": 0.4425, \"confidence\": 0.95, \"area\": \"none\", \"moved_since_last_look_cm\": 1.1, \"stable\": true, \"looks\": 2}\n[06 +   1.1s]        arm -> commander  result      {\"success\": true, \"object\": \"cup\", \"requested_area\": \"left\", \"arm_message\": \"ok\", \"camera_after\": [0.3824, 0.6241], \"area_after\": \"left\"}\n[07 +   1.6s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3342, \"y\": 0.442, \"confidence\": 0.95, \"area\": \"none\", \"moved_since_last_look_cm\": 1.1, \"stable\": true, \"looks\": 3},\n[08 +   1.6s]  commander -> reporter   report      {\"text\": \"目前桌面上的物體有杯子，杯子已經移到左側。\", \"problems\": []}"
   },
   {
    "id": "h2_coords",
    "mode": "single",
    "rep": 1,
    "task": "可以告訴我杯子的座標嗎？",
-   "seconds": 4.9,
+   "seconds": 5.0,
    "tool_calls": [
     [
      "list_objects",
@@ -1166,13 +1166,13 @@
    "mode": "team",
    "rep": 1,
    "task": "Move the bottle to the center.",
-   "seconds": 1.5,
+   "seconds": 1.4,
    "tool_calls": [
     [
      "predict_move",
      {
-      "area": "center",
-      "object": "bottle"
+      "object": "bottle",
+      "area": "center"
      }
     ],
     [
@@ -1193,14 +1193,14 @@
    "zh_tw": true,
    "final": true,
    "pass": true,
-   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"Move the bottle to the center.\", \"objects\": [\"bottle\"], \"areas\": [\"center\"], \"keep\": []}\n[02 +   0.7s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.5542, \"y\": 0.2961, \"confidence\": 0.95, \"area\": \"right\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": \n[03 +   0.7s]  predictor -> commander  prediction  {\"object\": \"bottle\", \"area\": \"center\", \"table_version\": 1, \"feasible\": true, \"reason\": \"ok\", \"move_needed\": true, \"target\": [0.45, 0.47], \"p_success\": 0.95, \"expected_seconds\": 26.\n[04 +   1.2s]  commander -> arm        action      {\"object\": \"bottle\", \"area\": \"center\", \"from\": [0.554, 0.296], \"to\": [0.45, 0.47]}\n[05 +   1.2s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.4435, \"y\": 0.4619, \"confidence\": 0.95, \"area\": \"center\", \"moved_since_last_look_cm\": 19.9, \"stable\": false, \"looks\"\n[06 +   1.2s]        arm -> commander  result      {\"success\": true, \"object\": \"bottle\", \"requested_area\": \"center\", \"arm_message\": \"ok\", \"camera_after\": [0.4435, 0.4619], \"area_after\": \"center\"}\n[07 +   1.5s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.4542, \"y\": 0.4615, \"confidence\": 0.95, \"area\": \"center\", \"moved_since_last_look_cm\": 1.1, \"stable\": true, \"looks\": \n[08 +   1.5s]  commander -> reporter   report      {\"text\": \"現在桌上有瓶子在中間。\", \"problems\": []}"
+   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"Move the bottle to the center.\", \"objects\": [\"bottle\"], \"areas\": [\"center\"], \"keep\": []}\n[02 +   0.7s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.5542, \"y\": 0.2961, \"confidence\": 0.95, \"area\": \"right\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": \n[03 +   0.7s]  predictor -> commander  prediction  {\"object\": \"bottle\", \"area\": \"center\", \"table_version\": 1, \"feasible\": true, \"reason\": \"ok\", \"move_needed\": true, \"target\": [0.45, 0.47], \"p_success\": 0.95, \"expected_seconds\": 26.\n[04 +   1.2s]  commander -> arm        action      {\"object\": \"bottle\", \"area\": \"center\", \"from\": [0.554, 0.296], \"to\": [0.45, 0.47]}\n[05 +   1.2s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.4435, \"y\": 0.4619, \"confidence\": 0.95, \"area\": \"center\", \"moved_since_last_look_cm\": 19.9, \"stable\": false, \"looks\"\n[06 +   1.2s]        arm -> commander  result      {\"success\": true, \"object\": \"bottle\", \"requested_area\": \"center\", \"arm_message\": \"ok\", \"camera_after\": [0.4435, 0.4619], \"area_after\": \"center\"}\n[07 +   1.4s]    tracker -> all        observation {\"version\": 2, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.4542, \"y\": 0.4615, \"confidence\": 0.95, \"area\": \"center\", \"moved_since_last_look_cm\": 1.1, \"stable\": true, \"looks\": \n[08 +   1.4s]  commander -> reporter   report      {\"text\": \"現在桌上有瓶子在中間。\", \"problems\": []}"
   },
   {
    "id": "h2_keep_blocked",
    "mode": "single",
    "rep": 1,
    "task": "瓶子不要動，把杯子放到中間",
-   "seconds": 2.3,
+   "seconds": 2.2,
    "tool_calls": [
     [
      "list_objects",
@@ -1281,8 +1281,8 @@
     [
      "move_object",
      {
-      "area": "center",
-      "object": "cup"
+      "object": "cup",
+      "area": "center"
      }
     ]
    ],
@@ -1325,8 +1325,8 @@
     [
      "pick_and_place",
      {
-      "area": "left",
-      "object": "cup"
+      "object": "cup",
+      "area": "left"
      }
     ]
    ],
@@ -1361,15 +1361,15 @@
     [
      "move_object",
      {
-      "object": "cup",
-      "area": "center"
+      "area": "center",
+      "object": "cup"
      }
     ],
     [
      "predict_move",
      {
-      "area": "right",
-      "object": "bottle"
+      "object": "bottle",
+      "area": "right"
      }
     ],
     [
@@ -1407,7 +1407,7 @@
    "mode": "single",
    "rep": 1,
    "task": "把杯子跟瓶子的位置對調",
-   "seconds": 3.5,
+   "seconds": 3.4,
    "tool_calls": [
     [
      "list_objects",
@@ -1427,8 +1427,8 @@
     [
      "pick_and_place",
      {
-      "object": "bottle",
-      "area": "left"
+      "area": "left",
+      "object": "bottle"
      }
     ]
    ],
@@ -1464,15 +1464,15 @@
     [
      "predict_move",
      {
-      "object": "bottle",
-      "area": "left"
+      "area": "left",
+      "object": "bottle"
      }
     ],
     [
      "move_object",
      {
-      "object": "cup",
-      "area": "left"
+      "area": "left",
+      "object": "cup"
      }
     ],
     [
@@ -1510,8 +1510,8 @@
     [
      "pick_and_place",
      {
-      "object": "all",
-      "area": "near_robot"
+      "area": "near_robot",
+      "object": "all"
      }
     ]
    ],
@@ -1539,8 +1539,8 @@
     [
      "move_object",
      {
-      "object": "cup",
-      "area": "near_robot"
+      "area": "near_robot",
+      "object": "cup"
      }
     ]
    ],
@@ -1605,27 +1605,27 @@
     "there is no '鉛筆' on the table: the camera only knows bottle, cup. Tell the user that the 鉛筆 is not on the table; move no"
    ],
    "moves": 0,
-   "answer": "鉛筆不在桌上。\n\n觀察桌面：瓶子在左邊，杯子在中間，靠近機器人。\n\n不能移動任何東西。",
+   "answer": "桌上：瓶子（0.334, 0.446，不在任何區域）、杯子（0.494, 0.556，不在任何區域）。\n桌上沒有 鉛筆，沒有移動任何東西。",
    "positions": true,
    "answer_ok": true,
    "no_invented_numbers": true,
    "zh_tw": true,
    "final": true,
    "pass": true,
-   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"把鉛筆放到右邊\", \"objects\": [], \"areas\": [\"right\"], \"keep\": []}\n[02 +   0.7s]     policy -> commander  refusal     {\"object\": \"鉛筆\", \"area\": \"right\", \"reason\": \"there is no '鉛筆' on the table: the camera only knows bottle, cup. Tell the user that the 鉛筆 is not on the table; move nothing\"}\n[03 +   1.5s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3342, \"y\": 0.4461, \"confidence\": 0.95, \"area\": \"none\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": 1\n[04 +   1.5s]  commander -> reporter   report      {\"text\": \"鉛筆不在桌上。\\n\\n觀察桌面：瓶子在左邊，杯子在中間，靠近機器人。\\n\\n不能移動任何東西。\", \"problems\": []}"
+   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"把鉛筆放到右邊\", \"objects\": [], \"areas\": [\"right\"], \"keep\": []}\n[02 +   0.7s]     policy -> commander  refusal     {\"object\": \"鉛筆\", \"area\": \"right\", \"reason\": \"there is no '鉛筆' on the table: the camera only knows bottle, cup. Tell the user that the 鉛筆 is not on the table; move nothing\"}\n[03 +   1.5s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3342, \"y\": 0.4461, \"confidence\": 0.95, \"area\": \"none\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": 1\n[04 +   1.5s]  commander -> reporter   report      {\"text\": \"鉛筆不在桌上。\\n\\n觀察桌面：瓶子在左邊，杯子在中間，靠近機器人。\\n\\n不能移動任何東西。\", \"problems\": [\"says the cup is in ['center'], the camera sees it in none\", \"says the bottle is in ['left'], the camera se\n[05 +   1.5s]   reporter -> user       report      {\"text\": \"桌上：瓶子（0.334, 0.446，不在任何區域）、杯子（0.494, 0.556，不在任何區域）。\\n桌上沒有 鉛筆，沒有移動任何東西。\", \"replaced_because\": [\"says the cup is in ['center'], the camera sees it in none\", \"says the bottl"
   },
   {
    "id": "h2_ceiling",
    "mode": "single",
    "rep": 1,
    "task": "把杯子放到天花板上",
-   "seconds": 1.9,
+   "seconds": 2.9,
    "tool_calls": [
     [
      "pick_and_place",
      {
-      "object": "cup",
-      "area": "center"
+      "area": "center",
+      "object": "cup"
      }
     ]
    ],
@@ -1648,7 +1648,7 @@
    "mode": "team",
    "rep": 1,
    "task": "把杯子放到天花板上",
-   "seconds": 2.1,
+   "seconds": 1.2,
    "tool_calls": [
     [
      "predict_move",
@@ -1735,8 +1735,8 @@
     [
      "move_object",
      {
-      "object": "bottle",
-      "area": "center"
+      "area": "center",
+      "object": "bottle"
      }
     ],
     [
@@ -1749,8 +1749,8 @@
     [
      "move_object",
      {
-      "area": "left",
-      "object": "cup"
+      "object": "cup",
+      "area": "left"
      }
     ]
    ],
@@ -1800,7 +1800,7 @@
    "mode": "team",
    "rep": 1,
    "task": "右邊的東西移到中間",
-   "seconds": 1.4,
+   "seconds": 1.3,
    "tool_calls": [
     [
      "predict_move",
@@ -1822,7 +1822,7 @@
    "zh_tw": true,
    "final": true,
    "pass": false,
-   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"右邊的東西移到中間\", \"objects\": [], \"areas\": [\"center\", \"right\"], \"keep\": []}\n[02 +   0.6s]     policy -> commander  refusal     {\"object\": \"東西\", \"area\": \"center\", \"reason\": \"there is no '東西' on the table: the camera only knows bottle, cup. Tell the user that the 東西 is not on the table; move nothing\"}\n[03 +   1.4s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3842, \"y\": 0.6161, \"confidence\": 0.95, \"area\": \"left\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": 1\n[04 +   1.4s]  commander -> reporter   report      {\"text\": \"東西不在桌子上。\\n\\n桌子上的東西：瓶子、杯子。\\n\\n右邊的東西移到中間：失敗，東西不在桌子上。\", \"problems\": []}"
+   "blackboard": "[01 +   0.0s]       user -> commander  request     {\"task\": \"右邊的東西移到中間\", \"objects\": [], \"areas\": [\"center\", \"right\"], \"keep\": []}\n[02 +   0.5s]     policy -> commander  refusal     {\"object\": \"東西\", \"area\": \"center\", \"reason\": \"there is no '東西' on the table: the camera only knows bottle, cup. Tell the user that the 東西 is not on the table; move nothing\"}\n[03 +   1.3s]    tracker -> all        observation {\"version\": 1, \"count\": 2, \"objects\": [{\"name\": \"bottle\", \"x\": 0.3842, \"y\": 0.6161, \"confidence\": 0.95, \"area\": \"left\", \"moved_since_last_look_cm\": 0.0, \"stable\": false, \"looks\": 1\n[04 +   1.3s]  commander -> reporter   report      {\"text\": \"東西不在桌子上。\\n\\n桌子上的東西：瓶子、杯子。\\n\\n右邊的東西移到中間：失敗，東西不在桌子上。\", \"problems\": []}"
   }
  ]
 }

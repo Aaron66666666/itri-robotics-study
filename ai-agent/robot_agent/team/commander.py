@@ -210,6 +210,8 @@ class TableTeam:
     # ------------------------------------------------------------ report
     ZH_OBJ = {"cup": "杯子", "bottle": "瓶子"}
     ZH_AREA = {"left": "左邊", "right": "右邊", "center": "中間", "near_robot": "靠近機器人", "none": "不在任何區域"}
+    AREA_WORDS = {"left": ("左",), "right": ("右",), "center": ("中間", "中央"),
+                  "near_robot": ("靠近機器人", "機器人旁邊", "機器人附近", "靠近手臂")}
     ZH_REASON = {"not_on_table": "桌上沒有{o}", "out_of_reach": "{o}超出手臂可以搆到的範圍（離底座超過 0.80 m）",
                  "area_occupied": "{a}已經被{b}占用，沒有空間"}
 
@@ -261,9 +263,25 @@ class TableTeam:
                     invented.append(float(x))
         if invented:
             problems.append(f"numbers not in any tool result: {invented[:4]}")
-        ok_objs = {n.content["object"] for n in self.board.notes if n.kind == "result" and n.content["success"]}
         moved = r"(成功|已經放|已放到|放好|移到了|完成|被移到|被放到|被搬到|移動到|搬到|放在了)"
         negated = r"(不能|無法|沒有|沒能|未能|不可以|失敗|不會)"
+        # Where an object is now: 「杯子位於右邊」 must match the last camera look
+        # (Llama said the cup was on the right when it was in no area, 2026-11-28 demo).
+        obs = self.board.last("observation")
+        now = {o["name"]: o["area"] for o in obs.content["objects"]} if obs else {}
+        located = r"(位於|現在在|目前在|現在位於|目前位於|放在|在)"
+        for o, zh in self.ZH_OBJ.items():
+            for clause in re.split(r"[。！\n；;，,]", text):
+                i = clause.find(zh)
+                if i < 0 or o not in now or re.search(moved + "|" + negated + r"|把|要|請|移|搬|放到", clause):
+                    continue
+                rest = clause[i + len(zh):]
+                if not re.match(located, rest):
+                    continue
+                said = {a for a, w in self.AREA_WORDS.items() if any(x in rest for x in w)}
+                if said and now[o] not in said:
+                    problems.append(f"says the {o} is in {sorted(said)}, the camera sees it in {now[o]}")
+        ok_objs = {n.content["object"] for n in self.board.notes if n.kind == "result" and n.content["success"]}
         for o, zh in self.ZH_OBJ.items():
             for sentence in re.split(r"[。！\n；;]", text):
                 if zh in sentence and re.search(moved, sentence) and not re.search(negated, sentence) \

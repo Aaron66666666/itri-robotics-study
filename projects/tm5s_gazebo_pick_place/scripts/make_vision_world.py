@@ -8,8 +8,10 @@ facing the camera (yaw 0) YOLO scored the cup only 0.12, at -45 deg 0.75
 (tested 2026-11-26). At -45 deg the handle also stays ~9 mm clear of the
 fingers, which close along world y in the top-down grasp.
 
-Usage: python3 make_vision_world.py [--datagen]   (writes next to pick_place_world.sdf;
---datagen adds a boundingbox camera and class labels for YOLO training data)
+Usage: python3 make_vision_world.py [--datagen | --demo]   (writes next to pick_place_world.sdf;
+--datagen adds a boundingbox camera and class labels for YOLO training data;
+--demo adds a 1280x720 recording camera with a three-quarter view of the arm and
+the table, /demo_camera/image, for demo videos; the scene is otherwise identical)
 """
 import math
 import os
@@ -102,6 +104,28 @@ def camera():
       </link></model>'''
 
 
+DEMO_CAM_POS = (1.55, -0.75, 1.55)
+DEMO_CAM_TARGET = (0.28, 0.38, 0.82)
+
+
+def demo_camera():
+    """Recording camera (no visual, so the table camera never sees it)."""
+    dx, dy, dz = (DEMO_CAM_TARGET[i] - DEMO_CAM_POS[i] for i in range(3))
+    yaw = math.atan2(dy, dx)
+    pitch = math.atan2(-dz, math.hypot(dx, dy))
+    return f'''<model name="demo_camera"><static>true</static>
+      <pose>{DEMO_CAM_POS[0]} {DEMO_CAM_POS[1]} {DEMO_CAM_POS[2]} 0 {pitch:.4f} {yaw:.4f}</pose>
+      <link name="link">
+        <sensor name="demo_camera" type="camera">
+          <always_on>1</always_on><update_rate>10</update_rate><visualize>false</visualize>
+          <topic>/demo_camera/image</topic>
+          <camera><horizontal_fov>1.1</horizontal_fov>
+            <image><width>1280</width><height>720</height><format>R8G8B8</format></image>
+            <clip><near>0.05</near><far>20</far></clip></camera>
+        </sensor>
+      </link></model>'''
+
+
 LABEL_PLUGIN = '<plugin filename="gz-sim-label-system" name="gz::sim::systems::Label"><label>{}</label></plugin>'
 
 
@@ -121,6 +145,7 @@ def bbox_camera():
 
 def main():
     datagen = "--datagen" in sys.argv
+    demo = "--demo" in sys.argv
     s = open(BASE).read()
     s = s.replace('<world name="tm5s_pick_place">', '<world name="tm5s_vision">')
     sensors = ('<plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">'
@@ -137,8 +162,10 @@ def main():
     objs = camera() + "\n    " + cup_sdf + "\n    " + bottle_sdf
     if datagen:
         objs += "\n    " + bbox_camera()
+    if demo:
+        objs += "\n    " + demo_camera()
     s = s.replace("  </world>", "    " + objs + "\n  </world>")
-    out = OUT.replace(".sdf", "_datagen.sdf") if datagen else OUT
+    out = OUT.replace(".sdf", "_datagen.sdf") if datagen else OUT.replace(".sdf", "_demo.sdf") if demo else OUT
     open(out, "w").write(s)
     print("wrote", out)
 
