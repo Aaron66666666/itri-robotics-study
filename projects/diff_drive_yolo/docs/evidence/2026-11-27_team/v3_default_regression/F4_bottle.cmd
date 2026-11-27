@@ -1,0 +1,1 @@
+ros2 launch robot_control autonomous_yolo.launch.py device:=0 search_speed:=0.05 approach_speed:=0.05 alignment_speed:=0.15 target_action:=stop target_class:=bottle stop_bbox_dimension:=width stop_bbox_ratio:=0.22

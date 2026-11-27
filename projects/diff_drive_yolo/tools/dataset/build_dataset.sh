@@ -1,6 +1,9 @@
 #!/bin/bash
 # Build the synthetic dataset: starts headless Gazebo with the data world and
 # generates train/val/test with different seeds. Usage: build_dataset.sh OUT_DIR
+# Images come from an ordinary camera (clean, v5). To rebuild the v1-v3 data,
+# whose images have the boundingbox camera's drawn boxes on them:
+#   IMAGE_TOPIC=/datagen/boxes_image build_dataset.sh OUT_DIR
 set -e
 # 'set -e' also stops the build if a chunk fails three times.
 S=$(cd "$(dirname "$0")" && pwd); WS=$(cd "$S/../.." && pwd); OUT=${1:?OUT_DIR}
@@ -17,7 +20,8 @@ run_chunk() {  # split start count seed
   for attempt in 1 2 3; do
     timeout 600 gz sim -s -r --headless-rendering "$WS/worlds/yolo_datagen.sdf" > "$OUT/gz_$1_$2.log" 2>&1 &
     GZ=$!; sleep 15
-    if timeout 400 python3 "$S/generate.py" --out "$OUT" --split "$1" --start "$2" --count "$3" --seed "$4"; then
+    if timeout 400 python3 "$S/generate.py" --out "$OUT" --split "$1" --start "$2" --count "$3" --seed "$4" \
+        --image-topic "${IMAGE_TOPIC:-/datagen/rgb}"; then
       stop_gz; return 0
     fi
     echo "chunk $1/$2 failed (attempt $attempt), restarting Gazebo"

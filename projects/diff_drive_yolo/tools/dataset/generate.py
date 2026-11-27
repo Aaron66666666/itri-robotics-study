@@ -238,6 +238,10 @@ def main() -> None:
     parser.add_argument('--seed', type=int, required=True)
     parser.add_argument('--start', type=int, default=0,
                         help='first image index (chunked generation)')
+    parser.add_argument('--image-topic', default='/datagen/rgb',
+                        help='/datagen/rgb: clean images (v5); '
+                             '/datagen/boxes_image: the boundingbox '
+                             "camera's image with drawn boxes (v1-v3)")
     args = parser.parse_args()
     out = Path(args.out)
     for sub in (f'images/{args.split}', f'labels/{args.split}', 'meta'):
@@ -245,7 +249,7 @@ def main() -> None:
     # one deterministic stream per chunk, so a retried chunk is identical
     rng = random.Random(f'{args.seed}-{args.start}')
     requester = Requester()   # start before any gz node exists here
-    cap = BoxCameraCapture()
+    cap = BoxCameraCapture(image_topic=args.image_topic)
     cap.get(after=-1, timeout=30)   # wait until the sensor is running
     light = set_light(requester, rng)
     started = time.time()

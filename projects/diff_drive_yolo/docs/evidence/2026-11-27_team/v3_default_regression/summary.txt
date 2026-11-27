@@ -1,0 +1,12 @@
+== F1_cup
+stale_detections approach_target target_lost_wait approach_target target_lost_wait search_forward approach_target target_action:stop target_action_complete stale_detections target_action:stop target_action_complete 
+    x: 0.53444998080150385
+== F2_loss
+stale_detections approach_target target_lost_wait approach_target target_lost_wait search_forward approach_target target_action:stop target_action_complete target_lost_wait search_forward search_timeout target_action:stop target_action_complete 
+    x: 0.70394997474776289
+== F3_person
+stale_detections approach_target person_detected approach_target target_action:stop target_action_complete 
+    x: 0.529349980981937
+== F4_bottle
+stale_detections approach_target target_action:stop target_action_complete 
+    x: 0.97334996510899641

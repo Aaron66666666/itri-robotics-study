@@ -43,17 +43,32 @@
 | E2：杯子場景 | PASS：停在 x = 0.529 m | cup ≥ 0.5 佔 99.4%（最低 0.43）；原模型為 100%（最低 0.63） |
 | E3：人物情境 | PASS：人物出現後 478 ms 停車，畫面中有人時位移 0.0 m，人離開後 58 ms 恢復接近，停在 x = 0.555 m | person 0.946 |
 
-**v3 已設為預設模型**（`~/yolo_project/yolo26n_gazebo_v3.pt`）。切回原模型用 `model_path:=~/yolo_project/yolo26n.pt`。停止門檻：
+**v3 已設為預設模型**（`~/yolo_project/yolo26n_gazebo_v3.pt`）。改用 v5 用 `yolo_model:=v5`（見下方「v5」），切回原模型用 `yolo_model:=coco`；`model_path:=檔案` 可指定其他權重。停止門檻（v5 和 v3 相同）：
 
 ```bash
 # v3（預設）：
 #   瓶子 target_class:=bottle stop_bbox_dimension:=width stop_bbox_ratio:=0.22
 #   杯子 target_class:=cup    stop_bbox_dimension:=width stop_bbox_ratio:=0.185
-# 原模型（model_path:=~/yolo_project/yolo26n.pt）：
+# 原模型（yolo_model:=coco）：
 #   杯子 target_class:=cup    stop_bbox_dimension:=width stop_bbox_ratio:=0.14
 ```
 
 **停止門檻必須依模型重新校正**：Gazebo 的標註框包含杯子把手，所以 v3 的杯子框比原模型寬約 30%。沿用原模型的 0.14 時，車輛一開始就判定「已到達」而完全不動。改為 0.185 後，停止位置與原本相同（約 x = 0.5 m）。
+
+## v5：去掉畫框的乾淨資料（2026-11-27）
+
+做 TM5S 的桌面資料時發現，Gazebo boundingbox 相機自己輸出的影像上會畫出標註框。v1–v3 的訓練影像都取自這個影像，所以模型訓練時看到的物體周圍都有綠框，而實際相機影像沒有。
+
+修正：資料世界加上一台位置相同的一般相機（`/datagen/rgb`），影像改取自它，再依時間戳和標註配對（`gzcapture.py`）。用同樣的場景產生器、同樣的 2800 張、同樣的 COCO128 回放和訓練參數重新訓練，就是 v5（`yolo26n_gazebo_v5clean.pt`）。
+
+| 項目 | v3 | v5 |
+|---|---|---|
+| 乾淨測試集 mAP50 | 0.884 | **0.988** |
+| 杯子 mAP50 | 0.717 | **0.985** |
+| 自走車相機最弱的杯子影格 | 0.761 | **0.852** |
+| 閉環回歸 F1–F4（杯子、目標遺失、人員停止、原瓶子場景） | 通過 | 通過，停止位置差 ≤ 3 cm |
+
+兩個模型都保留：預設仍是 v3，`yolo_model:=v5` 改用 v5。v5 在三代理 S1–S5 場景的結果見 [`docs/three_agents_results.md`](../../../docs/three_agents_results.md) 第三節。要重現 v3 的原始資料，用 `IMAGE_TOPIC=/datagen/boxes_image build_dataset.sh OUT_DIR`（README「YOLO 模型」）。
 
 ## 取捨與限制
 
@@ -68,8 +83,8 @@
 |---|---|
 | 資料產生與訓練工具 | `tools/dataset/`（`make_world.py`、`generate.py`、`gzcapture.py`、`build_dataset.sh`、`montage.py`、`train_yolo.py`、`eval_models.py`、`capture_robot_frames.sh`） |
 | 資料世界 | `worlds/yolo_datagen.sdf`（由 `make_world.py` 產生） |
-| 資料集（不納入 git） | `~/yolo_project/datasets/gazebo_bottle_cup`（v1）、`gazebo_bottle_cup_v2`（v2、v3） |
-| 模型（不納入 git） | 預設 `~/yolo_project/yolo26n_gazebo_v3.pt`（複製自 `runs/gazebo_ft/yolo26n_gazebo_v3/weights/best.pt`）；v1、v2 在 `runs/gazebo_ft/` |
+| 資料集（不納入 git） | `~/yolo_project/datasets/gazebo_bottle_cup`（v1）、`gazebo_bottle_cup_v2`（v2、v3）、`gazebo_bottle_cup_v5clean`（v5） |
+| 模型（不納入 git） | 預設 `~/yolo_project/yolo26n_gazebo_v3.pt`（複製自 `runs/gazebo_ft/yolo26n_gazebo_v3/weights/best.pt`）；v5 `~/yolo_project/yolo26n_gazebo_v5clean.pt`（複製自 `runs/gazebo_ft/yolo26n_gazebo_v5clean/weights/best.pt`）；v1、v2 在 `runs/gazebo_ft/` |
 | 證據 | `docs/evidence/2026-11-24/yolo_training/` |
 
 ## 開發中遇到的問題
@@ -78,4 +93,5 @@
 - **離開 Python 時 segfault**：發生在 gz-transport 結束時，以 `os._exit(0)` 避開。
 - **Gazebo 執行約 370 張後感測器停止輸出**：改為每 200 張重新啟動 Gazebo，並自動重試失敗的批次。
 - **`set -e` 加上找不到行程的 `pkill`** 會讓腳本默默結束；清理步驟改為不會中斷腳本。
+- **訓練影像上有標註框**（2026-11-27 才發現）：boundingbox 相機自己的影像會畫出框。改取同位置一般相機的影像並依時間戳配對，重新訓練成 v5（見上方「v5」）。
 - **評估影格混到別的場景**：前一個 Gazebo 尚未完全關閉，兩個模擬器同時發布同一個相機 topic。改為等所有模擬器結束後再啟動下一個，並逐張檢查影格內容。

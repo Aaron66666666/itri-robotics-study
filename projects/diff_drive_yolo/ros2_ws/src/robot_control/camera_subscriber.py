@@ -14,9 +14,18 @@ yolo_site_packages = yolo_venv / 'lib' / python_version / 'site-packages'
 if yolo_site_packages.is_dir():
     sys.path.insert(0, str(yolo_site_packages))
 
-# Default model: YOLO26n fine-tuned on Gazebo data (v3). Switch back to the
-# original COCO model with model_path:=~/yolo_project/yolo26n.pt.
-DEFAULT_MODEL = str(Path.home() / 'yolo_project' / 'yolo26n_gazebo_v3.pt')
+# YOLO weights by short name (yolo_model:=v3|v5|coco); model_path:=FILE
+# overrides the name. Weights live in ~/yolo_project and are not in git.
+#   v3    YOLO26n fine-tuned on Gazebo data (stage 2), the accepted default
+#   v5    same recipe, images regenerated without the boxes Gazebo drew on them
+#   coco  the original YOLO26n
+MODEL_DIR = Path.home() / 'yolo_project'
+YOLO_MODELS = {
+    'v3': 'yolo26n_gazebo_v3.pt',
+    'v5': 'yolo26n_gazebo_v5clean.pt',
+    'coco': 'yolo26n.pt',
+}
+DEFAULT_YOLO_MODEL = 'v3'
 
 import cv2  # noqa: E402
 from cv_bridge import CvBridge  # noqa: E402
@@ -26,6 +35,18 @@ from rclpy.qos import qos_profile_sensor_data  # noqa: E402
 from sensor_msgs.msg import Image  # noqa: E402
 from std_msgs.msg import String  # noqa: E402
 from ultralytics import YOLO  # noqa: E402
+
+
+def resolve_model_path(yolo_model, model_path=''):
+    """Return model_path if it is set, else the weights file of yolo_model."""
+    if model_path:
+        # '~' is not expanded by the shell in 'model_path:=~/...'.
+        return os.path.expanduser(model_path)
+    if yolo_model not in YOLO_MODELS:
+        raise ValueError(
+            f'unknown yolo_model {yolo_model!r}: use one of '
+            f'{", ".join(YOLO_MODELS)}, or model_path:=FILE')
+    return str(MODEL_DIR / YOLO_MODELS[yolo_model])
 
 
 def save_diagnostic_frame(frame, image_path):
@@ -48,22 +69,23 @@ class CameraSubscriber(Node):
         self.declare_parameter(
             'image_topic', '/vehicle_blue/camera/image'
         )
-        self.declare_parameter('model_path', DEFAULT_MODEL)
+        self.declare_parameter('yolo_model', DEFAULT_YOLO_MODEL)
+        self.declare_parameter('model_path', '')
         self.declare_parameter('confidence_threshold', 0.35)
         self.declare_parameter('device', 'auto')
         self.declare_parameter('display', False)
         self.declare_parameter('diagnostic_frame_path', '')
 
         image_topic = self.get_parameter('image_topic').value
-        # '~' is not expanded by the shell in 'model_path:=~/...'.
-        model_path = os.path.expanduser(
-            self.get_parameter('model_path').value)
+        yolo_model = self.get_parameter('yolo_model').value
+        model_path = resolve_model_path(
+            yolo_model, self.get_parameter('model_path').value)
         if not Path(model_path).is_file():
             # Never let Ultralytics fall back to downloading a model.
             raise FileNotFoundError(
-                f'YOLO weights not found: {model_path} (see README: '
-                'copy or retrain yolo26n_gazebo_v3.pt, or use '
-                'model_path:=~/yolo_project/yolo26n.pt)')
+                f'YOLO weights not found: {model_path} (see README, '
+                '"YOLO 模型": copy or retrain the weights, or choose '
+                'another model with yolo_model:=v3|v5|coco)')
         self.confidence_threshold = float(
             self.get_parameter('confidence_threshold').value
         )

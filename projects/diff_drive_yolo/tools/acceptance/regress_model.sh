@@ -1,9 +1,11 @@
 #!/bin/bash
 # Re-run the v3 regression scenarios (F1-F4) with another YOLO model.
-# Usage: regress_model.sh MODEL.pt OUT_DIR
+# Usage: regress_model.sh MODEL OUT_DIR
+#   MODEL: v3 | v5 | coco (yolo_model:=...), default (launch defaults), or a .pt file
 A=$(cd "$(dirname "$0")" && pwd); M=${1:?model}; export OUT=${2:?out}
 mkdir -p "$OUT"
-COMMON="device:=0 search_speed:=0.05 approach_speed:=0.05 alignment_speed:=0.15 target_action:=stop model_path:=$M"
+case $M in v3|v5|coco) MODEL_ARG="yolo_model:=$M" ;; default) MODEL_ARG="" ;; *) MODEL_ARG="model_path:=$M" ;; esac
+COMMON="device:=0 search_speed:=0.05 approach_speed:=0.05 alignment_speed:=0.15 target_action:=stop $MODEL_ARG"
 CUP="target_class:=cup stop_bbox_dimension:=width stop_bbox_ratio:=0.185"
 WORLD=worlds/diff_drive_camera_cup.sdf bash "$A/run.sh" F1_cup 60 $COMMON $CUP
 HOOK=$A/hook_loss.sh WORLD=worlds/diff_drive_camera_cup.sdf bash "$A/run.sh" F2_loss 55 $COMMON $CUP search_duration:=3.0

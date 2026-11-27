@@ -1,12 +1,8 @@
-from pathlib import Path
-
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
-
-DEFAULT_MODEL = str(Path.home() / 'yolo_project' / 'yolo26n_gazebo_v3.pt')
 
 
 def generate_launch_description():
@@ -17,10 +13,17 @@ def generate_launch_description():
             description='ROS 2 camera image topic',
         ),
         DeclareLaunchArgument(
+            'yolo_model',
+            default_value='v3',
+            choices=['v3', 'v5', 'coco'],
+            description='YOLO weights in ~/yolo_project: v3 (Gazebo '
+                        'fine-tuned, default), v5 (retrained on clean '
+                        'images), coco (original YOLO26n)',
+        ),
+        DeclareLaunchArgument(
             'model_path',
-            default_value=DEFAULT_MODEL,
-            description='YOLO weights. Default: Gazebo fine-tuned v3; '
-                        'original model: ~/yolo_project/yolo26n.pt',
+            default_value='',
+            description='Optional YOLO weights file; overrides yolo_model',
         ),
         DeclareLaunchArgument(
             'confidence_threshold',
@@ -58,7 +61,9 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'image_topic': LaunchConfiguration('image_topic'),
-                'model_path': LaunchConfiguration('model_path'),
+                'yolo_model': LaunchConfiguration('yolo_model'),
+                'model_path': ParameterValue(
+                    LaunchConfiguration('model_path'), value_type=str),
                 'confidence_threshold': ParameterValue(
                     LaunchConfiguration('confidence_threshold'),
                     value_type=float,

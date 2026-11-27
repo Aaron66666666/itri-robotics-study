@@ -1,0 +1,2 @@
+# yolo_model:=v4
+Argument "yolo_model" provided value "v4" is not valid. Valid options are: ['v3', 'v5', 'coco']

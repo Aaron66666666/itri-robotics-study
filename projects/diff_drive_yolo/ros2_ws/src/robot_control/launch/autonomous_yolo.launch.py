@@ -1,7 +1,5 @@
 """Launch camera inference, Gazebo bridges, and rule-based autonomy."""
 
-from pathlib import Path
-
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument, GroupAction, IncludeLaunchDescription)
@@ -11,14 +9,14 @@ from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 
-DEFAULT_MODEL = str(Path.home() / 'yolo_project' / 'yolo26n_gazebo_v3.pt')
-
 
 def generate_launch_description():
     arguments = [
         DeclareLaunchArgument('image_topic', default_value='/vehicle_blue/camera/image'),
-        # Gazebo fine-tuned YOLO (v3); original: model_path:=~/yolo_project/yolo26n.pt
-        DeclareLaunchArgument('model_path', default_value=DEFAULT_MODEL),
+        # YOLO weights: v3 (Gazebo fine-tuned, default), v5 (retrained on
+        # clean images) or coco (original); model_path:=FILE overrides it.
+        DeclareLaunchArgument('yolo_model', default_value='v3', choices=['v3', 'v5', 'coco']),
+        DeclareLaunchArgument('model_path', default_value=''),
         DeclareLaunchArgument('target_class', default_value='bottle'),
         DeclareLaunchArgument('yolo_confidence_threshold', default_value='0.35'),
         DeclareLaunchArgument('diagnostic_frame_path', default_value=''),
@@ -49,6 +47,7 @@ def generate_launch_description():
             FindPackageShare('robot_control'), 'launch', 'camera_yolo.launch.py'])),
         launch_arguments={
             'image_topic': LaunchConfiguration('image_topic'),
+            'yolo_model': LaunchConfiguration('yolo_model'),
             'model_path': LaunchConfiguration('model_path'),
             'confidence_threshold': LaunchConfiguration(
                 'yolo_confidence_threshold'),

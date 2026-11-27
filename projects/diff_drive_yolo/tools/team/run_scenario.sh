@@ -1,9 +1,11 @@
 #!/bin/bash
 # Usage: run_scenario.sh MODE(baseline|team|team_safe) SCENARIO(S1..S5) OUT_DIR [DURATION_S] [MODEL]
+# MODEL: v3 (default) | v5 | coco, or a YOLO weights file.
 # Baseline = the accepted controller (stops whenever a person is visible);
 # team = Tracker/Predictor/Commander (autonomous_team.launch.py).
 T=$(cd "$(dirname "$0")" && pwd); WS=$(cd "$T/../.." && pwd); A=$WS/tools/acceptance
-MODE=$1; SC=$2; OUT=$3; DUR=${4:-80}; MODEL=${5:-$HOME/yolo_project/yolo26n_gazebo_v3.pt}
+MODE=$1; SC=$2; OUT=$3; DUR=${4:-80}; MODEL=${5:-v3}
+case $MODEL in v3|v5|coco) MODEL_ARG="yolo_model:=$MODEL" ;; *) MODEL_ARG="model_path:=$MODEL" ;; esac
 NAME=${SC}_${MODE}; mkdir -p "$OUT"; cd "$WS"
 source /opt/ros/jazzy/setup.bash; source install/setup.bash
 export ROS_HOME=/tmp/ros-home ROS_LOG_DIR=/tmp/ros-log
@@ -15,7 +17,7 @@ python3 "$T/pose_logger.py" "$OUT/$NAME.poses.csv" > /dev/null 2>&1 &
 LAUNCH=autonomous_yolo.launch.py; EXTRA=""
 [ "$MODE" = team ] && LAUNCH=autonomous_team.launch.py
 [ "$MODE" = team_safe ] && { LAUNCH=autonomous_team.launch.py; EXTRA="stop_radius:=1.0"; }
-ARGS="$EXTRA target_class:=cup device:=0 search_speed:=0.05 approach_speed:=0.05 alignment_speed:=0.15 target_action:=stop stop_bbox_dimension:=width stop_bbox_ratio:=0.185 model_path:=$MODEL"
+ARGS="$EXTRA target_class:=cup device:=0 search_speed:=0.05 approach_speed:=0.05 alignment_speed:=0.15 target_action:=stop stop_bbox_dimension:=width stop_bbox_ratio:=0.185 $MODEL_ARG"
 echo "ros2 launch robot_control $LAUNCH $ARGS" > "$OUT/$NAME.cmd"
 setsid timeout -s INT $DUR ros2 launch robot_control $LAUNCH $ARGS > "$OUT/$NAME.launch.log" 2>&1 &
 LP=$!

@@ -17,7 +17,7 @@
 
 ## 重現驗收
 
-預設 YOLO 為 Gazebo 微調的 v3（`~/yolo_project/yolo26n_gazebo_v3.pt`），下列杯子停止門檻 0.185 是依 v3 校正（v3 的杯子框含把手）。改用原模型時加 `model_path:=~/yolo_project/yolo26n.pt`，杯子門檻改回 `stop_bbox_ratio:=0.14`。瓶子情境（原瓶子場景）：
+預設 YOLO 為 Gazebo 微調的 v3（`~/yolo_project/yolo26n_gazebo_v3.pt`），用 `yolo_model:=v5` 改用 v5、`yolo_model:=coco` 改用原模型（`model_path:=檔案` 可指定其他權重）。下列杯子停止門檻 0.185 是依 v3 校正（v3、v5 的杯子框都含把手），v5 沿用；改用原模型時，杯子門檻改回 `stop_bbox_ratio:=0.14`。用其他模型重跑 F1–F4：`regress_model.sh v5 OUT_DIR`。瓶子情境（原瓶子場景）：
 
 ```bash
 cd ~/robot_ws/tools/acceptance

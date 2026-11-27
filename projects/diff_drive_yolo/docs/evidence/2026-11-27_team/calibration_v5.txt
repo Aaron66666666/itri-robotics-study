@@ -1,0 +1,11 @@
+{"pos": [2.0, 3.2], "range": 1.806, "h_px": null}
+{"pos": [2.0, 0.8], "range": 1.806, "h_px": null}
+{"pos": [3.0, 3.2], "range": 2.639, "h_px": 402.4, "K": 1061.8, "bearing_err_deg": -0.02, "frames": 9}
+{"pos": [3.0, 0.8], "range": 2.639, "h_px": 392.2, "K": 1034.9, "bearing_err_deg": 2.33, "frames": 7}
+{"pos": [4.0, 3.2], "range": 3.558, "h_px": 280.4, "K": 997.9, "bearing_err_deg": 1.93, "frames": 15}
+{"pos": [4.0, 0.8], "range": 3.558, "h_px": 277.8, "K": 988.6, "bearing_err_deg": 1.73, "frames": 8}
+{"pos": [5.0, 3.2], "range": 4.512, "h_px": 215.1, "K": 970.7, "bearing_err_deg": 1.52, "frames": 10}
+{"pos": [5.0, 0.8], "range": 4.512, "h_px": 216.1, "K": 975.3, "bearing_err_deg": 1.43, "frames": 8}
+{"pos": [6.0, 3.2], "range": 5.483, "h_px": 174.7, "K": 958.0, "bearing_err_deg": 1.28, "frames": 12}
+{"pos": [6.0, 0.8], "range": 5.483, "h_px": 175.4, "K": 961.5, "bearing_err_deg": 1.26, "frames": 11}
+K_mean 993.6 K_std 34.6 n 8

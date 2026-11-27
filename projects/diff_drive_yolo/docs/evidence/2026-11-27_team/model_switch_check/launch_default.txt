@@ -1,0 +1,2 @@
+# (no argument)
+YOLO model loaded: /home/yulin/yolo_project/yolo26n_gazebo_v3.pt

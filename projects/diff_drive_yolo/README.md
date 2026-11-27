@@ -19,7 +19,7 @@ Gazebo camera → ros_gz_image bridge → /vehicle_blue/camera/image
 
 ## 環境
 
-Ubuntu 24.04（WSL2）、ROS 2 Jazzy、Gazebo Harmonic、YOLO venv `~/yolo_project/.venv`、權重 `~/yolo_project/yolo26n_gazebo_v3.pt`（預設）與 `~/yolo_project/yolo26n.pt`（原模型），皆不納入 git（見「YOLO 模型」）。
+Ubuntu 24.04（WSL2）、ROS 2 Jazzy、Gazebo Harmonic、YOLO venv `~/yolo_project/.venv`、權重 `~/yolo_project/yolo26n_gazebo_v3.pt`（預設）、`yolo26n_gazebo_v5clean.pt`（v5）與 `yolo26n.pt`（原模型），皆不納入 git（見「YOLO 模型」）。
 
 ## 建置與執行
 
@@ -40,27 +40,31 @@ ros2 launch robot_control autonomous_yolo.launch.py target_class:=cup device:=0 
 
 ## YOLO 模型
 
-預設使用 **v3**：以 Gazebo 自動標註資料加 COCO128 回放微調的 YOLO26n（`docs/yolo_training.md`）。原本的瓶子場景只有 v3 能穩定辨識瓶子，人員辨識與原模型相同。
+三個模型都保留，用 `yolo_model:=` 選擇。`camera_yolo.launch.py`、`autonomous_yolo.launch.py`、`autonomous_team.launch.py` 都適用。權重放在 `~/yolo_project/`，不納入 git。
 
-| 模型 | 檔案 | 用法 |
+| `yolo_model` | 檔案 | 說明 |
 |---|---|---|
-| v3（預設） | `~/yolo_project/yolo26n_gazebo_v3.pt` | 不需指定 |
-| 原 COCO 模型 | `~/yolo_project/yolo26n.pt` | `model_path:=~/yolo_project/yolo26n.pt` |
-
-切回原模型（節點會自行展開 `~`）：
+| `v3`（預設） | `yolo26n_gazebo_v3.pt` | 階段 2：Gazebo 自動標註資料加 COCO128 回放微調（`docs/yolo_training.md`）。2026-11-24 的驗收都用它 |
+| `v5` | `yolo26n_gazebo_v5clean.pt` | 資料和訓練方法都和 v3 相同，只是影像改用一般相機重新產生（v3 的訓練影像上有 Gazebo 畫的框）。乾淨測試集 mAP50 從 0.884 提高到 0.988 |
+| `coco` | `yolo26n.pt` | 原 YOLO26n。原瓶子場景辨識不到瓶子 |
 
 ```bash
-ros2 launch robot_control autonomous_yolo.launch.py model_path:=~/yolo_project/yolo26n.pt ...
+ros2 launch robot_control autonomous_yolo.launch.py yolo_model:=v5 ...
+ros2 launch robot_control autonomous_team.launch.py yolo_model:=v5 ...
 ```
 
-**停止門檻依模型而不同**：v3 的杯子框包含把手，比原模型寬約 30%。
+`model_path:=檔案` 仍可直接指定其他權重，並會覆蓋 `yolo_model`（節點會自行展開 `~`）。名稱打錯時，launch 會直接報錯並列出可用的名稱。v3 和 v5 的完整比較（辨識、閉環回歸、S1–S5 三代理場景）見 [`docs/three_agents_results.md`](../../docs/three_agents_results.md) 第三節。
 
-| 目標 | v3 | 原模型 |
+**停止門檻依模型而不同**：v3、v5 的杯子框都包含把手，比原模型寬約 30%。v5 沿用 v3 的門檻，閉環回歸的停止位置和 v3 相差不到 3 cm。
+
+| 目標 | v3、v5 | 原模型（`coco`） |
 |---|---|---|
 | 杯子（`stop_bbox_dimension:=width`） | `stop_bbox_ratio:=0.185` | `stop_bbox_ratio:=0.14` |
 | 原瓶子場景的瓶子（`stop_bbox_dimension:=width`） | `stop_bbox_ratio:=0.22` | 原模型辨識不到瓶子 |
 
-### v3 權重不在 git 裡
+三代理用偵測框高度估計人的距離（`RANGE_K`）。v3 校正值為 989.1，v5 為 993.6，差 0.5%，所以共用 989.1。
+
+### 權重不在 git 裡
 
 `*.pt` 被 `.gitignore` 排除，模型檔與資料集都不在 repo 中。找不到權重檔時，相機節點會直接報錯，不會自動下載。取得方式（三選一）：
 
@@ -68,22 +72,29 @@ ros2 launch robot_control autonomous_yolo.launch.py model_path:=~/yolo_project/y
 
    ```bash
    cp ~/yolo_project/runs/gazebo_ft/yolo26n_gazebo_v3/weights/best.pt ~/yolo_project/yolo26n_gazebo_v3.pt
+   cp ~/yolo_project/runs/gazebo_ft/yolo26n_gazebo_v5clean/weights/best.pt ~/yolo_project/yolo26n_gazebo_v5clean.pt
    ```
 
-2. **從另一台電腦複製**：把 `yolo26n_gazebo_v3.pt`（約 5.5 MB）放到 `~/yolo_project/`。2026-11-24 版本的 SHA-256 前 16 碼為 `f99d3033ae1dfbae`（`sha256sum` 可驗證）。
+2. **從另一台電腦複製**：把權重（各約 5.5 MB）放到 `~/yolo_project/`。可用 `sha256sum` 驗證，SHA-256 前 16 碼：v3（2026-11-24）為 `f99d3033ae1dfbae`，v5（2026-11-27）為 `481ef41091f75548`。
 
-3. **重新訓練**（RTX 4070 約 10 分鐘產生資料、15 分鐘訓練；隨機種子固定，但 GPU 訓練不保證逐位元相同）：
+3. **重新訓練**（RTX 4070 約 10 分鐘產生資料、15 分鐘訓練；隨機種子固定，但 GPU 訓練不保證逐位元相同）。v3 和 v5 只差在產生資料時取哪一台相機的影像：
 
    ```bash
-   ~/robot_ws/tools/dataset/build_dataset.sh ~/yolo_project/datasets/gazebo_bottle_cup_v2
+   # 回放用的 COCO128（只需一次）
    cd ~/yolo_project && .venv/bin/python -c "from ultralytics.data.utils import check_det_dataset as c; c('coco128.yaml')"
-   python3 ~/robot_ws/tools/dataset/make_replay_yaml.py ~/yolo_project/datasets/gazebo_bottle_cup_v2
+   # v5：一般相機的乾淨影像（build_dataset.sh 的預設）
+   D=~/yolo_project/datasets/gazebo_bottle_cup_v5clean; NAME=yolo26n_gazebo_v5clean
+   ~/robot_ws/tools/dataset/build_dataset.sh $D
+   # v3：改取 boundingbox 相機自己的影像（上面有畫框），重現原本的資料
+   #   D=~/yolo_project/datasets/gazebo_bottle_cup_v2; NAME=yolo26n_gazebo_v3
+   #   IMAGE_TOPIC=/datagen/boxes_image ~/robot_ws/tools/dataset/build_dataset.sh $D
+   python3 ~/robot_ws/tools/dataset/make_replay_yaml.py $D
    cd ~/yolo_project && .venv/bin/python -I ~/robot_ws/tools/dataset/train_yolo.py \
-       datasets/gazebo_bottle_cup_v2/data_v3_replay.yaml --name yolo26n_gazebo_v3 --freeze 0
-   cp runs/gazebo_ft/yolo26n_gazebo_v3/weights/best.pt yolo26n_gazebo_v3.pt
+       $D/data_v3_replay.yaml --name $NAME --freeze 0
+   cp runs/gazebo_ft/$NAME/weights/best.pt $NAME.pt
    ```
 
-   重新訓練後，請用 `tools/dataset/eval_models.py` 和 `tools/acceptance` 的驗收腳本確認結果。
+   重新訓練後，請用 `tools/dataset/eval_models.py` 和 `tools/acceptance` 的驗收腳本確認結果（`tools/acceptance/regress_model.sh v5 OUT_DIR`）。
 
 ## 目錄
 

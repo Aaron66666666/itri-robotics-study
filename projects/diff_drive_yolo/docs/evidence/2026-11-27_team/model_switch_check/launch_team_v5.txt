@@ -1,0 +1,2 @@
+# autonomous_team.launch.py yolo_model:=v5
+YOLO model loaded: /home/yulin/yolo_project/yolo26n_gazebo_v5clean.pt
