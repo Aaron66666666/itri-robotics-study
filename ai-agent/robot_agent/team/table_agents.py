@@ -68,6 +68,7 @@ class Tracker:
             self.version += 1
         summary = {
             "version": self.version,
+            "count": len(self.tracks),
             "objects": [{"name": n, "x": round(t.pos[0], 4), "y": round(t.pos[1], 4),
                          "confidence": round(t.history[-1][2], 3), "area": area_of(*t.pos) or "none",
                          "moved_since_last_look_cm": round(100 * t.moved, 1), "stable": t.stable,

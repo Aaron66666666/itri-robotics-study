@@ -9,6 +9,7 @@ Single and team share every case; where the team is expected to do better
 
   python3 eval_team.py --backend fake --modes single team --repeat 2
   python3 eval_team.py --backend gazebo --modes team          (start_vision.sh first)
+  python3 eval_team.py --set heldout ...   24 commands not used while developing (heldout_cases.py)
 """
 
 import argparse
@@ -20,6 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from eval_arm_agent import BASE, CASES as D_CASES, SIMPLIFIED_ONLY, numbers  # noqa: E402
+from heldout_cases import HELDOUT, HELDOUT2  # noqa: E402
 from robot_agent.arm_tools import (AREAS, ARM_SYSTEM_PROMPT, ArmSession, FakeArm, GazeboArm,  # noqa: E402
                                    area_of, arm_policy, build_arm_tools)
 from robot_agent.llm import OllamaChat  # noqa: E402
@@ -50,7 +52,7 @@ CASES += [
 ]
 
 
-def grade(case, mode, before, after, answer, tool_texts, stop_reason):
+def grade(case, mode, before, after, answer, tool_texts, stop_reason, board_numbers=None):
     exp = case.get(f"expect_{mode}", case["expect"])
     ok = True
     if "one_in" in case:
@@ -80,6 +82,8 @@ def grade(case, mode, before, after, answer, tool_texts, stop_reason):
         nums = numbers(answer)
         a_ok &= any(abs(n - cx) < 0.015 for n in nums) and any(abs(n - cy) < 0.015 for n in nums)
     tool_nums = [n for t in tool_texts for n in numbers(t)]
+    if board_numbers:  # team: the reporter (code) may quote camera measurements from the board
+        tool_nums += board_numbers
     invented = [n for n in numbers(answer) if not any(abs(n - t) < 0.0051 or abs(n - 100 * t) < 0.051
                                                      for t in tool_nums)]
     simp = "".join(sorted({c for c in answer if c in SIMPLIFIED_ONLY}))
@@ -133,7 +137,9 @@ def run_case(case, mode, backend_name, model, rep):
         res = team.run(model, on_event=on_event)
         board = team.board
     after = truth()
-    g = grade(case, mode, before, after, res.final_text or "", tool_texts, res.stop_reason)
+    board_nums = [n for note in board.notes for n in numbers(json.dumps(note.content))
+                  if note.kind in ("observation", "prediction", "result")] if board else None
+    g = grade(case, mode, before, after, res.final_text or "", tool_texts, res.stop_reason, board_nums)
     return {"id": case["id"], "mode": mode, "rep": rep, "task": case["task"], "seconds": round(time.time() - t0, 1),
             "tool_calls": calls, "n_tool_calls": len(calls), "refused": refused,
             "moves": sum(1 for c in calls if c[0] in ("move_object", "pick_and_place")),
@@ -147,12 +153,13 @@ def main():
     p.add_argument("--model", default="llama3.1:8b")
     p.add_argument("--repeat", type=int, default=1)
     p.add_argument("--cases", nargs="*")
+    p.add_argument("--set", choices=["dev", "heldout", "heldout2"], default="dev")
     p.add_argument("--out")
     a = p.parse_args()
     model = OllamaChat(a.model)
     rows = []
     for rep in range(a.repeat):
-        for case in CASES:
+        for case in {"dev": CASES, "heldout": HELDOUT, "heldout2": HELDOUT2}[a.set]:
             if a.cases and case["id"] not in a.cases:
                 continue
             for mode in a.modes:
@@ -174,7 +181,7 @@ def main():
                          "failed": sorted({r["id"] for r in rs if not r["pass"]})}
     print("SUMMARY", json.dumps(summary, ensure_ascii=False))
     if a.out:
-        json.dump({"backend": a.backend, "model": a.model, "summary": summary, "rows": rows},
+        json.dump({"backend": a.backend, "model": a.model, "set": a.set, "summary": summary, "rows": rows},
                   open(a.out, "w"), ensure_ascii=False, indent=1)
 
 

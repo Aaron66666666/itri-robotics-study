@@ -138,6 +138,7 @@ class ArmSession:
         dets = self._detect()
         self.seen = {n: (x, y) for n, (x, y, _) in dets.items()}
         return {
+            "count": len(dets),
             "objects": [{"name": n, "x": x, "y": y, "confidence": c, "area": area_of(x, y) or "none",
                          "reachable": math.hypot(x, y) <= MAX_REACH_XY} for n, (x, y, c) in dets.items()],
             "known_object_types": sorted(OBJECTS),
@@ -175,10 +176,16 @@ class ArmSession:
                 "distance_from_target_cm": err_cm, "arm_message": msg}
 
 
+# 「兩個東西都」「全部」 "both": every object, when the request names none.
+ALL_OBJECTS = r"兩個|兩樣|兩件|全部|所有|每個|每樣|東西都|\bboth\b|\ball\b|everything"
+
+
 def mentioned(task: str) -> tuple[set[str], set[str]]:
     """Objects and areas the user's request names (Chinese or English)."""
     t = task.lower()
     objs = {n for n, (_, _, zh) in OBJECTS.items() if n in t or any(z in task for z in zh)}
+    if not objs and re.search(ALL_OBJECTS, task, re.I):
+        objs = set(OBJECTS)
     areas = set()
     for n, (_, zh) in sorted(AREAS.items(), key=lambda kv: -max(len(z) for z in kv[1][1])):
         if n.replace("_", " ") in t or n in t or any(z in task for z in zh):
@@ -210,20 +217,31 @@ def requested_pairs(task: str) -> dict[str, str]:
             nxt = next((h for h in hits[k + 1:] if h[1] == "area"), None)
             if nxt:
                 pairs[n] = nxt[2]
+    areas = [h[2] for h in hits if h[1] == "area"]
+    if not any(h[1] == "obj" for h in hits) and len(areas) == 1 and re.search(ALL_OBJECTS, task, re.I):
+        pairs = {n: areas[0] for n in OBJECTS}          # 「把兩個東西都移到左邊」
     return pairs
 
 
 NEGATION = r"(不要|別|不准|不可以|不能|勿)(動|移動|碰|搬)|保持不動|留在原地"
+# The negation before the object: 「不要碰瓶子」「別動到杯子」.
+NEGATED_VERB = r"(不要|別|不准|不可以|不能|勿)(碰到|碰|動到|移動|動|搬動|搬|拿)(到)?"
 
 
 def forbidden_objects(task: str) -> set[str]:
-    """Objects the user said must not move, e.g. 「瓶子不要動」, "don't move the bottle"."""
+    """Objects the user said must not move, e.g. 「瓶子不要動」「不要碰瓶子」,
+    "don't move the bottle", 「除了杯子以外，什麼都不要動」."""
     out = set()
     for n, (_, _, zh) in OBJECTS.items():
         for z in zh + (n,):
             if re.search(re.escape(z) + r".{0,3}?(" + NEGATION + ")", task) or \
+               re.search(NEGATED_VERB + re.escape(z), task) or \
                re.search(r"(don'?t|do not|never)\s+(move|touch)\s+(the\s+)?" + n, task.lower()):
                 out.add(n)
+    m = re.search(r"除了(.{1,8}?)(以外|之外)", task)
+    if m and re.search(r"(什麼|其他|別的|其它)(東西)?都?(不要|別|不准)(動|碰)", task):
+        named = {n for n, (_, _, zh) in OBJECTS.items() if any(z in m.group(1) for z in zh)}
+        out |= set(OBJECTS) - named
     return out
 
 

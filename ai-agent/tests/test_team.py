@@ -113,7 +113,9 @@ def test_full_run_clears_blocker_then_places():
 
 def test_fact_check_replaces_false_success():
     t = team({"cup": (0.38, 0.62), "bottle": AREAS["right"][0]}, "把杯子放到右邊")
-    model = ScriptedModel([call("observe_table", "c1"), Message("assistant", "杯子已經放到右邊，成功。")])
+    # The supervisor hands the blocked request back (with the Predictor's clearing
+    # move) up to three more times; the model keeps claiming success.
+    model = ScriptedModel([call("observe_table", "c1")] + [Message("assistant", "杯子已經放到右邊，成功。")] * 4)
     res = t.run(model)
     assert "claims a move of the cup" in t.board.last("report", "commander").content["problems"][0]
     assert "成功" not in res.final_text and "桌上" in res.final_text
@@ -124,3 +126,52 @@ def test_fact_check_catches_passive_move_claim_but_not_negation():
     t.observe_table()
     assert t.fact_check("杯子被移到靠近機器人的地方。")
     assert not t.fact_check("杯子不能移到右邊，因為右邊被瓶子佔據。")
+
+
+def test_request_parsing_heldout_fixes():
+    from robot_agent.arm_tools import forbidden_objects, mentioned, requested_pairs
+    assert forbidden_objects("把杯子放到中間，但不要碰瓶子") == {"bottle"}
+    assert forbidden_objects("別動到杯子，瓶子放左邊") == {"cup"}
+    assert forbidden_objects("除了杯子以外，什麼都不要動。杯子放到靠近機器人的地方") == {"bottle"}
+    assert forbidden_objects("把杯子放到右邊") == set()
+    assert mentioned("把兩個東西都移到左邊")[0] == {"cup", "bottle"}
+    assert requested_pairs("把兩個東西都移到左邊") == {"cup": "left", "bottle": "left"}
+    assert requested_pairs("把杯子放到右邊，瓶子放到左邊") == {"cup": "right", "bottle": "left"}
+
+
+def test_swap_gets_a_clearing_step_and_no_area_is_refused():
+    t = team({"cup": AREAS["left"][0], "bottle": AREAS["right"][0]}, "把杯子放到右邊，瓶子放到左邊")
+    t.observe_table()
+    (step,) = t.open_requests()               # both blocked: clear one of them to a free area first
+    assert step[1] not in ("left", "right") and t.policy("move_object", {"object": step[0], "area": step[1]}) is None
+    t.move_object(*step)
+    assert t.policy("move_object", {"object": step[0], "area": t.requested[step[0]]}) is None  # may move on
+    lift = team(FREE, "把杯子舉高一點")
+    assert "named no area" in lift.policy("predict_move", {"object": "cup", "area": "center"})
+
+
+def test_reporter_converts_simplified_characters():
+    t = team(FREE, "把杯子放到右邊")
+    model = ScriptedModel([call("move_object", "c1", object="cup", area="right"),
+                           Message("assistant", "杯子现在在右邊，位置正确。")])
+    res = t.run(model)
+    assert res.final_text.startswith("杯子現在在右邊") and "正確" in res.final_text
+
+
+def test_question_only_moves_nothing_and_placed_objects_stay():
+    t = team({"cup": AREAS["right"][0], "bottle": (0.38, 0.62)}, "現在可以把瓶子放到右邊嗎？先不要動，告訴我就好")
+    t.observe_table()
+    assert t.ask_only and t.open_requests() == []
+    assert "only asked a question" in t.policy("move_object", {"object": "cup", "area": "center"})
+    both = team({"cup": (0.50, 0.55), "bottle": (0.33, 0.45)}, "把杯子和瓶子都放到中間")
+    both.observe_table()
+    both.predict_move("cup", "center")
+    both.move_object("cup", "center")          # the cup is where the user wanted it
+    assert both.open_requests() == []           # so it is not moved away to make room
+
+
+def test_fact_check_catches_integer_coordinates():
+    t = team(FREE, "把杯子放到中間")
+    t.observe_table()
+    assert any("numbers" in p for p in t.fact_check("杯子在 (10, 20)，瓶子在 (30, 40)。"))
+    assert not t.fact_check("桌上有 2 樣東西。")

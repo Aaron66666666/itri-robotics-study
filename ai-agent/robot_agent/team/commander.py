@@ -21,6 +21,7 @@ import re
 from ..arm_tools import AREAS, OBJECTS, area_of, forbidden_objects, mentioned, requested_pairs
 from ..loop import run_agent
 from ..tools import Tool, ToolRegistry
+from ..zh import to_traditional
 from .blackboard import Blackboard
 from .table_agents import Predictor, Tracker
 
@@ -61,6 +62,9 @@ x and y from observe_table. Do not mention tool names in the report.
 Simplified Chinese characters."""
 
 
+ASK_ONLY = r"先不要動|先別動|不要動手|不用動|告訴我就好|只要告訴我|只是問|just tell me|don'?t move anything"
+
+
 class TableTeam:
     def __init__(self, backend, task: str):
         self.backend = backend
@@ -74,6 +78,9 @@ class TableTeam:
         self.requested = {o: a for o, a in requested_pairs(task).items() if o in self.objs}
         self.placed: dict[str, str] = {}      # object -> area it was put into during this request
         self.clearing: dict[str, str] = {}    # blocker -> area the Predictor suggested
+        self.pending_clear = None             # clearing move the supervisor asked for (a swap)
+        # 「先不要動，告訴我就好」: a question, nothing may move.
+        self.ask_only = bool(re.search(ASK_ONLY, task))
         self.board.post("user", "commander", "request", {"task": task, "objects": sorted(self.objs),
                                                            "areas": sorted(self.areas), "keep": sorted(self.keep)})
 
@@ -116,6 +123,8 @@ class TableTeam:
                   "area_after": after["area"] if after else "not seen"}
         if result["success"]:
             self.placed[object] = area
+            if self.pending_clear == (object, area):
+                self.pending_clear = None
         # Remind the Commander of requested moves that are still open (Llama
         # cleared a blocker and then forgot the original move, 2026-11-27).
         here = {o["name"]: o["area"] for o in obs["objects"]}
@@ -150,14 +159,24 @@ class TableTeam:
         elif a not in AREAS:
             reason = (f"'{a}' is not an area. Use exactly one of: left, right, center, near_robot. If the "
                       "user asked for a place that is none of these, tell the user it cannot be done")
+        elif not self.areas and not self.clearing:
+            reason = ("the user named no area (only left, right, center and near_robot exist), so this is "
+                      "not a move the arm can do. Do not try other areas and do not call more tools: tell "
+                      "the user it cannot be done")
         elif name == "predict_move":
             if o not in self.objs and o not in self.clearing:
                 reason = f"the user did not ask to move the {o}; predict only the moves the user asked for"
             elif a not in self.areas and self.clearing.get(o) != a:
                 reason = f"the user did not ask for area '{a}'; predict only the areas the user asked for"
+        elif name == "move_object" and self.ask_only:
+            reason = ("the user only asked a question and said not to move anything: answer the "
+                      "question (predict_move may be used), move nothing")
+        elif name == "move_object" and self.pending_clear and (o, a) != self.pending_clear:
+            reason = (f"first do the clearing move the Predictor suggested: move the {self.pending_clear[0]} "
+                      f"to {self.pending_clear[1]}; after it the blocked requests can be done")
         elif o in self.keep:
             reason = f"the user said the {o} must not move"
-        elif o in self.placed and self.placed[o] != a:
+        elif o in self.placed and self.placed[o] == self.requested.get(o) and self.placed[o] != a:
             reason = f"the {o} was already put into {self.placed[o]} for this request; do not move it away"
         elif self.clearing.get(o) == a:
             reason = None  # clearing move suggested by the Predictor for a requested move
@@ -234,6 +253,12 @@ class TableTeam:
         known = [float(x) for n in self.board.notes for x in re.findall(r"-?\d+\.\d+", json.dumps(n.content))]
         invented = [float(x) for x in re.findall(r"-?\d+\.\d+", text)
                     if not any(abs(float(x) - k) < 0.0051 or abs(float(x) - 100 * k) < 0.051 for k in known)]
+        # coordinates written as integers, e.g. 「杯子在 (10, 20)」 (Llama made them up)
+        for a, b in re.findall(r"[(（]\s*(-?\d+(?:\.\d+)?)\s*[,，]\s*(-?\d+(?:\.\d+)?)\s*[)）]", text):
+            for x in (a, b):
+                if "." not in x and not any(abs(float(x) - k) < 0.0051 or abs(float(x) - 100 * k) < 0.051
+                                            for k in known):
+                    invented.append(float(x))
         if invented:
             problems.append(f"numbers not in any tool result: {invented[:4]}")
         ok_objs = {n.content["object"] for n in self.board.notes if n.kind == "result" and n.content["success"]}
@@ -248,18 +273,32 @@ class TableTeam:
         return problems
 
     def open_requests(self) -> list[tuple[str, str]]:
-        """Requested moves not done yet that the Predictor says are feasible now."""
+        """Requested moves not done yet that the Predictor says are feasible now.
+        If none is feasible but one is blocked, the Predictor's clearing move for
+        it (e.g. a swap: the bottle to a free area first, 2026-11-28)."""
+        if self.ask_only:
+            return []
         self.tracker.observe()
         here = {n: area_of(*p) for n, p in self.tracker.positions().items()}
-        out = []
+        out, clear = [], None
         for o, a in self.requested.items():
             if here.get(o) != a and o not in self.keep:
                 p = self.predictor.predict_move(o, a, self.requested)
                 if p.get("feasible") and p.get("move_needed"):
                     out.append((o, a))
+                sug = p.get("suggested_clearing")
+                goal = self.requested.get(sug["move"]) if sug else None
+                done = goal is not None and self.placed.get(sug["move"]) == goal
+                if clear is None and p.get("reason") == "area_occupied" and sug and sug["move"] not in self.keep \
+                        and not done:  # never move an object away from where the user wanted it
+                    clear = (sug["move"], sug["to_area"])
+        if not out and clear:
+            self.clearing[clear[0]] = clear[1]
+            self.pending_clear = clear
+            out.append(clear)
         return out
 
-    def run(self, model, max_turns: int = 14, on_event=None, max_rounds: int = 3):
+    def run(self, model, max_turns: int = 14, on_event=None, max_rounds: int = 4):
         """Run the Commander; if it stops while a requested move is open and now
         feasible, hand it back with a note (at most max_rounds rounds)."""
         task = self.task
@@ -269,10 +308,13 @@ class TableTeam:
             todo = self.open_requests() if result.stop_reason == "final" else []
             if not todo or rnd == max_rounds - 1:
                 break
-            note = "、".join(f"{o} -> {a}" for o, a in todo)
+            note = "、".join(f"{o} -> {a}" + ("（Predictor 建議的清空移動，讓被擋住的要求能完成）"
+                                             if self.requested.get(o) != a else "") for o, a in todo)
             self.board.post("supervisor", "commander", "decision", {"still_open_and_feasible": todo})
             task = (f"{self.task}\n（系統提醒：這些要求還沒完成，而且 Predictor 判定現在可行：{note}。"
                     "請先 observe_table，再完成它們，最後回報全部結果。）")
+        if result.final_text:   # the local model sometimes mixes in simplified characters
+            result.final_text = to_traditional(result.final_text)
         problems = self.fact_check(result.final_text or "") if result.stop_reason == "final" else ["no final answer"]
         self.board.post("commander", "reporter", "report", {"text": result.final_text, "problems": problems})
         if problems:
