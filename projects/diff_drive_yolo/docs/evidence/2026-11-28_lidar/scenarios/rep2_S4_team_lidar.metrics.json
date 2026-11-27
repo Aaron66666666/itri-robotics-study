@@ -1,0 +1,14 @@
+{
+ "reached_cup_s": 31.1,
+ "stopped_s": 16.8,
+ "min_clearance_m": 0.504,
+ "min_clearance_moving_m": 1.256,
+ "final_x": 0.545,
+ "person_stops": 0,
+ "team_decisions": [
+  "CLEAR: no person near the path",
+  "SLOW: person 1 may enter the path in 3.0 s",
+  "STOP: person 1 predicted in the path in 1.9 s",
+  "CLEAR: no person near the path"
+ ]
+}

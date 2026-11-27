@@ -1,0 +1,14 @@
+{
+ "reached_cup_s": 22.0,
+ "stopped_s": 7.8,
+ "min_clearance_m": 0.447,
+ "min_clearance_moving_m": 0.447,
+ "final_x": 0.543,
+ "person_stops": 0,
+ "team_decisions": [
+  "CLEAR: no person near the path",
+  "SLOW: new person 1 2.0 m away, velocity unknown",
+  "STOP: person 1 is in the path 1.7 m ahead",
+  "CLEAR: no person near the path"
+ ]
+}

@@ -1,6 +1,9 @@
 """Tracker / Predictor / Commander logic for the vehicle (no ROS, unit-tested)."""
 # Tracker   - person detections (camera boxes) -> range and bearing from the
-# vehicle -> odometry-frame points -> tracks with stable ids.
+# vehicle -> odometry-frame points -> tracks with stable ids. With the
+# optional 360-degree lidar, the lidar gives the positions (it also
+# sees beside and behind the vehicle) and the camera only labels
+# a lidar track as a person (matched by bearing).
 # Predictor - constant-velocity Kalman filter per track; predicts the next
 # seconds and checks whether the person enters the corridor in
 # front of the vehicle -> time to conflict and a risk level.
@@ -27,8 +30,15 @@ RANGE_K = 989.1  # calibrated 2026-11-27 (tools/team/calibrate_person.py)
 # Vehicle footprint (chassis 2.0 x 1.0 m, centred 0.15 m behind the origin).
 HALF_WIDTH = 0.5
 FRONT = 0.85
+REAR = -1.15
+PERSON_R = 0.25          # body radius: gap = distance to the footprint - PERSON_R
 MARGIN = 0.4             # extra lateral clearance
 LOOKAHEAD = 2.5          # m ahead of the front bumper that counts as "in the way"
+
+# 360-degree 2D lidar on the chassis, 0.9 m above the ground: it sees people,
+# but not the cup on its table or the parked vehicle (both lower than 0.8 m).
+LIDAR_X = -0.15          # in the base frame (chassis centre)
+BODY_DEPTH = 0.1         # the scan hits the near side of a body: centre is farther
 
 
 def measure(box, conf: float = 1.0):
@@ -39,6 +49,45 @@ def measure(box, conf: float = 1.0):
     u = (x1 + x2) / 2
     bearing = math.atan2(-(u - IMG_W / 2), FOCAL)
     return rng, bearing
+
+
+def cluster_scan(ranges, angle_min, angle_inc, range_min=0.3, range_max=10.0,
+                 gap=0.3, max_extent=1.2, min_points=2):
+    """Cluster LaserScan ranges -> centres (x, y) of compact clusters, lidar frame."""
+    pts = []
+    for i, r in enumerate(ranges):
+        if math.isfinite(r) and range_min < r < range_max * 0.99:
+            a = angle_min + i * angle_inc
+            pts.append((i, r * math.cos(a), r * math.sin(a)))
+    clusters, cur = [], []
+    for p in pts:  # neighbouring rays (one missing ray allowed) closer than gap
+        if cur and (p[0] - cur[-1][0] > 2 or math.dist(p[1:], cur[-1][1:]) > gap):
+            clusters.append(cur)
+            cur = []
+        cur.append(p)
+    if cur:
+        clusters.append(cur)
+    n = len(ranges)  # a full turn wraps around: join the last and the first cluster
+    if (len(clusters) > 1 and clusters[0][0][0] <= 1 and clusters[-1][-1][0] >= n - 2
+            and math.dist(clusters[0][0][1:], clusters[-1][-1][1:]) <= gap):
+        clusters[0] = clusters.pop() + clusters[0]
+    out = []
+    for c in clusters:
+        if len(c) < min_points or math.dist(c[0][1:], c[-1][1:]) > max_extent:
+            continue  # single rays (noise) and long surfaces (walls) are not people
+        cx = sum(q[1] for q in c) / len(c)
+        cy = sum(q[2] for q in c) / len(c)
+        d = math.hypot(cx, cy)
+        out.append((cx + BODY_DEPTH * cx / d, cy + BODY_DEPTH * cy / d))
+    return out
+
+
+def lidar_to_odom(points, pose):
+    """Lidar-frame (x, y) points -> odometry frame. pose = (x, y, yaw)."""
+    px, py, yaw = pose
+    c, s = math.cos(yaw), math.sin(yaw)
+    return [(px + (LIDAR_X + x) * c - y * s, py + (LIDAR_X + x) * s + y * c)
+            for x, y in points]
 
 
 def to_odom(rng, bearing, pose):
@@ -96,32 +145,68 @@ class Track:
     n: int = 1
     last_seen: float = 0.0
     points: list = field(default_factory=list)
+    label: str = 'person'    # 'object': lidar only, not (yet) seen as a person
+    source: str = 'camera'   # 'camera' or 'lidar': what gives the position
 
 
 class PersonTracker:
-    def __init__(self, gate: float = 1.0, max_age: float = 1.0, min_conf: float = 0.5):
+    def __init__(self, gate: float = 1.0, max_age: float = 1.0, min_conf: float = 0.5,
+                 lidar_gate: float = 0.8, bearing_gate: float = 0.12):
         self.tracks: dict[int, Track] = {}
         self.next_id = 1
         self.gate, self.max_age, self.min_conf = gate, max_age, min_conf
+        self.lidar_gate, self.bearing_gate = lidar_gate, bearing_gate
+        self.lidar_time = None
 
     def update(self, detections, t, pose):
+        """Camera detections. With a fresh lidar scan they only label tracks."""
+        lidar_fresh = self.lidar_time is not None and t - self.lidar_time < 0.5
         pts = []
         for d in detections:
             if (str(d.get('class_name', '')).lower() != 'person'
                     or float(d.get('confidence', 0)) < self.min_conf):
                 continue
             rng, bearing = measure(d['bbox_xyxy'])
+            tid = self._match_bearing(bearing, t, pose) if lidar_fresh else None
+            if tid is not None:
+                self.tracks[tid].label = 'person'
+                continue
             pts.append(to_odom(rng, bearing, pose))
+        self._associate(pts, t, self.gate, 'person', 'camera')
+        return self._expire(t)
+
+    def update_lidar(self, points, t):
+        """Odometry-frame lidar cluster centres (lidar_to_odom(cluster_scan(...)))."""
+        self.lidar_time = t
+        self._associate(points, t, self.lidar_gate, 'object', 'lidar')
+        return self._expire(t)
+
+    def _match_bearing(self, bearing, t, pose):
+        best, bd = None, self.bearing_gate
+        for tid, tr in self.tracks.items():
+            if tr.source != 'lidar' or t - tr.last_seen > 0.3:
+                continue
+            x, y, _, _ = tr.kf.state_at(t)
+            rx, ry = to_vehicle((x, y), pose)
+            if rx - CAM_X < 0.2:
+                continue
+            d = abs(math.atan2(ry, rx - CAM_X) - bearing)
+            if d < bd:
+                best, bd = tid, d
+        return best
+
+    def _associate(self, pts, t, gate, label, source):
         free = set(self.tracks)
         for p in pts:  # greedy nearest-neighbour association
-            best, bd = None, self.gate
+            best, bd = None, gate
             for tid in free:
                 x, y, _, _ = self.tracks[tid].kf.state_at(t)
                 d = math.dist(p, (x, y))
                 if d < bd:
                     best, bd = tid, d
             if best is None:
-                tr = Track(self.next_id, KalmanCV(p[0], p[1], t), last_seen=t)
+                tr = Track(self.next_id, KalmanCV(p[0], p[1], t), last_seen=t,
+                           label=label, source=source)
                 self.tracks[tr.tid] = tr
                 self.next_id += 1
             else:
@@ -129,8 +214,12 @@ class PersonTracker:
                 tr.kf.update(p[0], p[1], t)
                 tr.n += 1
                 tr.last_seen = t
+                if source == 'lidar':
+                    tr.source = 'lidar'
                 free.discard(best)
             tr.points.append((t, p[0], p[1]))
+
+    def _expire(self, t):
         for tid in [k for k, v in self.tracks.items() if t - v.last_seen > self.max_age]:
             del self.tracks[tid]
         return list(self.tracks.values())
@@ -146,10 +235,42 @@ def to_vehicle(p, pose):
     return dx * math.cos(yaw) + dy * math.sin(yaw), -dx * math.sin(yaw) + dy * math.cos(yaw)
 
 
+PASS_GAP = 0.5   # approach_stop: stop if a near person is predicted closer than this
+
+
+def min_predicted_gap(state, pose, speed, horizon=3.0, step=0.1):
+    """Smallest body gap over the horizon: person at constant velocity, vehicle ahead at speed."""
+    x, y, vx, vy = state
+    px, py, yaw = pose
+    best = math.inf
+    k = 1
+    while k * step <= horizon + 1e-9:
+        tt = k * step
+        vpose = (px + speed * math.cos(yaw) * tt, py + speed * math.sin(yaw) * tt, yaw)
+        rx, ry = to_vehicle((x + vx * tt, y + vy * tt), vpose)
+        best = min(best, footprint_distance(rx, ry) - PERSON_R)
+        k += 1
+    return best
+
+
+def footprint_distance(rx, ry):
+    """Distance (m) from a vehicle-frame point to the vehicle footprint."""
+    ex = max(0.0, rx - FRONT, REAR - rx)
+    return math.hypot(ex, max(0.0, abs(ry) - HALF_WIDTH))
+
+
 def assess(tracks, t, pose, speed, horizon=3.0, step=0.1, stop_ttc=2.0, min_obs=3,
-           stop_radius=0.0):
-    """-> dict(risk CLEAR|SLOW|STOP, ttc, track, reason). The vehicle is."""
-    # predicted along its heading at `speed`, each person with its Kalman state.
+           stop_radius=0.0, near_clearance=0.75, approach_stop=False):
+    """-> dict(risk CLEAR|SLOW|STOP, ttc, track, reason, min_gap)."""
+    # The vehicle is predicted along its heading at `speed`, each person with
+    # its Kalman state. near_clearance: SLOW while the gap between a person and
+    # the vehicle body is smaller (SLOW does not release a STOP, see
+    # CommanderLogic); 0.75 is the camera-only default (1.0 m to the footprint).
+    # approach_stop: STOP instead of SLOW when that person is also predicted to
+    # come within PASS_GAP of the body in the next seconds (walking up to the
+    # vehicle), not when they just walk past at a constant distance. Found with
+    # the random walks: a person walking up beside the path was within 0.6 m
+    # while the lidar team still crept forward at half speed (2026-11-27, R1).
     worst = {'risk': 'CLEAR', 'ttc': None, 'track': None, 'reason': 'no person near the path'}
     rank = {'CLEAR': 0, 'SLOW': 1, 'STOP': 2}
 
@@ -161,21 +282,24 @@ def assess(tracks, t, pose, speed, horizon=3.0, step=0.1, stop_ttc=2.0, min_obs=
             worst = {'risk': risk, 'ttc': ttc, 'track': tid, 'reason': reason}
 
     px, py, yaw = pose
+    min_gap = None
     for tr in tracks:
         x, y, vx, vy = tr.kf.state_at(t)
         rx, ry = to_vehicle((x, y), pose)
-        dist_front = math.hypot(max(0.0, rx - FRONT), max(0.0, abs(ry) - HALF_WIDTH))
+        name = f"{getattr(tr, 'label', 'person')} {tr.tid}"
+        dist = footprint_distance(rx, ry)
+        gap = dist - PERSON_R
+        min_gap = gap if min_gap is None else min(min_gap, gap)
         if in_corridor(rx, ry):
-            take('STOP', 0.0, tr.tid, f'person {tr.tid} is in the path {rx - FRONT:.1f} m ahead')
+            take('STOP', 0.0, tr.tid, f'{name} is in the path {rx - FRONT:.1f} m ahead')
             continue
         # Conservative mode: stop whenever a person is this close, wherever.
-        if dist_front < stop_radius:
-            take('STOP', None, tr.tid, f'person {tr.tid} within {dist_front:.1f} m (stop radius)')
+        if dist < stop_radius:
+            take('STOP', None, tr.tid, f'{name} within {dist:.1f} m (stop radius)')
             continue
         if tr.n < min_obs:  # too new to trust a velocity: be conservative
-            if dist_front < 3.0:
-                take('SLOW', None, tr.tid,
-                     f'new person {tr.tid} {dist_front:.1f} m away, velocity unknown')
+            if dist < 3.0:
+                take('SLOW', None, tr.tid, f'new {name} {dist:.1f} m away, velocity unknown')
             continue
         ttc = None
         k = 1
@@ -188,11 +312,18 @@ def assess(tracks, t, pose, speed, horizon=3.0, step=0.1, stop_ttc=2.0, min_obs=
                 break
             k += 1
         if ttc is not None and ttc <= stop_ttc:
-            take('STOP', ttc, tr.tid, f'person {tr.tid} predicted in the path in {ttc:.1f} s')
+            take('STOP', ttc, tr.tid, f'{name} predicted in the path in {ttc:.1f} s')
         elif ttc is not None:
-            take('SLOW', ttc, tr.tid, f'person {tr.tid} may enter the path in {ttc:.1f} s')
-        elif dist_front < 1.0:
-            take('SLOW', None, tr.tid, f'person {tr.tid} within {dist_front:.1f} m of the vehicle')
+            take('SLOW', ttc, tr.tid, f'{name} may enter the path in {ttc:.1f} s')
+        elif gap < near_clearance:
+            ahead = (min_predicted_gap((x, y, vx, vy), pose, speed, horizon, step)
+                     if approach_stop else gap)
+            if ahead < min(gap, PASS_GAP):
+                take('STOP', None, tr.tid,
+                     f'{name} {max(0.0, gap):.1f} m away, coming to {max(0.0, ahead):.1f} m')
+            else:
+                take('SLOW', None, tr.tid, f'{name} {max(0.0, gap):.1f} m from the vehicle')
+    worst['min_gap'] = None if min_gap is None else round(min_gap, 2)
     return worst
 
 

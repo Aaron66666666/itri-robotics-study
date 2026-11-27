@@ -1,0 +1,16 @@
+{
+ "reached_cup_s": 24.2,
+ "stopped_s": 9.1,
+ "min_clearance_m": 0.372,
+ "min_clearance_moving_m": 0.609,
+ "final_x": 0.546,
+ "person_stops": 0,
+ "team_decisions": [
+  "CLEAR: no person near the path",
+  "SLOW: new object 2 2.8 m away, velocity unknown",
+  "CLEAR: no person near the path",
+  "SLOW: object 2 1.0 m from the vehicle",
+  "STOP: person 1 predicted in the path in 1.0 s",
+  "CLEAR: no person near the path"
+ ]
+}

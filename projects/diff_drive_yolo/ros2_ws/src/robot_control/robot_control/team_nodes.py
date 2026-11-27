@@ -1,5 +1,5 @@
 """ROS 2 nodes of the vehicle team (logic in team_logic.py)."""
-# team_tracker    /yolo/detections + odometry -> /team/tracks
+# team_tracker    /yolo/detections (+ /vehicle_blue/scan) + odometry -> /team/tracks
 # team_predictor  /team/tracks + odometry     -> /team/prediction (10 Hz)
 # team_commander  /autonomy/cmd_vel_raw + /team/prediction -> vehicle cmd_vel (20 Hz)
 
@@ -12,9 +12,11 @@ from nav_msgs.msg import Odometry
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
+from sensor_msgs.msg import LaserScan
 from std_msgs.msg import String
 
-from .team_logic import assess, CommanderLogic, PersonTracker
+from .team_logic import (assess, cluster_scan, CommanderLogic, lidar_to_odom,
+                         PersonTracker)
 
 ODOM = '/model/vehicle_blue/odometry'
 
@@ -39,9 +41,15 @@ class TrackerNode(Node, _OdomMixin):
     def __init__(self):
         super().__init__('team_tracker')
         self._init_odom()
+        self.declare_parameter('use_lidar', False)
+        self.declare_parameter('scan_topic', '/vehicle_blue/scan')
         self.tracker = PersonTracker()
         self.pub = self.create_publisher(String, '/team/tracks', 10)
         self.create_subscription(String, '/yolo/detections', self._on_det, 10)
+        if self.get_parameter('use_lidar').value:
+            topic = self.get_parameter('scan_topic').value
+            self.create_subscription(LaserScan, topic, self._on_scan, qos_profile_sensor_data)
+            self.get_logger().info(f'Team tracker: lidar positions from {topic}, camera labels')
 
     def _on_det(self, msg):
         try:
@@ -49,12 +57,21 @@ class TrackerNode(Node, _OdomMixin):
         except (ValueError, AttributeError):
             return
         t = time.monotonic()
-        tracks = self.tracker.update(dets, t, self.pose)
-        out = {'t': t, 'tracks': []}
+        self._publish(self.tracker.update(dets, t, self.pose), t)
+
+    def _on_scan(self, m):
+        t = time.monotonic()
+        pts = cluster_scan(m.ranges, m.angle_min, m.angle_increment,
+                           max(0.3, m.range_min), m.range_max)
+        self._publish(self.tracker.update_lidar(lidar_to_odom(pts, self.pose), t), t)
+
+    def _publish(self, tracks, t):
+        out = {'t': t, 'lidar_t': self.tracker.lidar_time, 'tracks': []}
         for tr in tracks:
             x, y, vx, vy = tr.kf.state_at(t)
             out['tracks'].append({'id': tr.tid, 'x': round(x, 3), 'y': round(y, 3),
-                                  'vx': round(vx, 3), 'vy': round(vy, 3), 'n': tr.n})
+                                  'vx': round(vx, 3), 'vy': round(vy, 3), 'n': tr.n,
+                                  'label': tr.label, 'source': tr.source})
         self.pub.publish(String(data=json.dumps(out)))
 
 
@@ -72,13 +89,20 @@ class _TrackView:
 
     def __init__(self, d, t0):
         self.tid, self.n, self.kf = d['id'], d['n'], self._KF(d, t0)
+        self.label = d.get('label', 'person')
 
 
 class PredictorNode(Node, _OdomMixin):
     def __init__(self):
         super().__init__('team_predictor')
         self.declare_parameter('stop_radius', 0.0)
+        self.declare_parameter('near_clearance', 0.75)
+        self.declare_parameter('require_lidar', False)
+        self.declare_parameter('approach_stop', False)
         self.stop_radius = float(self.get_parameter('stop_radius').value)
+        self.near_clearance = float(self.get_parameter('near_clearance').value)
+        self.require_lidar = bool(self.get_parameter('require_lidar').value)
+        self.approach_stop = bool(self.get_parameter('approach_stop').value)
         self._init_odom()
         self.tracks_msg = None
         self.tracks_time = None
@@ -92,13 +116,18 @@ class PredictorNode(Node, _OdomMixin):
 
     def _tick(self):
         now = time.monotonic()
+        lidar_t = (self.tracks_msg or {}).get('lidar_t')
         if self.tracks_time is None or now - self.tracks_time > 1.0:
             pred = {'risk': 'STOP', 'ttc': None, 'track': None,
                     'reason': 'tracker silent (no camera detections for 1 s)'}
+        elif self.require_lidar and (lidar_t is None or now - lidar_t > 1.0):
+            pred = {'risk': 'STOP', 'ttc': None, 'track': None,
+                    'reason': 'lidar silent for 1 s (fail-safe)'}
         else:
             views = [_TrackView(d, self.tracks_msg['t']) for d in self.tracks_msg['tracks']]
             pred = assess(views, now, self.pose, max(0.0, self.speed),
-                          stop_radius=self.stop_radius)
+                          stop_radius=self.stop_radius, near_clearance=self.near_clearance,
+                          approach_stop=self.approach_stop)
         pred['n_tracks'] = len(self.tracks_msg['tracks']) if self.tracks_msg else 0
         self.pub.publish(String(data=json.dumps(pred)))
 

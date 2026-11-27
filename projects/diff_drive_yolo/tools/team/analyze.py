@@ -21,7 +21,8 @@ def clearance(row):
 
 
 def main(prefix):
-    rows = [{k: float(v) for k, v in r.items()} for r in csv.DictReader(open(prefix + '.poses.csv'))]
+    rows = [{k: float(v) for k, v in r.items()} for r in csv.DictReader(open(prefix + '.poses.csv'))
+            if None not in r.values() and '' not in r.values()]  # the last line may be cut off
     log = open(prefix + '.launch.log', errors='ignore').read()
     stamps = [(float(t), s) for t, s in re.findall(r'\[(\d+\.\d+)\] \[autonomy_controller\]: Autonomy state: (\S+)', log)]
     t_start = stamps[0][0] if stamps else rows[0]['t']

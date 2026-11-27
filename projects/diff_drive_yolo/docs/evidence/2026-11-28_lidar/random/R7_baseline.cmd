@@ -1,0 +1,1 @@
+WORLD=worlds/diff_drive_camera_cup_person_lidar.sdf ros2 launch robot_control autonomous_yolo.launch.py  target_class:=cup device:=0 search_speed:=0.05 approach_speed:=0.05 alignment_speed:=0.15 target_action:=stop stop_bbox_dimension:=width stop_bbox_ratio:=0.185 yolo_model:=v3

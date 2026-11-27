@@ -1,0 +1,9 @@
+{
+ "reached_cup_s": 26.0,
+ "stopped_s": 12.1,
+ "min_clearance_m": 1.09,
+ "min_clearance_moving_m": 1.388,
+ "final_x": 0.543,
+ "person_stops": 1,
+ "team_decisions": []
+}
