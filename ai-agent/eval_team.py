@@ -15,6 +15,7 @@ Single and team share every case; where the team is expected to do better
 import argparse
 import json
 import math
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -109,11 +110,11 @@ def run_case(case, mode, backend_name, model, rep):
         st.place(case["setup"]["cup"], case["setup"]["bottle"])
         time.sleep(2.5)
         def truth():
-            for _ in range(5):  # one pose message sometimes misses a model
+            for _ in range(15):  # one pose message sometimes misses a model; right after start-up all of them
                 t = {k: v[:2] for k, v in truth_positions().items()}
                 if {"cup", "bottle"} <= set(t):
                     return t
-                time.sleep(1.0)
+                time.sleep(2.0)
             raise RuntimeError(f"Gazebo truth incomplete: {sorted(t)}")
     before = truth()
     tool_texts, calls, refused = [], [], []
@@ -156,6 +157,9 @@ def main():
     p.add_argument("--set", choices=["dev", "heldout", "heldout2"], default="dev")
     p.add_argument("--out")
     a = p.parse_args()
+    if a.backend == "gazebo" and not shutil.which("gz"):
+        # Without the ROS environment the Gazebo truth read gets nothing (2026-11-28).
+        sys.exit("gz not found: source /opt/ros/jazzy/setup.bash (or the TM5S scripts/env.sh) first")
     model = OllamaChat(a.model)
     rows = []
     for rep in range(a.repeat):
