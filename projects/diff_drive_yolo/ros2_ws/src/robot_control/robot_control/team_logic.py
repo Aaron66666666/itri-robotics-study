@@ -39,6 +39,7 @@ LOOKAHEAD = 2.5          # m ahead of the front bumper that counts as "in the wa
 # but not the cup on its table or the parked vehicle (both lower than 0.8 m).
 LIDAR_X = -0.15          # in the base frame (chassis centre)
 BODY_DEPTH = 0.1         # the scan hits the near side of a body: centre is farther
+MAP_RES = 0.1            # static map cells (m), odometry frame
 
 
 def measure(box, conf: float = 1.0):
@@ -52,8 +53,9 @@ def measure(box, conf: float = 1.0):
 
 
 def cluster_scan(ranges, angle_min, angle_inc, range_min=0.3, range_max=10.0,
-                 gap=0.3, max_extent=1.2, min_points=2):
+                 gap=0.3, max_extent=1.2, min_points=2, with_points=False):
     """Cluster LaserScan ranges -> centres (x, y) of compact clusters, lidar frame."""
+    # with_points: (x, y, [points]) per cluster, for the static-map check.
     pts = []
     for i, r in enumerate(ranges):
         if math.isfinite(r) and range_min < r < range_max * 0.99:
@@ -78,8 +80,34 @@ def cluster_scan(ranges, angle_min, angle_inc, range_min=0.3, range_max=10.0,
         cx = sum(q[1] for q in c) / len(c)
         cy = sum(q[2] for q in c) / len(c)
         d = math.hypot(cx, cy)
-        out.append((cx + BODY_DEPTH * cx / d, cy + BODY_DEPTH * cy / d))
+        centre = (cx + BODY_DEPTH * cx / d, cy + BODY_DEPTH * cy / d)
+        out.append((*centre, [q[1:] for q in c]) if with_points else centre)
     return out
+
+
+class StaticMap:
+    """Cells the lidar hits when nobody is around (tools/team/record_static_map.py)."""
+
+    def __init__(self, cells, res=MAP_RES):
+        self.res = res
+        self.cells = {tuple(c) for c in cells}
+
+    @classmethod
+    def load(cls, path):
+        import json
+        d = json.load(open(path))
+        return cls(d['cells'], d.get('resolution', MAP_RES))
+
+    def fraction(self, points):
+        """Share of odometry-frame points on (or next to) a static cell."""
+        if not points:
+            return 0.0
+        hit = 0
+        for x, y in points:
+            i, j = math.floor(x / self.res), math.floor(y / self.res)
+            if any((i + di, j + dj) in self.cells for di in (-1, 0, 1) for dj in (-1, 0, 1)):
+                hit += 1
+        return hit / len(points)
 
 
 def lidar_to_odom(points, pose):
@@ -147,6 +175,7 @@ class Track:
     points: list = field(default_factory=list)
     label: str = 'person'    # 'object': lidar only, not (yet) seen as a person
     source: str = 'camera'   # 'camera' or 'lidar': what gives the position
+    static: bool = False     # on the static map (pillar, wall) and never seen as a person
 
 
 class PersonTracker:
@@ -170,15 +199,17 @@ class PersonTracker:
             tid = self._match_bearing(bearing, t, pose) if lidar_fresh else None
             if tid is not None:
                 self.tracks[tid].label = 'person'
+                self.tracks[tid].static = False
                 continue
             pts.append(to_odom(rng, bearing, pose))
         self._associate(pts, t, self.gate, 'person', 'camera')
         return self._expire(t)
 
-    def update_lidar(self, points, t):
+    def update_lidar(self, points, t, static=None):
         """Odometry-frame lidar cluster centres (lidar_to_odom(cluster_scan(...)))."""
+        # static: one flag per point, True if that cluster lies on the static map.
         self.lidar_time = t
-        self._associate(points, t, self.lidar_gate, 'object', 'lidar')
+        self._associate(points, t, self.lidar_gate, 'object', 'lidar', static)
         return self._expire(t)
 
     def _match_bearing(self, bearing, t, pose):
@@ -195,9 +226,9 @@ class PersonTracker:
                 best, bd = tid, d
         return best
 
-    def _associate(self, pts, t, gate, label, source):
+    def _associate(self, pts, t, gate, label, source, static=None):
         free = set(self.tracks)
-        for p in pts:  # greedy nearest-neighbour association
+        for k, p in enumerate(pts):  # greedy nearest-neighbour association
             best, bd = None, gate
             for tid in free:
                 x, y, _, _ = self.tracks[tid].kf.state_at(t)
@@ -217,6 +248,9 @@ class PersonTracker:
                 if source == 'lidar':
                     tr.source = 'lidar'
                 free.discard(best)
+            if static is not None:
+                # a camera-confirmed person is never treated as a static obstacle
+                tr.static = bool(static[k]) and tr.label != 'person'
             tr.points.append((t, p[0], p[1]))
 
     def _expire(self, t):
@@ -286,12 +320,16 @@ def assess(tracks, t, pose, speed, horizon=3.0, step=0.1, stop_ttc=2.0, min_obs=
     for tr in tracks:
         x, y, vx, vy = tr.kf.state_at(t)
         rx, ry = to_vehicle((x, y), pose)
-        name = f"{getattr(tr, 'label', 'person')} {tr.tid}"
+        static = getattr(tr, 'static', False)
+        name = f"{'obstacle' if static else getattr(tr, 'label', 'person')} {tr.tid}"
         dist = footprint_distance(rx, ry)
         gap = dist - PERSON_R
-        min_gap = gap if min_gap is None else min(min_gap, gap)
+        if not static:
+            min_gap = gap if min_gap is None else min(min_gap, gap)
         if in_corridor(rx, ry):
             take('STOP', 0.0, tr.tid, f'{name} is in the path {rx - FRONT:.1f} m ahead')
+            continue
+        if static:  # a pillar or a wall beside the path does not walk into it
             continue
         # Conservative mode: stop whenever a person is this close, wherever.
         if dist < stop_radius:

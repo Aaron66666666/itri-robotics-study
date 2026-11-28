@@ -1,0 +1,192 @@
+{
+ "S0": {
+  "baseline": {
+   "runs": 2,
+   "reached": 2,
+   "reached_cup_s": 16.4,
+   "stopped_s": 3.0,
+   "min_clearance_m": 25.33,
+   "min_clearance_moving_m": 25.33,
+   "collision": false
+  },
+  "team": {
+   "runs": 2,
+   "reached": 2,
+   "reached_cup_s": 17.8,
+   "stopped_s": 4.9,
+   "min_clearance_m": 25.34,
+   "min_clearance_moving_m": 25.34,
+   "collision": false
+  },
+  "team_lidar2": {
+   "runs": 1,
+   "reached": 0,
+   "reached_cup_s": null,
+   "stopped_s": 82.4,
+   "min_clearance_m": 25.7,
+   "min_clearance_moving_m": null,
+   "collision": false
+  },
+  "team_lidar3": {
+   "runs": 2,
+   "reached": 2,
+   "reached_cup_s": 16.9,
+   "stopped_s": 3.3,
+   "min_clearance_m": 25.33,
+   "min_clearance_moving_m": 25.33,
+   "collision": false
+  }
+ },
+ "S1": {
+  "baseline": {
+   "runs": 2,
+   "reached": 2,
+   "reached_cup_s": 20.0,
+   "stopped_s": 6.8,
+   "min_clearance_m": 0.4,
+   "min_clearance_moving_m": 0.4,
+   "collision": false
+  },
+  "team": {
+   "runs": 2,
+   "reached": 2,
+   "reached_cup_s": 21.6,
+   "stopped_s": 8.3,
+   "min_clearance_m": 0.42,
+   "min_clearance_moving_m": 0.42,
+   "collision": false
+  },
+  "team_lidar2": {
+   "runs": 1,
+   "reached": 0,
+   "reached_cup_s": null,
+   "stopped_s": 81.3,
+   "min_clearance_m": 0.9,
+   "min_clearance_moving_m": null,
+   "collision": false
+  },
+  "team_lidar3": {
+   "runs": 2,
+   "reached": 2,
+   "reached_cup_s": 26.1,
+   "stopped_s": 12.9,
+   "min_clearance_m": 0.51,
+   "min_clearance_moving_m": 0.99,
+   "collision": false
+  }
+ },
+ "S3": {
+  "baseline": {
+   "runs": 2,
+   "reached": 0,
+   "reached_cup_s": null,
+   "stopped_s": 82.2,
+   "min_clearance_m": 2.52,
+   "min_clearance_moving_m": null,
+   "collision": false
+  },
+  "team": {
+   "runs": 2,
+   "reached": 2,
+   "reached_cup_s": 17.9,
+   "stopped_s": 4.8,
+   "min_clearance_m": 2.05,
+   "min_clearance_moving_m": 2.05,
+   "collision": false
+  },
+  "team_lidar2": {
+   "runs": 1,
+   "reached": 0,
+   "reached_cup_s": null,
+   "stopped_s": 81.3,
+   "min_clearance_m": 2.52,
+   "min_clearance_moving_m": null,
+   "collision": false
+  },
+  "team_lidar3": {
+   "runs": 2,
+   "reached": 2,
+   "reached_cup_s": 17.4,
+   "stopped_s": 3.3,
+   "min_clearance_m": 2.03,
+   "min_clearance_moving_m": 2.03,
+   "collision": false
+  }
+ },
+ "S4": {
+  "baseline": {
+   "runs": 2,
+   "reached": 2,
+   "reached_cup_s": 34.8,
+   "stopped_s": 21.0,
+   "min_clearance_m": 0.8,
+   "min_clearance_moving_m": 0.95,
+   "collision": false
+  },
+  "team": {
+   "runs": 2,
+   "reached": 2,
+   "reached_cup_s": 29.4,
+   "stopped_s": 16.0,
+   "min_clearance_m": 0.49,
+   "min_clearance_moving_m": 0.76,
+   "collision": false
+  },
+  "team_lidar2": {
+   "runs": 1,
+   "reached": 0,
+   "reached_cup_s": null,
+   "stopped_s": 82.7,
+   "min_clearance_m": 0.8,
+   "min_clearance_moving_m": null,
+   "collision": false
+  },
+  "team_lidar3": {
+   "runs": 2,
+   "reached": 2,
+   "reached_cup_s": 30.7,
+   "stopped_s": 17.6,
+   "min_clearance_m": 0.51,
+   "min_clearance_moving_m": 1.22,
+   "collision": false
+  }
+ },
+ "S6": {
+  "baseline": {
+   "runs": 2,
+   "reached": 2,
+   "reached_cup_s": 18.5,
+   "stopped_s": 5.5,
+   "min_clearance_m": 0.35,
+   "min_clearance_moving_m": 0.35,
+   "collision": false
+  },
+  "team": {
+   "runs": 2,
+   "reached": 2,
+   "reached_cup_s": 21.8,
+   "stopped_s": 8.2,
+   "min_clearance_m": 0.42,
+   "min_clearance_moving_m": 0.42,
+   "collision": false
+  },
+  "team_lidar2": {
+   "runs": 1,
+   "reached": 0,
+   "reached_cup_s": null,
+   "stopped_s": 81.5,
+   "min_clearance_m": 0.71,
+   "min_clearance_moving_m": null,
+   "collision": false
+  },
+  "team_lidar3": {
+   "runs": 2,
+   "reached": 2,
+   "reached_cup_s": 27.8,
+   "stopped_s": 11.3,
+   "min_clearance_m": 0.61,
+   "min_clearance_moving_m": 0.7,
+   "collision": false
+  }
+ }
+}

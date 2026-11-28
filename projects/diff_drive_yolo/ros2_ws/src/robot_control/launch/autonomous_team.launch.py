@@ -35,6 +35,9 @@ def generate_launch_description():
         DeclareLaunchArgument('lidar', default_value='false'),
         # STOP (not only SLOW) when a person inside near_clearance is coming closer.
         DeclareLaunchArgument('approach_stop', default_value='false'),
+        # Static lidar map (tools/team/record_static_map.sh): clusters on it are
+        # pillars / walls, not people.
+        DeclareLaunchArgument('static_map', default_value=''),
     ]
     base = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution([
@@ -47,7 +50,10 @@ def generate_launch_description():
         output='screen',
         condition=IfCondition(LaunchConfiguration('lidar')))
     tracker = Node(package='robot_control', executable='team_tracker', name='team_tracker',
-                   output='screen', parameters=[{'use_lidar': _bool('lidar')}])
+                   output='screen', parameters=[{'use_lidar': _bool('lidar'),
+                                                 'static_map': ParameterValue(
+                                                     LaunchConfiguration('static_map'),
+                                                     value_type=str)}])
     predictor = Node(package='robot_control', executable='team_predictor',
                      name='team_predictor', output='screen',
                      parameters=[{'stop_radius': _float('stop_radius'),

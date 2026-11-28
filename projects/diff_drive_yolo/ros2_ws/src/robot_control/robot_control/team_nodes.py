@@ -16,7 +16,7 @@ from sensor_msgs.msg import LaserScan
 from std_msgs.msg import String
 
 from .team_logic import (assess, cluster_scan, CommanderLogic, lidar_to_odom,
-                         PersonTracker)
+                         PersonTracker, StaticMap)
 
 ODOM = '/model/vehicle_blue/odometry'
 
@@ -43,7 +43,13 @@ class TrackerNode(Node, _OdomMixin):
         self._init_odom()
         self.declare_parameter('use_lidar', False)
         self.declare_parameter('scan_topic', '/vehicle_blue/scan')
+        self.declare_parameter('static_map', '')
         self.tracker = PersonTracker()
+        path = self.get_parameter('static_map').value
+        self.static_map = StaticMap.load(path) if path else None
+        if self.static_map:
+            n = len(self.static_map.cells)
+            self.get_logger().info(f'Team tracker: static map {path} ({n} cells)')
         self.pub = self.create_publisher(String, '/team/tracks', 10)
         self.create_subscription(String, '/yolo/detections', self._on_det, 10)
         if self.get_parameter('use_lidar').value:
@@ -61,9 +67,14 @@ class TrackerNode(Node, _OdomMixin):
 
     def _on_scan(self, m):
         t = time.monotonic()
-        pts = cluster_scan(m.ranges, m.angle_min, m.angle_increment,
-                           max(0.3, m.range_min), m.range_max)
-        self._publish(self.tracker.update_lidar(lidar_to_odom(pts, self.pose), t), t)
+        clusters = cluster_scan(m.ranges, m.angle_min, m.angle_increment,
+                                max(0.3, m.range_min), m.range_max, with_points=True)
+        centres = lidar_to_odom([(c[0], c[1]) for c in clusters], self.pose)
+        static = None
+        if self.static_map:   # most of the cluster on the static map: pillar / wall
+            static = [self.static_map.fraction(lidar_to_odom(c[2], self.pose)) >= 0.6
+                      for c in clusters]
+        self._publish(self.tracker.update_lidar(centres, t, static), t)
 
     def _publish(self, tracks, t):
         out = {'t': t, 'lidar_t': self.tracker.lidar_time, 'tracks': []}
@@ -71,7 +82,8 @@ class TrackerNode(Node, _OdomMixin):
             x, y, vx, vy = tr.kf.state_at(t)
             out['tracks'].append({'id': tr.tid, 'x': round(x, 3), 'y': round(y, 3),
                                   'vx': round(vx, 3), 'vy': round(vy, 3), 'n': tr.n,
-                                  'label': tr.label, 'source': tr.source})
+                                  'label': tr.label, 'source': tr.source,
+                                  'static': tr.static})
         self.pub.publish(String(data=json.dumps(out)))
 
 
@@ -90,6 +102,7 @@ class _TrackView:
     def __init__(self, d, t0):
         self.tid, self.n, self.kf = d['id'], d['n'], self._KF(d, t0)
         self.label = d.get('label', 'person')
+        self.static = d.get('static', False)
 
 
 class PredictorNode(Node, _OdomMixin):

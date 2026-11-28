@@ -4,7 +4,7 @@ import math
 
 from robot_control.team_logic import (assess, BODY_DEPTH, cluster_scan, CommanderLogic,
                                       FRONT, in_corridor, KalmanCV, lidar_to_odom, LIDAR_X,
-                                      measure, PersonTracker, RANGE_K, to_odom)
+                                      measure, PersonTracker, RANGE_K, StaticMap, to_odom)
 
 
 def person(box, conf=0.9):
@@ -205,3 +205,33 @@ def test_approach_stop_only_for_people_walking_up_to_the_vehicle():
     past, t = walker(1.4, 1.4, -0.4, 0.0, n=12)
     assert assess(past.tracks.values(), t, pose, 0.05, near_clearance=1.0,
                   approach_stop=True)['risk'] == 'SLOW'
+
+
+def test_static_map_obstacles_are_not_people():
+    pose = (0.0, 0.0, 0.0)
+    pillar = (0.0, 1.0)                      # beside the vehicle, gap 0.25 m
+    smap = StaticMap([(0, 9), (0, 10), (-1, 10)])
+    assert smap.fraction([(0.02, 0.95), (0.05, 1.01)]) == 1.0
+    assert smap.fraction([(3.0, 3.0)]) == 0.0
+    tr = PersonTracker()
+    for i in range(5):
+        tr.update_lidar([pillar], i * 0.1, static=[True])
+    r = assess(tr.tracks.values(), 0.4, pose, 0.05, near_clearance=1.0, approach_stop=True)
+    assert r['risk'] == 'CLEAR' and r['min_gap'] is None
+    # the same place without the map: a possible person 0.25 m away
+    tr2 = PersonTracker()
+    for i in range(5):
+        tr2.update_lidar([pillar], i * 0.1)
+    assert assess(tr2.tracks.values(), 0.4, pose, 0.05, near_clearance=1.0)['risk'] == 'SLOW'
+    # a static obstacle in the path still stops the vehicle
+    tr3 = PersonTracker()
+    for i in range(5):
+        tr3.update_lidar([(FRONT + 0.8, 0.0)], i * 0.1, static=[True])
+    assert assess(tr3.tracks.values(), 0.4, pose, 0.05)['risk'] == 'STOP'
+    # a track the camera confirmed as a person is never static
+    tr4 = PersonTracker()
+    for i in range(3):
+        tr4.update_lidar(lidar_to_odom([(3.0 - LIDAR_X, 0.0)], pose), i * 0.1, static=[True])
+    tr4.update([person([300, 100, 340, 100 + RANGE_K / 2.0])], 0.25, pose)
+    tr4.update_lidar(lidar_to_odom([(3.0 - LIDAR_X, 0.0)], pose), 0.3, static=[True])
+    assert [t.static for t in tr4.tracks.values()] == [False]

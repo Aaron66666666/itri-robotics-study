@@ -4,7 +4,12 @@
 the chassis, the cup on its table and the parked vehicle; people are taller).
 Everything else is unchanged, so baseline / team / team_lidar runs compare in
 the same world.
+
+--clutter also writes ..._lidar_clutter.sdf: the same plus two pillars beside
+the path (one next to the vehicle, one ahead on the right) and a wall behind,
+all taller than the scan plane, i.e. static things a lidar sees in a real room.
 """
+import sys
 from pathlib import Path
 
 WS = Path(__file__).resolve().parents[2]
@@ -44,14 +49,36 @@ LIDAR = """
 """
 
 
+CLUTTER = """
+    <!-- Static obstacles taller than the scan plane (make_lidar_world.py --clutter). -->
+    <model name="pillar_left"><static>true</static><pose>0.3 2.95 0.6 0 0 0</pose>
+      <link name="l"><collision name="c"><geometry><cylinder><radius>0.15</radius><length>1.2</length></cylinder></geometry></collision>
+        <visual name="v"><geometry><cylinder><radius>0.15</radius><length>1.2</length></cylinder></geometry>
+          <material><ambient>0.5 0.5 0.5 1</ambient><diffuse>0.6 0.6 0.6 1</diffuse></material></visual></link></model>
+    <model name="pillar_right"><static>true</static><pose>1.2 0.8 0.6 0 0 0</pose>
+      <link name="l"><collision name="c"><geometry><cylinder><radius>0.15</radius><length>1.2</length></cylinder></geometry></collision>
+        <visual name="v"><geometry><cylinder><radius>0.15</radius><length>1.2</length></cylinder></geometry>
+          <material><ambient>0.5 0.5 0.5 1</ambient><diffuse>0.6 0.6 0.6 1</diffuse></material></visual></link></model>
+    <model name="wall_back"><static>true</static><pose>-4.5 2.0 0.75 0 0 0</pose>
+      <link name="l"><collision name="c"><geometry><box><size>0.1 4.0 1.5</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.1 4.0 1.5</size></box></geometry>
+          <material><ambient>0.7 0.7 0.65 1</ambient><diffuse>0.8 0.8 0.75 1</diffuse></material></visual></link></model>
+"""
+
+
 def main():
     s = SRC.read_text()
     anchor = '<sensor name="front_camera" type="camera">'
     i = s.index(anchor)
     j = s.index('</sensor>', i) + len('</sensor>')
     assert s.count(anchor) == 1
-    DST.write_text(s[:j] + '\n' + LIDAR + s[j:])
+    out = s[:j] + '\n' + LIDAR + s[j:]
+    DST.write_text(out)
     print(f'wrote {DST}')
+    if '--clutter' in sys.argv:
+        dst = DST.with_name(DST.stem + '_clutter.sdf')
+        dst.write_text(out.replace('  </world>', CLUTTER + '  </world>'))
+        print(f'wrote {dst}')
 
 
 if __name__ == '__main__':
