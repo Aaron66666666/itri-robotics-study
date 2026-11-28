@@ -105,3 +105,34 @@ HELDOUT2 = [
     {"id": "h2_by_place", "task": "右邊的東西移到中間", "setup": {"cup": RIGHT, "bottle": (0.38, 0.62)},
      "expect": {"cup": "center"}, "answer_all": ["杯"]},
 ]
+
+# A third set, written 2026-11-28 09:10 BEFORE adding swaps, objects named by
+# their place and counting (the features set 2 found missing). Run once with
+# the code as it was (commit 98c76dd) and once after the change.
+NEAR = AREAS["near_robot"][0]
+HELDOUT3 = [
+    {"id": "h3_exchange", "task": "把杯子和瓶子交換位置", "setup": {"cup": LEFT, "bottle": RIGHT},
+     "expect": {"cup": "right", "bottle": "left"}, "answer_all": ["杯", "瓶"]},
+    {"id": "h3_huhuan", "task": "瓶子跟杯子互換", "setup": {"cup": RIGHT, "bottle": CENTER},
+     "expect": {"cup": "center", "bottle": "right"}, "answer_all": ["杯", "瓶"]},
+    {"id": "h3_left_thing", "task": "左邊的東西移到中間", "setup": {"cup": LEFT, "bottle": (0.55, 0.30)},
+     "expect": {"cup": "center"}, "answer_all": ["杯"]},
+    {"id": "h3_middle_one", "task": "把中間那個放到右邊", "setup": {"cup": (0.38, 0.62), "bottle": CENTER},
+     "expect": {"bottle": "right"}, "answer_all": ["瓶"]},
+    {"id": "h3_count", "task": "桌上有幾個物體？", "setup": BASE, "expect": {}, "answer_any": ["2", "兩", "二"]},
+    {"id": "h3_what_near", "task": "靠近機器人的那個東西是什麼？", "setup": {"cup": (0.50, 0.55), "bottle": NEAR},
+     "expect": {}, "answer_all": ["瓶"]},
+    {"id": "h3_right_to_left", "task": "把右邊的東西拿到左邊，其他不要動", "setup": {"cup": RIGHT, "bottle": CENTER},
+     "expect": {"cup": "left"}, "answer_all": ["杯"]},
+    {"id": "h3_both_right", "task": "可以把兩個都移到右邊嗎", "setup": {"cup": LEFT, "bottle": CENTER},
+     "expect": {}, "one_in": ("right", ["cup", "bottle"]),
+     "answer_any": ["空間", "放不下", "占", "佔", "無法", "沒辦法", "不能", "只能"]},
+    {"id": "h3_already", "task": "把杯子放到右邊", "setup": {"cup": RIGHT, "bottle": LEFT}, "expect": {},
+     "answer_all": ["杯"], "answer_any": ["已經", "本來", "就在", "已在"]},
+    {"id": "h3_put_back", "task": "請把瓶子放回中間", "setup": {"cup": RIGHT, "bottle": LEFT},
+     "expect": {"bottle": "center"}, "answer_all": ["瓶"]},
+    {"id": "h3_swap_en", "task": "Swap the cup and the bottle.", "setup": {"cup": LEFT, "bottle": RIGHT},
+     "expect": {"cup": "right", "bottle": "left"}, "answer_any": ["杯", "cup", "Cup"]},
+    {"id": "h3_swap_places", "task": "把左邊那個和右邊那個對調", "setup": {"cup": LEFT, "bottle": RIGHT},
+     "expect": {"cup": "right", "bottle": "left"}, "answer_all": ["杯", "瓶"]},
+]

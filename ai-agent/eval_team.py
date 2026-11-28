@@ -22,7 +22,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from eval_arm_agent import BASE, CASES as D_CASES, SIMPLIFIED_ONLY, numbers  # noqa: E402
-from heldout_cases import HELDOUT, HELDOUT2  # noqa: E402
+from heldout_cases import HELDOUT, HELDOUT2, HELDOUT3  # noqa: E402
 from robot_agent.arm_tools import (AREAS, ARM_SYSTEM_PROMPT, ArmSession, FakeArm, GazeboArm,  # noqa: E402
                                    area_of, arm_policy, build_arm_tools)
 from robot_agent.llm import OllamaChat  # noqa: E402
@@ -154,7 +154,7 @@ def main():
     p.add_argument("--model", default="llama3.1:8b")
     p.add_argument("--repeat", type=int, default=1)
     p.add_argument("--cases", nargs="*")
-    p.add_argument("--set", choices=["dev", "heldout", "heldout2"], default="dev")
+    p.add_argument("--set", choices=["dev", "heldout", "heldout2", "heldout3"], default="dev")
     p.add_argument("--out")
     a = p.parse_args()
     if a.backend == "gazebo" and not shutil.which("gz"):
@@ -163,7 +163,7 @@ def main():
     model = OllamaChat(a.model)
     rows = []
     for rep in range(a.repeat):
-        for case in {"dev": CASES, "heldout": HELDOUT, "heldout2": HELDOUT2}[a.set]:
+        for case in {"dev": CASES, "heldout": HELDOUT, "heldout2": HELDOUT2, "heldout3": HELDOUT3}[a.set]:
             if a.cases and case["id"] not in a.cases:
                 continue
             for mode in a.modes:

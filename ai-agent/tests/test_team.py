@@ -183,3 +183,29 @@ def test_fact_check_catches_a_wrong_location():
     assert any("says the cup" in p for p in t.fact_check("桌上有瓶子和杯子。瓶子位於靠近機器人的左邊，杯子位於右邊。"))
     assert not t.fact_check("桌上有瓶子和杯子。瓶子在靠近機器人的地方。")
     assert not t.fact_check("杯子放到右邊失敗，因為右邊被占用。")
+
+
+def test_place_references_and_swaps():
+    from robot_agent.arm_tools import resolve_request
+    pos = {"cup": AREAS["left"][0], "bottle": AREAS["right"][0]}
+    assert resolve_request("把杯子和瓶子交換位置", pos)[2] == {"cup": "right", "bottle": "left"}
+    assert resolve_request("Swap the cup and the bottle.", pos)[2] == {"cup": "right", "bottle": "left"}
+    assert resolve_request("把左邊那個和右邊那個對調", pos)[2] == {"cup": "right", "bottle": "left"}
+    assert resolve_request("左邊的東西移到中間", pos)[2] == {"cup": "center"}
+    assert resolve_request("把杯子放到右邊的位置", pos)[2] == {"cup": "right"}   # 「右邊的位置」 is a place
+    t = team({"cup": AREAS["left"][0], "bottle": (0.55, 0.30)}, "左邊的東西移到中間")
+    assert t.policy("move_object", {"object": "cup", "area": "center"}) is None
+    assert t.requested == {"cup": "center"}
+
+
+def test_count_question_gets_a_number():
+    t = team(FREE, "桌上有幾個物體？")
+    model = ScriptedModel([call("observe_table", "c1"), Message("assistant", "桌上有杯子和瓶子。")])
+    assert "共有 2 樣" in t.run(model).final_text
+
+
+def test_count_survives_a_fact_report():
+    t = team(FREE, "桌上有幾個物體？")
+    model = ScriptedModel([call("observe_table", "c1"), Message("assistant", "杯子在 (10, 20)。")])
+    text = t.run(model).final_text
+    assert "桌上：" in text and "共有 2 樣" in text      # replaced, and still answers the count

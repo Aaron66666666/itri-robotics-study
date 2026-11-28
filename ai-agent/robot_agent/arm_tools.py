@@ -226,6 +226,35 @@ def requested_pairs(task: str) -> dict[str, str]:
     return pairs
 
 
+# 「交換位置」「對調」 "swap": each object goes to the other one's area.
+SWAP = r"交換|互換|對調|調換|\bswap\b|\bswitch\b|\bexchange\b"
+# An object named by where it is: 「左邊的東西」「中間那個」.
+PLACE_REF = (r"(靠近機器人|機器人旁邊|機器人附近|左邊|左側|右邊|右側|中間|中央|正中間)"
+             r"(的那一個|那一個|的那個|那個|的東西|的物體)")
+
+
+def resolve_request(task: str, positions: dict) -> tuple[set[str], set[str], dict[str, str]]:
+    """Objects, areas and object -> area pairs a request means, given where the
+    objects are now (what the text alone cannot say): 「左邊的東西」 is the object
+    in the left area, and a swap sends each object to the other one's area."""
+    here = {n: area_of(*p) for n, p in positions.items()}
+    text = task
+    for m in reversed(list(re.finditer(PLACE_REF, task))):
+        key = next(k for k, (_, zh) in AREAS.items() if m.group(1) in zh)
+        obj = next((n for n, a in here.items() if a == key), None)
+        if obj:
+            text = text[:m.start()] + OBJECTS[obj][2][0] + text[m.end():]
+    objs, areas = mentioned(text)
+    pairs = requested_pairs(text)
+    if re.search(SWAP, text, re.I):
+        two = sorted(objs) if len(objs) == 2 else sorted(here)
+        if len(two) == 2 and all(here.get(o) for o in two):
+            a, b = two
+            pairs = {a: here[b], b: here[a]}
+            objs, areas = {a, b}, {here[a], here[b]}
+    return objs, areas, pairs
+
+
 NEGATION = r"(不要|別|不准|不可以|不能|勿)(動|移動|碰|搬)|保持不動|留在原地"
 # The negation before the object: 「不要碰瓶子」「別動到杯子」.
 NEGATED_VERB = r"(不要|別|不准|不可以|不能|勿)(碰到|碰|動到|移動|動|搬動|搬|拿)(到)?"
@@ -252,6 +281,18 @@ def arm_policy(task: str, session: ArmSession):
     objs, areas = mentioned(task)
     keep = forbidden_objects(task)
     objs -= keep
+    resolved = {"done": False}
+
+    def resolve():
+        # place references and swaps need the current positions (2026-11-28)
+        nonlocal objs, areas
+        if resolved["done"] or not (re.search(SWAP, task, re.I) or re.search(PLACE_REF, task)):
+            return
+        if not session.seen:
+            session._detect()
+        o2, a2, _ = resolve_request(task, session.seen)
+        objs, areas = o2 - keep, a2
+        resolved["done"] = True
 
     # pick_and_place itself looks with the camera before moving and refuses
     # objects that are not on the table, so "only detected objects" holds
@@ -260,6 +301,7 @@ def arm_policy(task: str, session: ArmSession):
     def check(name: str, args: dict):
         if name != "pick_and_place":
             return None
+        resolve()
         o, a = args.get("object"), args.get("area")
         if o not in OBJECTS:
             return (f"there is no '{o}' on the table: the camera only knows {', '.join(sorted(OBJECTS))}. "

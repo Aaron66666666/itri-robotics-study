@@ -18,7 +18,8 @@ from __future__ import annotations
 import json
 import re
 
-from ..arm_tools import AREAS, OBJECTS, area_of, forbidden_objects, mentioned, requested_pairs
+from ..arm_tools import (AREAS, OBJECTS, PLACE_REF, SWAP, area_of, forbidden_objects, mentioned,
+                         requested_pairs, resolve_request)
 from ..loop import run_agent
 from ..tools import Tool, ToolRegistry
 from ..zh import to_traditional
@@ -81,6 +82,8 @@ class TableTeam:
         self.pending_clear = None             # clearing move the supervisor asked for (a swap)
         # 「先不要動，告訴我就好」: a question, nothing may move.
         self.ask_only = bool(re.search(ASK_ONLY, task))
+        # 「左邊的東西」 and swaps need the positions: resolved at the first look.
+        self.needs_positions = bool(re.search(SWAP, task, re.I) or re.search(PLACE_REF, task))
         self.board.post("user", "commander", "request", {"task": task, "objects": sorted(self.objs),
                                                            "areas": sorted(self.areas), "keep": sorted(self.keep)})
 
@@ -147,9 +150,24 @@ class TableTeam:
                 args["object"] = key
         return args
 
+    def resolve(self):
+        """Fill in objects named by place and swap targets from the Tracker's view."""
+        if not self.needs_positions:
+            return
+        self.needs_positions = False
+        if self.tracker.version == 0:
+            self.tracker.observe()
+        objs, areas, pairs = resolve_request(self.task, self.tracker.positions())
+        self.objs = objs - self.keep
+        self.areas = areas
+        self.requested = {o: a for o, a in pairs.items() if o in self.objs}
+        self.board.post("parser", "commander", "decision",
+                        {"objects": sorted(self.objs), "areas": sorted(self.areas), "requested": self.requested})
+
     def policy(self, name: str, args: dict):
         if name not in ("move_object", "predict_move"):
             return None
+        self.resolve()
         self.normalise(args)
         o, a = args.get("object"), args.get("area")
         reason = None
@@ -296,6 +314,7 @@ class TableTeam:
         it (e.g. a swap: the bottle to a free area first, 2026-11-28)."""
         if self.ask_only:
             return []
+        self.resolve()
         self.tracker.observe()
         here = {n: area_of(*p) for n, p in self.tracker.positions().items()}
         out, clear = [], None
@@ -338,4 +357,11 @@ class TableTeam:
         if problems:
             result.final_text = self.fact_report()
             self.board.post("reporter", "user", "report", {"text": result.final_text, "replaced_because": problems})
+        obs = self.board.last("observation")
+        if (result.final_text and obs and re.search(r"幾個|幾樣|多少個|多少樣|[Hh]ow many", self.task)
+                and not re.search(r"\d+\s*(個|樣|件)|[一兩二三]\s*(個|樣|件)", result.final_text)):
+            # a count question is answered with the number, also after a fact report
+            # (Llama listed the objects only; the first version added the count before
+            # the fact check, so a replaced report lost it again, 2026-11-28)
+            result.final_text += f"\n桌上共有 {obs.content.get('count', len(obs.content['objects']))} 樣東西。"
         return result
