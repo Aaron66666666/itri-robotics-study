@@ -130,7 +130,10 @@ def main() -> None:
     global TASK
     p = argparse.ArgumentParser()
     p.add_argument("--checkpoints", nargs="+", required=True)
-    p.add_argument("--commands", nargs="+", default=["0.2,0,0", "0.4,0,0", "-0.2,0,0", "0,0.2,0", "0,0,0.8", "0,0,0"])
+    # Both turning and both lateral directions: F (2026-11-28) fell turning right in
+    # place while every left-only test passed.
+    p.add_argument("--commands", nargs="+", default=["0.2,0,0", "0.4,0,0", "-0.2,0,0", "0,0.2,0", "0,-0.2,0",
+                                                     "0,0,0.8", "0,0,-0.8", "0,0,0"])
     p.add_argument("--num-envs", type=int, default=64)
     p.add_argument("--seconds", type=float, default=20.0)
     p.add_argument("--pushes", choices=["off", "on"], default="off")

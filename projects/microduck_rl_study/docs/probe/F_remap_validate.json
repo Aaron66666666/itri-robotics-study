@@ -1,0 +1,673 @@
+{
+ "checkpoint": "logs/rsl_rl/velocity/2026-11-28_10-18-17_track_v3_F/model_13994.pt",
+ "rows": [
+  {
+   "target": [
+    -0.15,
+    0.0,
+    0.0
+   ],
+   "remapped_cmd": [
+    -0.1846,
+    0.0,
+    0.0
+   ],
+   "raw_achieved": [
+    -0.0698,
+    -0.0,
+    -0.0014
+   ],
+   "remap_achieved": [
+    -0.1439,
+    0.0031,
+    0.0125
+   ],
+   "raw_abs_err": 0.0816,
+   "remap_abs_err": 0.0217,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "vx"
+  },
+  {
+   "target": [
+    -0.1,
+    0.0,
+    0.0
+   ],
+   "remapped_cmd": [
+    -0.1231,
+    0.0,
+    0.0
+   ],
+   "raw_achieved": [
+    -0.0029,
+    -0.0003,
+    0.003
+   ],
+   "remap_achieved": [
+    -0.032,
+    -0.001,
+    0.0023
+   ],
+   "raw_abs_err": 0.1004,
+   "remap_abs_err": 0.0713,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "vx"
+  },
+  {
+   "target": [
+    -0.05,
+    0.0,
+    0.0
+   ],
+   "remapped_cmd": [
+    -0.0615,
+    0.0,
+    0.0
+   ],
+   "raw_achieved": [
+    -0.0007,
+    -0.0001,
+    0.0013
+   ],
+   "remap_achieved": [
+    0.0004,
+    -0.0001,
+    0.0017
+   ],
+   "raw_abs_err": 0.0507,
+   "remap_abs_err": 0.0522,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "vx"
+  },
+  {
+   "target": [
+    0.05,
+    0.0,
+    0.0
+   ],
+   "remapped_cmd": [
+    0.1312,
+    0.0,
+    0.0
+   ],
+   "raw_achieved": [
+    -0.0001,
+    0.0,
+    -0.0002
+   ],
+   "remap_achieved": [
+    0.0544,
+    -0.0044,
+    0.0096
+   ],
+   "raw_abs_err": 0.0503,
+   "remap_abs_err": 0.0184,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "vx"
+  },
+  {
+   "target": [
+    0.1,
+    0.0,
+    0.0
+   ],
+   "remapped_cmd": [
+    0.1645,
+    0.0,
+    0.0
+   ],
+   "raw_achieved": [
+    0.0025,
+    0.0,
+    -0.0015
+   ],
+   "remap_achieved": [
+    0.1314,
+    -0.001,
+    0.0031
+   ],
+   "raw_abs_err": 0.099,
+   "remap_abs_err": 0.0355,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "vx"
+  },
+  {
+   "target": [
+    0.15,
+    0.0,
+    0.0
+   ],
+   "remapped_cmd": [
+    0.1978,
+    0.0,
+    0.0
+   ],
+   "raw_achieved": [
+    0.1085,
+    -0.0016,
+    0.0002
+   ],
+   "remap_achieved": [
+    0.1516,
+    0.0022,
+    -0.0002
+   ],
+   "raw_abs_err": 0.0433,
+   "remap_abs_err": 0.004,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "vx"
+  },
+  {
+   "target": [
+    0.2,
+    0.0,
+    0.0
+   ],
+   "remapped_cmd": [
+    0.2716,
+    0.0,
+    0.0
+   ],
+   "raw_achieved": [
+    0.1471,
+    0.0007,
+    0.0105
+   ],
+   "remap_achieved": [
+    0.2032,
+    0.0014,
+    -0.0258
+   ],
+   "raw_abs_err": 0.0641,
+   "remap_abs_err": 0.0304,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "vx"
+  },
+  {
+   "target": [
+    0.25,
+    0.0,
+    0.0
+   ],
+   "remapped_cmd": [
+    0.3685,
+    0.0,
+    0.0
+   ],
+   "raw_achieved": [
+    0.1886,
+    0.005,
+    -0.0113
+   ],
+   "remap_achieved": [
+    0.2503,
+    0.0034,
+    -0.0074
+   ],
+   "raw_abs_err": 0.0777,
+   "remap_abs_err": 0.0111,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "vx"
+  },
+  {
+   "target": [
+    0.0,
+    -0.06,
+    0.0
+   ],
+   "remapped_cmd": [
+    0.0,
+    -0.1611,
+    0.0
+   ],
+   "raw_achieved": [
+    -0.0002,
+    0.0,
+    -0.0001
+   ],
+   "remap_achieved": [
+    0.0044,
+    -0.0368,
+    0.0068
+   ],
+   "raw_abs_err": 0.0603,
+   "remap_abs_err": 0.0344,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "vy"
+  },
+  {
+   "target": [
+    0.0,
+    -0.03,
+    0.0
+   ],
+   "remapped_cmd": [
+    0.0,
+    -0.1301,
+    0.0
+   ],
+   "raw_achieved": [
+    0.0001,
+    -0.0,
+    0.0012
+   ],
+   "remap_achieved": [
+    0.0001,
+    -0.0013,
+    0.001
+   ],
+   "raw_abs_err": 0.0313,
+   "remap_abs_err": 0.0298,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "vy"
+  },
+  {
+   "target": [
+    0.0,
+    0.03,
+    0.0
+   ],
+   "remapped_cmd": [
+    0.0,
+    0.0668,
+    0.0
+   ],
+   "raw_achieved": [
+    -0.0,
+    -0.0,
+    0.0016
+   ],
+   "remap_achieved": [
+    -0.0,
+    -0.0,
+    0.0018
+   ],
+   "raw_abs_err": 0.0316,
+   "remap_abs_err": 0.0318,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "vy"
+  },
+  {
+   "target": [
+    0.0,
+    0.06,
+    0.0
+   ],
+   "remapped_cmd": [
+    0.0,
+    0.1336,
+    0.0
+   ],
+   "raw_achieved": [
+    0.0005,
+    -0.0002,
+    0.0028
+   ],
+   "remap_achieved": [
+    0.0006,
+    0.0035,
+    0.0021
+   ],
+   "raw_abs_err": 0.0635,
+   "remap_abs_err": 0.0592,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "vy"
+  },
+  {
+   "target": [
+    0.0,
+    0.09,
+    0.0
+   ],
+   "remapped_cmd": [
+    0.0,
+    0.2005,
+    0.0
+   ],
+   "raw_achieved": [
+    0.0,
+    -0.0,
+    0.0018
+   ],
+   "remap_achieved": [
+    -0.0004,
+    0.0816,
+    0.0082
+   ],
+   "raw_abs_err": 0.0918,
+   "remap_abs_err": 0.017,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "vy"
+  },
+  {
+   "target": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "remapped_cmd": [
+    0.0,
+    0.0,
+    -0.9833
+   ],
+   "raw_achieved": [
+    0.0064,
+    -0.0024,
+    -1.018
+   ],
+   "remap_achieved": [
+    0.0102,
+    -0.001,
+    -0.9944
+   ],
+   "raw_abs_err": 0.0268,
+   "remap_abs_err": 0.0168,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "wz"
+  },
+  {
+   "target": [
+    0.0,
+    0.0,
+    -0.6
+   ],
+   "remapped_cmd": [
+    0.0,
+    0.0,
+    -0.6702
+   ],
+   "raw_achieved": [
+    0.0046,
+    -0.0007,
+    -0.5191
+   ],
+   "remap_achieved": [
+    0.0009,
+    -0.0022,
+    -0.6217
+   ],
+   "raw_abs_err": 0.0862,
+   "remap_abs_err": 0.0248,
+   "raw_falls": 4,
+   "remap_falls": 2,
+   "main_axis": "wz"
+  },
+  {
+   "target": [
+    0.0,
+    0.0,
+    -0.3
+   ],
+   "remapped_cmd": [
+    0.0,
+    0.0,
+    -0.462
+   ],
+   "raw_achieved": [
+    0.001,
+    -0.0002,
+    -0.0516
+   ],
+   "remap_achieved": [
+    0.0052,
+    0.0008,
+    -0.2775
+   ],
+   "raw_abs_err": 0.2496,
+   "remap_abs_err": 0.0285,
+   "raw_falls": 0,
+   "remap_falls": 3,
+   "main_axis": "wz"
+  },
+  {
+   "target": [
+    0.0,
+    0.0,
+    -0.15
+   ],
+   "remapped_cmd": [
+    0.0,
+    0.0,
+    -0.3636
+   ],
+   "raw_achieved": [
+    0.0004,
+    0.0001,
+    -0.0037
+   ],
+   "remap_achieved": [
+    0.0022,
+    0.0006,
+    -0.1489
+   ],
+   "raw_abs_err": 0.1468,
+   "remap_abs_err": 0.0039,
+   "raw_falls": 0,
+   "remap_falls": 1,
+   "main_axis": "wz"
+  },
+  {
+   "target": [
+    0.0,
+    0.0,
+    0.15
+   ],
+   "remapped_cmd": [
+    0.0,
+    0.0,
+    0.3475
+   ],
+   "raw_achieved": [
+    0.0003,
+    -0.0002,
+    0.0085
+   ],
+   "remap_achieved": [
+    -0.001,
+    -0.0034,
+    0.1483
+   ],
+   "raw_abs_err": 0.142,
+   "remap_abs_err": 0.0061,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "wz"
+  },
+  {
+   "target": [
+    0.0,
+    0.0,
+    0.3
+   ],
+   "remapped_cmd": [
+    0.0,
+    0.0,
+    0.4432
+   ],
+   "raw_achieved": [
+    -0.0012,
+    -0.0014,
+    0.0889
+   ],
+   "remap_achieved": [
+    -0.0008,
+    -0.0055,
+    0.2581
+   ],
+   "raw_abs_err": 0.2137,
+   "remap_abs_err": 0.0482,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "wz"
+  },
+  {
+   "target": [
+    0.0,
+    0.0,
+    0.6
+   ],
+   "remapped_cmd": [
+    0.0,
+    0.0,
+    0.6462
+   ],
+   "raw_achieved": [
+    -0.0026,
+    -0.0079,
+    0.4984
+   ],
+   "remap_achieved": [
+    -0.0007,
+    -0.0099,
+    0.599
+   ],
+   "raw_abs_err": 0.1121,
+   "remap_abs_err": 0.0116,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "wz"
+  },
+  {
+   "target": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "remapped_cmd": [
+    0.0,
+    0.0,
+    0.9866
+   ],
+   "raw_achieved": [
+    -0.0038,
+    -0.0115,
+    1.0289
+   ],
+   "remap_achieved": [
+    0.0016,
+    -0.0093,
+    1.0063
+   ],
+   "raw_abs_err": 0.0442,
+   "remap_abs_err": 0.0172,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "wz"
+  },
+  {
+   "target": [
+    0.15,
+    0.0,
+    0.3
+   ],
+   "remapped_cmd": [
+    0.1978,
+    0.0,
+    0.4432
+   ],
+   "raw_achieved": [
+    0.1172,
+    -0.0076,
+    0.2819
+   ],
+   "remap_achieved": [
+    0.1547,
+    -0.0046,
+    0.4622
+   ],
+   "raw_abs_err": 0.0585,
+   "remap_abs_err": 0.1715,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "vx"
+  },
+  {
+   "target": [
+    0.1,
+    0.0,
+    -0.3
+   ],
+   "remapped_cmd": [
+    0.1645,
+    0.0,
+    -0.462
+   ],
+   "raw_achieved": [
+    0.031,
+    -0.0002,
+    -0.128
+   ],
+   "remap_achieved": [
+    0.1269,
+    0.0,
+    -0.4296
+   ],
+   "raw_abs_err": 0.2412,
+   "remap_abs_err": 0.1565,
+   "raw_falls": 1,
+   "remap_falls": 0,
+   "main_axis": "vx"
+  },
+  {
+   "target": [
+    0.15,
+    0.03,
+    0.0
+   ],
+   "remapped_cmd": [
+    0.1978,
+    0.0668,
+    0.0
+   ],
+   "raw_achieved": [
+    0.0996,
+    0.01,
+    0.0001
+   ],
+   "remap_achieved": [
+    0.1419,
+    0.034,
+    -0.006
+   ],
+   "raw_abs_err": 0.0705,
+   "remap_abs_err": 0.0181,
+   "raw_falls": 0,
+   "remap_falls": 0,
+   "main_axis": "vx"
+  }
+ ],
+ "summary": {
+  "vx": {
+   "raw_mean_abs_err": 0.0709,
+   "remap_mean_abs_err": 0.0306,
+   "falls_raw": 0,
+   "falls_remap": 0
+  },
+  "vy": {
+   "raw_mean_abs_err": 0.0557,
+   "remap_mean_abs_err": 0.0344,
+   "falls_raw": 0,
+   "falls_remap": 0
+  },
+  "wz": {
+   "raw_mean_abs_err": 0.1277,
+   "remap_mean_abs_err": 0.0196,
+   "falls_raw": 4,
+   "falls_remap": 6
+  }
+ }
+}
