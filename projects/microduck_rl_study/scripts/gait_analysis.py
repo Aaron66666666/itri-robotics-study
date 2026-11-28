@@ -45,7 +45,7 @@ def record(env, policy, seconds: float, warmup: float = 2.0):
     bodies = list(robot.body_names)
     feet = [i for i, b in enumerate(bodies) if "foot" in b.lower() or b.startswith("ankle")]
     clip = load_rl_cfg(efc.TASK).clip_actions
-    q_log, feet_log, vel_log, act_log, alive = [], [], [], [], []
+    q_log, feet_log, vel_log, act_log, alive, qd_log, tau_log = [], [], [], [], [], [], []
     obs = env.get_observations()
     for i in range(int(round((warmup + seconds) / dt))):
         act = policy(obs)
@@ -54,6 +54,8 @@ def record(env, policy, seconds: float, warmup: float = 2.0):
             continue
         alive.append(~dones.bool())
         q_log.append(robot.data.joint_pos.clone())
+        qd_log.append(robot.data.joint_vel.clone())
+        tau_log.append(robot.data.actuator_force.clone())
         pos_w = robot.data.body_link_pos_w[:, feet, :] - robot.data.root_link_pos_w[:, None, :]
         feet_log.append(quat_rotate_inv(robot.data.root_link_quat_w, pos_w))
         vel_log.append(robot.data.root_link_lin_vel_b[:, :2].clone())
@@ -64,6 +66,7 @@ def record(env, policy, seconds: float, warmup: float = 2.0):
     a = torch.stack(act_log)
     ok = torch.stack(alive).all(0)    # envs that never fell / reset
     q, fp, v, a = q[:, ok], fp[:, ok], v[:, ok], a[:, ok]
+    qd, tau = torch.stack(qd_log)[:, ok], torch.stack(tau_log)[:, ok]
     out = {"envs_used": int(ok.sum()), "joints": {}, "feet": [bodies[i] for i in feet]}
     lim = getattr(robot.data, "joint_pos_limits", None)
     for j, nme in enumerate(names):
@@ -73,6 +76,11 @@ def record(env, policy, seconds: float, warmup: float = 2.0):
              "range": round(hi - lo, 3)}
         if lim is not None:
             d["limit"] = [round(float(lim[0, j, 0]), 3), round(float(lim[0, j, 1]), 3)]
+        pct = torch.tensor([0.5, 0.99], device=q.device)
+        d["vel_abs_p50_p99"] = [round(x, 2) for x in torch.quantile(qd[:, :, j].abs().flatten().float(), pct).tolist()]
+        if j < tau.shape[2]:  # walk model: ctrl index = joint index
+            d["torque_abs_p50_p99"] = [round(x, 3) for x in
+                                       torch.quantile(tau[:, :, j].abs().flatten().float(), pct).tolist()]
         out["joints"][nme] = d
     # step frequency from the foot height (z) crossing its mean, averaged over envs and feet
     z = fp[..., 2] - fp[..., 2].mean(0, keepdim=True)
